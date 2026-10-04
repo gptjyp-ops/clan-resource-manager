@@ -32,7 +32,7 @@ export async function scanScreen(file:File,kind:PhotoKind,onProgress:(n:number)=
   if(!bands.length||bands.length>8){parsed={};}
   else if(parsed.selected?.length!==bands.length){
    let digits='';await worker.setParameters({tessedit_pageseg_mode:PSM.SINGLE_CHAR});
-   for(const band of bands){const single=document.createElement('canvas');single.width=band.width+80;single.height=canvas.height;const singleContext=single.getContext('2d')!;singleContext.fillStyle='white';singleContext.fillRect(0,0,single.width,single.height);singleContext.drawImage(canvas,band.x,0,band.width,canvas.height,40,0,band.width,canvas.height);const read=await worker.recognize(single);const text=read.data.text.trim();diagnostics.attempts.push({field:r.field,source:'adaptive',text});if(!/^\d$/.test(text)){digits='';break;}digits+=text;}
+   for(const band of bands){const single=document.createElement('canvas');single.width=band.width+80;single.height=canvas.height;const singleContext=single.getContext('2d')!;singleContext.fillStyle='white';singleContext.fillRect(0,0,single.width,single.height);singleContext.drawImage(canvas,band.x,0,band.width,canvas.height,40,0,band.width,canvas.height);const read=await worker.recognize(single);const text=read.data.text.trim();original.push(text);diagnostics.attempts.push({field:r.field,source:'adaptive',text});if(!/^\d$/.test(text)){digits='';break;}digits+=text;}
    parsed=digits.length===bands.length?{selected:digits}:{};
    if(!parsed.selected)diagnostics.issues.push({code:'OCR-04',field:'selected',message:'합성 수량의 숫자 자리수와 인식 결과가 일치하지 않습니다. 사진을 확대해 확인하고 다시 인식해 주세요.'});
   }
