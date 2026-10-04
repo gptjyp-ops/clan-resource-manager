@@ -52,3 +52,6 @@ html[lang="en"] .panel-heading{flex-wrap:wrap;gap:8px}
 .photo-viewer-stage p{margin:auto}
 .evidence-links .photo-preview{margin-top:8px}
 @media(max-width:600px){.photo-viewer{padding:10px;height:94dvh}.photo-viewer-controls{gap:5px}.photo-viewer button{padding:7px 9px}.photo-viewer-heading h2{font-size:16px}}
+/* A resource can be ready for ascension independently of the other columns. */
+.resource-amount{display:inline-flex;align-items:center;justify-content:flex-end;gap:6px;white-space:nowrap}
+.ascension-crown{display:inline-flex;align-items:center;color:#ffbf56;flex-shrink:0}
