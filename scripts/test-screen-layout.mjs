@@ -2,7 +2,14 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import ts from 'typescript';
 const source=ts.transpileModule(fs.readFileSync('src/lib/screen-layout.ts','utf8'),{compilerOptions:{module:ts.ModuleKind.ESNext,target:ts.ScriptTarget.ES2022}}).outputText;
-const {findLandmarks,locateRegions,ratioCandidates}=await import('data:text/javascript;base64,'+Buffer.from(source).toString('base64'));
+const {findLandmarks,locateRegions,ratioCandidates,digitBands}=await import('data:text/javascript;base64,'+Buffer.from(source).toString('base64'));
+// Three narrow neighbouring 1s must remain three glyphs even when the OCR
+// engine returns a syntactically valid single 1. Ignore isolated speckles.
+const numeric={width:90,height:50,data:new Uint8ClampedArray(90*50*4).fill(255)};
+for(const left of [10,30,50])for(let y=10;y<40;y++)for(let x=left;x<left+8;x++)numeric.data.set([0,0,0,255],(y*90+x)*4);
+numeric.data.set([0,0,0,255],(4*90+80)*4);
+assert.equal(digitBands(numeric).length,3);
+assert.equal(digitBands({width:20,height:20,data:new Uint8ClampedArray(1600).fill(255)}).length,0);
 function image(barY,infoY){
  const p={width:400,height:870,data:new Uint8ClampedArray(400*870*4).fill(255)};
  const paint=(x,y,color)=>{const i=(y*400+x)*4;p.data.set([...color,255],i);};

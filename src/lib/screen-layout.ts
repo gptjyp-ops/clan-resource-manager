@@ -2,6 +2,20 @@ import type {PhotoKind} from './inventory';
 export type Box={x:number;y:number;width:number;height:number};
 export type Pixels={width:number;height:number;data:ArrayLike<number>};
 
+// Count separated glyphs in an already thresholded numeric crop. A valid
+// one-digit OCR result can still have dropped two neighbouring digits.
+export function digitBands(p:Pixels):Box[]{
+ const bands:Box[]=[];let start=-1,top=p.height,bottom=-1;
+ for(let x=0;x<=p.width;x++){
+  let ink=false;
+  for(let y=0;x<p.width&&y<p.height;y++)if(p.data[(y*p.width+x)*4]<100){ink=true;top=Math.min(top,y);bottom=Math.max(bottom,y);}
+  if(ink&&start<0)start=x;
+  if(!ink&&start>=0){bands.push({x:start,y:top,width:x-start,height:bottom-top+1});start=-1;top=p.height;bottom=-1;}
+ }
+ const tallest=Math.max(0,...bands.map(b=>b.height));
+ return bands.filter(b=>b.height>=tallest*.65&&b.height>=p.height*.25&&b.width>=2);
+}
+
 // Find interface landmarks in the image, rather than assuming a phone height
 // or a fixed number of rows in the skill collection.
 function components(p:Pixels,area:Box,test:(r:number,g:number,b:number)=>boolean,minDensity=.38):Box[]{

@@ -1,7 +1,7 @@
 import {newScanReport,missingIssues,ScanFailure} from './scan-diagnostics';
 import {parseNumber} from './ocr';
 import type {PhotoKind,Group,Item} from './inventory';
-import {locateRegions,ratioCandidates} from './screen-layout';
+import {locateRegions,ratioCandidates,digitBands} from './screen-layout';
 import {maximumStatus} from './summon-status';
 export type Region={field:'amount'|'level'|'ratio'|'selected';rect:[number,number,number,number];mode:'white'|'black'|'yellow'|'mixed'|'raw'};
 export const regions:Record<PhotoKind,Region[]>={
@@ -23,10 +23,21 @@ export async function scanScreen(file:File,kind:PhotoKind,onProgress:(n:number)=
  phase='read';const overview=document.createElement('canvas');overview.width=400;overview.height=Math.round(bitmap.height*400/bitmap.width);const overviewContext=overview.getContext('2d')!;overviewContext.drawImage(bitmap,0,0,overview.width,overview.height);
  const adaptive:Partial<Record<Region['field'],Region>>={};for(const r of locateRegions(overviewContext.getImageData(0,0,overview.width,overview.height),kind))adaptive[r.field]=r;
  for(let k=0;k<regions[kind].length;k++){
- const fallback=regions[kind][k],candidates=adaptive[fallback.field]?[...ratioCandidates(adaptive[fallback.field]!),fallback]:[fallback];
+ const fallback=regions[kind][k],candidates=fallback.field==='selected'?(adaptive.selected?[adaptive.selected]:[]):adaptive[fallback.field]?[...ratioCandidates(adaptive[fallback.field]!),fallback]:[fallback];
  for(const r of candidates){const canvas=document.createElement('canvas');const [x,y,w,h]=r.rect;const scale=Math.min(750/(bitmap.width*w),160/(bitmap.height*h));const cw=Math.round(bitmap.width*w*scale),ch=Math.round(bitmap.height*h*scale);canvas.width=cw;canvas.height=ch;const ctx=canvas.getContext('2d')!;ctx.drawImage(bitmap,bitmap.width*x,bitmap.height*y,bitmap.width*w,bitmap.height*h,0,0,cw,ch);
  const data=ctx.getImageData(0,0,canvas.width,canvas.height);for(let i=0;i<data.data.length;i+=4){if(r.mode==='raw')continue;const red=data.data[i],g=data.data[i+1],b=data.data[i+2];const ink=r.mode==='white'?Math.min(red,g,b)>180&&Math.max(red,g,b)-Math.min(red,g,b)<55:r.mode==='black'?Math.max(red,g,b)<100:r.mode==='mixed'?((Math.min(red,g,b)>180&&Math.max(red,g,b)-Math.min(red,g,b)<55)||(red>150&&g>150&&b<140)):red>150&&g>150&&b<140;const value=ink?0:255;data.data[i]=value;data.data[i+1]=value;data.data[i+2]=value;}ctx.putImageData(data,0,0);const padded=document.createElement('canvas');padded.width=canvas.width+40;padded.height=canvas.height+40;const paddedContext=padded.getContext('2d')!;paddedContext.fillStyle='white';paddedContext.fillRect(0,0,padded.width,padded.height);paddedContext.drawImage(canvas,20,20);
- await worker.setParameters({tessedit_char_whitelist:r.field==='ratio'?'0123456789/':r.field==='amount'?'0123456789.,kKmMbB':'0123456789',tessedit_pageseg_mode:PSM.SINGLE_LINE});const result=await worker.recognize(padded);original.push(result.data.text.trim());diagnostics.attempts.push({field:r.field,source:r===fallback?'fallback':'adaptive',text:result.data.text.trim()});const parsed=parseRead(r.field,result.data.text);if(Object.keys(parsed).length){Object.assign(item,parsed);break;}}
+ await worker.setParameters({tessedit_char_whitelist:r.field==='ratio'?'0123456789/':r.field==='amount'?'0123456789.,kKmMbB':'0123456789',tessedit_pageseg_mode:PSM.SINGLE_LINE});const result=await worker.recognize(padded);original.push(result.data.text.trim());diagnostics.attempts.push({field:r.field,source:r===fallback?'fallback':'adaptive',text:result.data.text.trim()});let parsed=parseRead(r.field,result.data.text);
+ if(r.field==='selected'){
+  const bands=digitBands(data);
+  if(!bands.length||bands.length>8){parsed={};}
+  else if(parsed.selected?.length!==bands.length){
+   let digits='';await worker.setParameters({tessedit_pageseg_mode:PSM.SINGLE_CHAR});
+   for(const band of bands){const single=document.createElement('canvas');single.width=band.width+80;single.height=canvas.height;const singleContext=single.getContext('2d')!;singleContext.fillStyle='white';singleContext.fillRect(0,0,single.width,single.height);singleContext.drawImage(canvas,band.x,0,band.width,canvas.height,40,0,band.width,canvas.height);const read=await worker.recognize(single);const text=read.data.text.trim();diagnostics.attempts.push({field:r.field,source:'adaptive',text});if(!/^\d$/.test(text)){digits='';break;}digits+=text;}
+   parsed=digits.length===bands.length?{selected:digits}:{};
+   if(!parsed.selected)diagnostics.issues.push({code:'OCR-04',field:'selected',message:'합성 수량의 숫자 자리수와 인식 결과가 일치하지 않습니다. 사진을 확대해 확인하고 다시 인식해 주세요.'});
+  }
+ }
+ if(Object.keys(parsed).length){Object.assign(item,parsed);break;}}
  onProgress(Math.round((k+1)/regions[kind].length*100));}
  if((kind==='skill'||kind==='egg'||kind==='mount')&&(!item.progress||!item.target)){
   onProgress(95);
@@ -38,6 +49,6 @@ export async function scanScreen(file:File,kind:PhotoKind,onProgress:(n:number)=
   canvas.getContext('2d')!.drawImage(bitmap,bitmap.width*x,bitmap.height*y,bitmap.width*(right-x),bitmap.height*(bottom-y),0,0,canvas.width,canvas.height);
   phase='load';koreanWorker=await createWorker('kor',1,options);phase='read';await koreanWorker.setParameters({tessedit_pageseg_mode:PSM.SPARSE_TEXT});const status=await koreanWorker.recognize(canvas);original.push(status.data.text.trim());diagnostics.attempts.push({field:'ratio',source:adaptive.ratio?'adaptive':'fallback',text:status.data.text.trim()});Object.assign(item,maximumStatus(status.data.text));
  }
- diagnostics.issues=missingIssues(kind,item,adaptive);onProgress(100);return {item,original,diagnostics};
+ diagnostics.issues.push(...missingIssues(kind,item,adaptive).filter(issue=>!diagnostics.issues.some(existing=>existing.field===issue.field)));onProgress(100);return {item,original,diagnostics};
  }catch{diagnostics.issues.push({code:phase==='load'?'OCR-01':'OCR-05',message:phase==='load'?'사진 인식 기능을 불러오지 못했습니다.':'사진 인식 처리 중 실행 오류가 발생했습니다.'});throw new ScanFailure(diagnostics);}finally{bitmap.close();await worker?.terminate().catch(()=>{});await koreanWorker?.terminate().catch(()=>{});}
 }
