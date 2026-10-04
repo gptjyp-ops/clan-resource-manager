@@ -315,5 +315,9 @@
   "오류 자동 전송은 구글 스크립트 업데이트 후 사용할 수 있습니다.": "Automatic reporting requires an Apps Script update.",
   "오류는 30초마다 전송할 수 있습니다.": "You can send one report every 30 seconds.",
   "오류 전송 한도에 도달했습니다. 진단 내용을 복사해주세요.": "Report limit reached. Please copy the diagnostics.",
-  "오류 진단 형식을 확인해주세요.": "Check the diagnostic report format."
+  "오류 진단 형식을 확인해주세요.": "Check the diagnostic report format.",
+  "재화 정렬": "Sort resources",
+  "내림차순": "High to low",
+  "오름차순": "Low to high",
+  "재화 버튼을 다시 누르면 오름차순·내림차순이 전환됩니다. 미입력은 마지막에 표시합니다.": "Click a resource again to switch between high to low and low to high. Missing values appear last."
 }

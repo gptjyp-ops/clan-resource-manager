@@ -55,3 +55,8 @@ html[lang="en"] .panel-heading{flex-wrap:wrap;gap:8px}
 /* A resource can be ready for ascension independently of the other columns. */
 .resource-amount{display:inline-flex;align-items:center;justify-content:flex-end;gap:6px;white-space:nowrap}
 .ascension-crown{display:inline-flex;align-items:center;color:#ffbf56;flex-shrink:0}
+.resource-sort{display:flex;flex-wrap:wrap;gap:8px;padding:16px 20px 0}
+.resource-sort button{background:#202c40;color:#b7c5da;border:1px solid #53627b;border-radius:7px;padding:8px 10px;min-height:40px;cursor:pointer;font-size:13px}
+.resource-sort button.active{color:#ffbf56;border-color:#ffbf56;background:#493b28}
+.resource-sort button:focus-visible{outline:2px solid #ffbf56;outline-offset:2px}
+.sort-help{padding:8px 20px 16px;margin:0;color:#b7c5da;font-size:12px}
