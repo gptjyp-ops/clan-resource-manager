@@ -66,3 +66,34 @@ html[lang="en"] .panel-heading{flex-wrap:wrap;gap:8px}
 .access-code-toggle:hover{color:#ffbf56;background:#202c40}
 .access-code-toggle:focus-visible{outline:2px solid #ffbf56;outline-offset:2px}
 .access-code-toggle:disabled{opacity:.5;cursor:default}
+/* Compact resource totals: keep labels, quantities and units together. */
+.summary article,.summary-content{min-width:0}
+.summary p{word-break:keep-all;overflow-wrap:break-word}
+.summary strong{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px}
+.summary strong small{margin-left:0;white-space:nowrap}
+.summary-number{min-width:0;overflow-wrap:anywhere}
+.summary .approx{white-space:nowrap}
+@media(max-width:600px){
+ .workspace{padding:22px 16px 16px}
+ .page-heading{gap:12px;margin-bottom:20px}
+ .page-heading h1{font-size:22px}
+ .page-heading p:not(.eyebrow){font-size:13px;word-break:keep-all}
+ .page-heading .eyebrow,.panel-heading .eyebrow{display:none}
+ .summary{gap:10px;margin-bottom:18px}
+ .summary article{display:grid;grid-template-columns:26px minmax(0,1fr);column-gap:8px;row-gap:8px;align-content:start;align-items:center;padding:14px 12px;border-radius:10px}
+ .summary-content{display:contents}
+ .summary .resource-marker{width:26px;height:28px;font-size:14px;border-radius:6px}
+ .summary p{grid-column:2;font-size:13px;line-height:1.4;margin:0}
+ .summary strong{grid-column:1/-1;font-size:clamp(18px,5.5vw,23px);line-height:1.3;gap:3px;letter-spacing:-.045em}
+ .summary strong small,.summary .approx{font-size:11px;letter-spacing:0}
+ .summary .meta{grid-column:1/-1;font-size:11px;line-height:1.4}
+ .merge-summary{display:grid;grid-template-columns:1fr 1fr;gap:10px 16px;padding:12px 14px;margin:0 0 20px;font-size:12px}
+ .merge-summary>span{display:flex;justify-content:space-between;align-items:baseline;gap:8px;white-space:nowrap}
+ .merge-summary>span:last-child{grid-column:1/-1;border-top:1px solid #2b374b;padding-top:8px}
+ .merge-summary strong{margin-left:0;font-size:13px}
+ .panel-heading{padding:16px}
+ .registration form{padding:16px}
+ .resource-sort{padding:12px 12px 0;gap:6px}
+ .resource-sort button{font-size:12px;padding:7px 9px}
+ .sort-help{padding:8px 12px 12px;font-size:11px;word-break:keep-all}
+}
