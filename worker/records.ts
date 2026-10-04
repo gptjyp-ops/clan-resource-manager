@@ -1,5 +1,5 @@
 import {storage,passwordHash} from './storage';
-import {validateInventory,photoKinds} from '../src/lib/inventory';
+import {validateInventory,mergeInventory,photoKinds,groups,type ChangedFields} from '../src/lib/inventory';
 export async function GET(){try{const {db}=storage();const rows=await db.prepare('SELECT nickname,details,photos,updated_at FROM members ORDER BY updated_at DESC').all();return Response.json({records:rows.results.map((r:any)=>({...r,details:JSON.parse(r.details),photos:JSON.parse(r.photos)}))},{headers:{'Cache-Control':'no-store'}});}catch(e){console.error(e);return Response.json({error:'현황을 불러오지 못했습니다. 잠시 후 다시 시도해주세요.'},{status:503});}}
 export async function POST(request:Request){
  const fresh:string[]=[];let committed=false;
@@ -12,6 +12,8 @@ export async function POST(request:Request){
  if(old?.lock_until>Date.now())return Response.json({error:'비밀번호 확인 시도가 많습니다. 10분 뒤 다시 시도해주세요.'},{status:429});
  const salt=old?.salt||crypto.randomUUID();const hash=await passwordHash(password,salt);
  if(old&&old.password_hash!==hash){await db.prepare('UPDATE members SET failed_attempts = failed_attempts + 1, lock_until = ? WHERE nickname = ?').bind(old.failed_attempts>=4?Date.now()+600000:0,nickname).run();return Response.json({error:'이 닉네임의 수정 비밀번호가 맞지 않습니다.'},{status:403});}
+ let changed:ChangedFields|undefined;
+ try{if(form.has('changedFields')){changed=JSON.parse(String(form.get('changedFields')));if(!changed||Array.isArray(changed)||typeof changed!=='object'||Object.keys(changed).some(g=>!groups.includes(g as any))||Object.values(changed).some(keys=>!Array.isArray(keys)||keys.length>6||keys.some(k=>!['amount','level','progress','target','selected','extra'].includes(k))))throw Error('수정 항목을 확인해주세요.');}details=mergeInventory(old?JSON.parse(old.details):undefined,details,changed);}catch(e){return Response.json({error:e instanceof Error?e.message:'수정 항목을 확인해주세요.'},{status:400});}
  const photos=JSON.parse(old?.photos||'{}');const obsolete:string[]=[];
  const uploads:{kind:string;bytes:Uint8Array;type:string}[]=[];
  for(const kind of photoKinds){const file=form.get('photo_'+kind);if(!(file instanceof File)||!file.size)continue;
@@ -20,6 +22,6 @@ export async function POST(request:Request){
  for(const u of uploads){const key=crypto.randomUUID();await bucket.put(key,u.bytes,{httpMetadata:{contentType:u.type}});fresh.push(key);if(photos[u.kind])obsolete.push(photos[u.kind]);photos[u.kind]=key;}
  const saved=await db.prepare('INSERT INTO members (nickname,password_hash,salt,details,photos,updated_at) VALUES (?,?,?,?,?,?) ON CONFLICT(nickname) DO UPDATE SET details=excluded.details,photos=excluded.photos,updated_at=excluded.updated_at,failed_attempts=0,lock_until=0 WHERE members.password_hash=excluded.password_hash').bind(nickname,hash,salt,JSON.stringify(details),JSON.stringify(photos),new Date().toISOString()).run();
  if(!saved.meta.changes){await Promise.all(fresh.map(k=>bucket.delete(k)));return Response.json({error:'닉네임이 이미 등록되었습니다. 수정 비밀번호를 확인해주세요.'},{status:409});}
- committed=true;await Promise.all(obsolete.map(k=>bucket.delete(k).catch(console.error)));return Response.json({ok:true});
+ committed=true;await Promise.all(obsolete.map(k=>bucket.delete(k).catch(console.error)));return Response.json({ok:true,details,photos});
  }catch(e){if(!committed&&fresh.length)await Promise.all(fresh.map(k=>storage().bucket.delete(k).catch(console.error)));console.error(e);return Response.json({error:'저장하지 못했습니다. 입력 내용을 유지했으니 다시 시도해주세요.'},{status:503});}
 }

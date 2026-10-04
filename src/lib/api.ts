@@ -1,5 +1,5 @@
 import type {ScanReport} from './scan-diagnostics';
-import type {Inventory,PhotoKind} from './inventory';
+import type {Inventory,PhotoKind,ChangedFields} from './inventory';
 import {googleScriptUrl} from './google-config';
 export const apiUrl=(path:string)=>(import.meta.env.VITE_API_BASE_URL||'').replace(/\/$/,'')+path;
 export const googleEnabled=!!googleScriptUrl;
@@ -16,7 +16,7 @@ const googleUrl=googleScriptUrl;
 export type ClanInfo={id:string;name:string;server?:string;inviteKey?:string};
 export let serverSelectionSupported=false;
 export let serverOptions:string[]=[];
-type Reply={clan?:ClanInfo;adminToken?:string;multiClan?:boolean;diagnosticReports?:boolean;serverSelection?:boolean;servers?:string[];ok:boolean;error?:string;records?:any[];photos?:Partial<Record<PhotoKind,string>>;base64?:string;type?:string};
+type Reply={clan?:ClanInfo;adminToken?:string;multiClan?:boolean;diagnosticReports?:boolean;preserveExisting?:boolean;details?:Inventory;serverSelection?:boolean;servers?:string[];ok:boolean;error?:string;records?:any[];photos?:Partial<Record<PhotoKind,string>>;base64?:string;type?:string};
 let bridgePromise:Promise<{source:Window;origin:string;channel:string}>|undefined;
 const pending=new Map<string,{resolve:(r:Reply)=>void;reject:(e:Error)=>void;timer:ReturnType<typeof setTimeout>}>();
 function bridge(){
@@ -44,9 +44,9 @@ async function encodedPhoto(file:File,kind:PhotoKind){
   throw Error('사진을 저장 크기로 줄이지 못했습니다. 더 작은 사진을 선택해주세요.');
  }finally{image.close();}
 }
-export async function saveInventory(nickname:string,password:string,inventory:Inventory,files:Partial<Record<PhotoKind,File>>){
- if(googleUrl){const photos=[];for(const [kind,file] of Object.entries(files))if(file)photos.push(await encodedPhoto(file,kind as PhotoKind));return rpc('save',{nickname,password,inventory,photos});}
- const form=new FormData();form.set('nickname',nickname);form.set('password',password);form.set('inventory',JSON.stringify(inventory));for(const [kind,file] of Object.entries(files))if(file)form.set('photo_'+kind,file);const r=await fetch(apiUrl('/api/records'),{method:'POST',body:form});const d:any=await r.json();if(!r.ok)throw Error(d.error);return d as Reply;
+export async function saveInventory(nickname:string,password:string,inventory:Inventory,files:Partial<Record<PhotoKind,File>>,changedFields?:ChangedFields){
+ if(googleUrl){const capability=await rpc('list',{operation:'capabilities'});if(!capability.preserveExisting)throw Error('기존 재화 보호를 위해 저장을 중단했습니다. 운영자가 구글 스크립트를 업데이트해야 합니다.');const photos=[];for(const [kind,file] of Object.entries(files))if(file)photos.push(await encodedPhoto(file,kind as PhotoKind));return rpc('save',{nickname,password,inventory,photos,changedFields});}
+ const form=new FormData();form.set('nickname',nickname);form.set('password',password);form.set('inventory',JSON.stringify(inventory));if(changedFields)form.set('changedFields',JSON.stringify(changedFields));for(const [kind,file] of Object.entries(files))if(file)form.set('photo_'+kind,file);const r=await fetch(apiUrl('/api/records'),{method:'POST',body:form});const d:any=await r.json();if(!r.ok)throw Error(d.error);return d as Reply;
 }
 export async function supportsClans(){try{const reply=await rpc('list',{operation:'capabilities'});serverSelectionSupported=!!reply.serverSelection;serverOptions=(reply.servers||[]).filter(s=>/^\d{1,6}$/.test(s));return !!reply.multiClan;}catch(e){if(e instanceof Error&&e.message.includes('클랜 입장 코드가 맞지 않습니다'))return false;throw e;}}
 export async function clanAction(operation:string,payload:Record<string,unknown>={}){return rpc('list',{operation,...payload});}

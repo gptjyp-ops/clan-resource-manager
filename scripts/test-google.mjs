@@ -31,6 +31,13 @@ assert.equal(allSaved.ok,true);assert.equal(Object.keys(allSaved.photos).length,
 const allRow=invoke('list').records.find(r=>r.nickname==='all-resources');assert.deepEqual(allRow.details,allInventory);assert.deepEqual(allRow.photos,allSaved.photos);
 // Bridge rejects foreign origins/channels and routes only allowed methods.
 const listeners={},sent=[],calls=[];const top={postMessage:(m,o)=>sent.push({m,o})};const runner={withSuccessHandler(f){this.success=f;return this;},withFailureHandler(f){this.failure=f;return this;},clanRpc(method,payload){calls.push({method,payload});this.success({ok:true});}};
+// A new submission with just one resource must not erase previous resources.
+const partial=Object.fromEntries(['skill','egg','mount','potion'].map(g=>[g,{amount:'',level:'',progress:'',target:'',selected:'',extra:'0'}]));partial.potion.amount='0';
+const before=invoke('list').records.find(r=>r.nickname==='all-resources');
+const updated=invoke('save',{nickname:'all-resources',password:'safe-password',inventory:partial,photos:[],changedFields:{potion:['amount']}});assert.equal(updated.ok,true);assert.equal(updated.details.potion.amount,'0');
+for(const g of ['skill','egg','mount'])assert.deepEqual(updated.details[g],before.details[g]);assert.deepEqual(updated.photos,before.photos);
+partial.egg.selected='388';const merge=invoke('save',{nickname:'all-resources',password:'safe-password',inventory:partial,photos:[],changedFields:{egg:['selected']}});assert.equal(merge.ok,true);assert.equal(merge.details.egg.selected,'388');assert.equal(merge.details.egg.amount,before.details.egg.amount);assert.equal(merge.details.potion.amount,'0');
+const bad=invoke('save',{nickname:'all-resources',password:'safe-password',inventory:partial,photos:[],changedFields:{egg:['unknown']}});assert.equal(bad.ok,false);assert.deepEqual(invoke('list').records.find(r=>r.nickname==='all-resources').details,merge.details);
 const script=fs.readFileSync('google/Bridge.html','utf8').match(/<script>([\s\S]*?)<\/script>/)[1].replace('<?= JSON.stringify(channel) ?>',JSON.stringify('test-channel')).replace('<?= JSON.stringify(origin) ?>',JSON.stringify('https://gptjyp-ops.github.io'));
 const b={document:{body:{dataset:{channel:'test-channel',origin:'https://gptjyp-ops.github.io'}}},window:{top,addEventListener:(k,f)=>listeners[k]=f},google:{script:{run:runner}}};vm.runInNewContext(script,b);assert.equal(sent[0].m.type,'clan-ready');
 const message={type:'clan-request',channel:'test-channel',id:'1',method:'list',payload:{accessKey:key}};

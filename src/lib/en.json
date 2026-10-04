@@ -1,4 +1,9 @@
 {
+  "기존 재화 보호를 위해 저장을 중단했습니다. 운영자가 구글 스크립트를 업데이트해야 합니다.": "Saving is blocked to protect existing resources. The operator must update Apps Script.",
+  "수정 항목을 확인해주세요.": "Check the updated fields.",
+  "변경한 항목만 저장합니다. 빈칸과 수정하지 않은 재화·사진은 기존 기록을 유지합니다.": "Only changed fields are saved. Blank fields and unchanged resources and photos keep their existing values.",
+  "빈칸은 삭제하지 않습니다. 0을 입력하면 해당 수량만 0으로 수정됩니다.": "Blank fields do not delete existing values. Enter 0 to set that quantity to zero.",
+  "승천 추천 재화량: 60k(60,000개) 이상": "Recommended resources for ascension: 60k (60,000) or more",
   "미입력": "Not entered",
   "약": "Approx.",
   "· 캡처 붙여넣기": "· Paste a screenshot",

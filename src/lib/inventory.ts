@@ -7,6 +7,17 @@ export type PhotoKind=typeof photoKinds[number];
 export const photoTitles:Record<PhotoKind,string>={skill:'스킬 화면',egg:'알 소환 화면',eggMerge:'알 합성 화면',mount:'탈것 소환 화면',mountMerge:'탈것 합성 화면',potion:'녹색 물약 화면'};
 export type Item={amount:string;level:string;progress:string;target:string;selected:string;extra:string};
 export type Inventory=Record<Group,Item>;
+export type ChangedFields=Partial<Record<Group,(keyof Item)[]>>;
+// Empty input is not a delete operation. A zero is an explicit value.
+export function mergeInventory(previous:Inventory|undefined,incoming:Inventory,changed?:ChangedFields):Inventory{
+ const result=previous?structuredClone(previous):emptyInventory();
+ for(const g of groups){
+  const keys=changed?.[g]??(changed?[]:Object.keys(incoming[g]).filter(k=>k!=='extra'||incoming[g].extra!=='0') as (keyof Item)[]);
+  for(const key of keys)if(incoming[g][key]!=='')result[g][key]=incoming[g][key];
+  if(keys.includes('level')&&incoming[g].level==='100'){result[g].progress='';result[g].target='';}
+ }
+ return validateInventory(result);
+}
 export const emptyItem=():Item=>({amount:'',level:'',progress:'',target:'',selected:'',extra:'0'});
 export const emptyInventory=():Inventory=>({skill:emptyItem(),egg:emptyItem(),mount:emptyItem(),potion:emptyItem()});
 export const totalMerge=(i:Item)=>i.selected===''&&(!i.extra||i.extra==='0')?null:Number(i.selected||0)+Number(i.extra||0);
