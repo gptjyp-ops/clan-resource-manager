@@ -20,4 +20,6 @@ a.api.leaveClan();assert.equal(a.storage.has('clanAccessKey:aaaaaaaaaaaaaaaaaaaa
 const legacy=setup('',{clanAccessKey:'legacy-secret'});assert.equal(legacy.api.savedAccessKey(),'legacy-secret');await legacy.api.getRecords();assert.equal(legacy.sent[0].payload.clanId,'legacy');
 const oldBackend=setup('',{},false);assert.equal(await oldBackend.api.supportsClans(),true);assert.equal(oldBackend.api.serverSelectionSupported,false);
 const unsafe=setup('',{clanAccessKey:'legacy-secret'},true,false);await assert.rejects(()=>unsafe.api.saveInventory('member','password',{},{}),/기존 재화 보호/);assert.equal(unsafe.sent.some(m=>m.method==='save'),false);
+await legacy.api.checkSaveConnection();assert.equal(legacy.sent.filter(m=>m.method==='save').length,0);assert.ok(legacy.sent.some(m=>m.payload.operation==='capabilities'));
+await assert.rejects(()=>unsafe.api.checkSaveConnection(),/기존 재화 보호/);
 console.log('Frontend clan ID, invitation parsing, credential scope, save payload and legacy compatibility passed.');

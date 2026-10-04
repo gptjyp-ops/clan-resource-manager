@@ -20,6 +20,7 @@ jobs:
       - run: node scripts/test-screen-layout.mjs
       - run: node scripts/test-photo-input.mjs
       - run: node scripts/test-full-save.mjs
+      - run: node scripts/test-drafts.mjs
       - run: node scripts/test-scan-diagnostics.mjs
       - run: node scripts/test-i18n.mjs
       - run: npm run check

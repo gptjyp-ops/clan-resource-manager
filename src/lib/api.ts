@@ -18,6 +18,7 @@ export let serverSelectionSupported=false;
 export let serverOptions:string[]=[];
 type Reply={clan?:ClanInfo;adminToken?:string;multiClan?:boolean;diagnosticReports?:boolean;preserveExisting?:boolean;details?:Inventory;serverSelection?:boolean;servers?:string[];ok:boolean;error?:string;records?:any[];photos?:Partial<Record<PhotoKind,string>>;base64?:string;type?:string};
 let bridgePromise:Promise<{source:Window;origin:string;channel:string}>|undefined;
+let bridgeCleanup:(()=>void)|undefined;
 const pending=new Map<string,{resolve:(r:Reply)=>void;reject:(e:Error)=>void;timer:ReturnType<typeof setTimeout>}>();
 function bridge(){
  if(bridgePromise)return bridgePromise;
@@ -33,9 +34,17 @@ function bridge(){
    const request=pending.get(m.id);if(!request)return;clearTimeout(request.timer);pending.delete(m.id);if(!m.result?.ok)request.reject(Error(m.result?.error||'저장 요청 실패'));else request.resolve(m.result);
   }
   window.addEventListener('message',listen);document.body.appendChild(frame);
+  bridgeCleanup=()=>{clearTimeout(timer);window.removeEventListener('message',listen);frame.remove();};
  });return bridgePromise;
 }
 async function rpc(method:string,payload:Record<string,unknown>={}):Promise<Reply>{const b=await bridge();return new Promise((resolve,reject)=>{const id=crypto.randomUUID();const timer=setTimeout(()=>{pending.delete(id);reject(Error('응답이 늦어지고 있습니다. 현황을 새로고침하여 저장 여부를 확인해주세요.'));},120000);pending.set(id,{resolve,reject,timer});b.source.postMessage({type:'clan-request',channel:b.channel,id,method,payload:{accessKey,clanId:activeClanId,...payload}},b.origin);});}
+export async function checkSaveConnection(){
+ if(!googleEnabled){const response=await fetch(apiUrl('/api/records'),{cache:'no-store'});if(!response.ok)throw Error('저장 연결을 확인하지 못했습니다. 잠시 후 다시 시도해주세요.');return;}
+ if(pending.size)throw Error('다른 연결 요청이 진행 중입니다. 잠시 후 다시 확인해주세요.');
+ bridgeCleanup?.();bridgePromise=undefined;
+ const capability=await rpc('list',{operation:'capabilities'});if(!capability.preserveExisting)throw Error('기존 재화 보호를 위해 저장을 중단했습니다. 운영자가 구글 스크립트를 업데이트해야 합니다.');
+ await rpc('list');
+}
 export async function getRecords(){if(googleUrl){const reply=await rpc('list');if(reply.clan)activeClanName=(reply.clan.server?'서버 '+reply.clan.server+' · ':'')+reply.clan.name;return reply.records||[];}const r=await fetch(apiUrl('/api/records'),{cache:'no-store'});const d:any=await r.json();if(!r.ok)throw Error(d.error);return d.records;}
 async function encodedPhoto(file:File,kind:PhotoKind){
  const image=await createImageBitmap(file);try{
