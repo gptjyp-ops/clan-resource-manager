@@ -43,7 +43,7 @@ for(const filename of ['src/App.tsx','src/ClanPortal.tsx','src/OcrCheck.tsx','sr
 }
 const App=load('src/App.tsx').default;
 const en=renderToStaticMarkup(React.createElement(App));
-for(const s of ['Your clan&#x27;s resources, together','In-game nickname','Save all four resources','Summon level','Current stage','Member resources','Green potions'])assert.ok(en.includes(s),s);
+for(const s of ['Your clan&#x27;s resources, together','My resources','Clan overview','In-game nickname','Save all four resources','Summon level','Current stage','Green potions'])assert.ok(en.includes(s),s);
 assert.ok(!/[가-힣]/.test(en),'English member form must not contain Korean UI text');
 const inventory=load('src/lib/inventory.ts');assert.equal(inventory.quantity('3.3k'),3300);assert.equal(inventory.quantity('0'),0);
 i18n.setLanguage('ko');assert.equal(document.documentElement.lang,'ko');assert.equal(i18n.guidePath(),'guide.html');const ko=renderToStaticMarkup(React.createElement(App));assert.ok(ko.includes('내 재화 등록'));assert.ok(ko.includes('현재 단계'));
