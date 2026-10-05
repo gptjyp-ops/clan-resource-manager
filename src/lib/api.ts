@@ -71,3 +71,10 @@ export async function sendScanReport(report:ScanReport){
  // nickname, passwords, browser URLs or invitation codes in the report.
  return rpc('report',{report:{version:report.version,kind:report.kind,mode:report.mode,image:report.image,issues:report.issues.map(({code,field})=>({code,field})),attempts:report.attempts.map(({field,source,text})=>({field,source,text:text.replace(/[^0-9.,/kKmMbB\s]/g,'').slice(0,80)}))}});
 }
+
+export async function memberLogin(nickname:string,password:string){
+ if(!googleEnabled)throw Error('구글 저장 연결이 필요합니다.');
+ const capability=await rpc('list',{operation:'capabilities'});
+ if(!(capability as Reply & {memberLogin?:boolean}).memberLogin)throw Error('내 재화 로그인은 구글 스크립트 업데이트 후 사용할 수 있습니다.');
+ return (await rpc('memberLogin',{nickname,password}) as Reply & {record:{nickname:string;details:Inventory;photos:Partial<Record<PhotoKind,string>>;updated_at:string}}).record;
+}

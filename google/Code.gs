@@ -43,6 +43,7 @@ function clanRpc(method,payload){
   }
   if(method==='report')return reportScan_(payload,clan);
   if(method==='save')return save_(payload,clan);
+  if(method==='memberLogin')return memberLogin_(payload,clan);
   throw Error('지원하지 않는 요청입니다.');
  }catch(e){return {ok:false,error:e.message||'구글 저장 요청에 실패했습니다.'};}
 }
@@ -116,7 +117,7 @@ function clanServer_(server){if(server===undefined||server==='')return '';if(typ
 function clanName_(name){if(typeof name!=='string'||!name.trim()||name.trim().length>40)throw Error('클랜 이름은 1~40자로 입력해주세요.');return name.trim().normalize('NFKC');}
 function clanPassword_(password){if(typeof password!=='string'||password.length<10||password.length>100)throw Error('클랜장 비밀번호는 10~100자로 정해주세요.');return password;}
 function clanOperation_(p){
- var op=p.operation;if(op==='capabilities')return {ok:true,multiClan:true,preserveExisting:true,diagnosticReports:true,serverSelection:true,servers:Array.from(new Set(clanRows_(registry_()).map(function(r){return String(r[10]||'');}).filter(function(s){return /^\d{1,6}$/.test(s);}))).sort(function(a,b){return Number(a)-Number(b);})};
+ var op=p.operation;if(op==='capabilities')return {ok:true,multiClan:true,memberLogin:true,preserveExisting:true,diagnosticReports:true,serverSelection:true,servers:Array.from(new Set(clanRows_(registry_()).map(function(r){return String(r[10]||'');}).filter(function(s){return /^\d{1,6}$/.test(s);}))).sort(function(a,b){return Number(a)-Number(b);})};
  var lock=LockService.getScriptLock();if(!lock.tryLock(15000))throw Error('다른 요청을 처리 중입니다. 잠시 후 다시 시도해주세요.');
  try{
   if(op==='createClan'||op==='claimLegacy'){
@@ -168,5 +169,16 @@ function reportScan_(p,clan){
   s.appendRow([new Date(now).toISOString(),clan.id,r.version,r.kind,r.mode,JSON.stringify(image),JSON.stringify(issues),JSON.stringify(attempts)]);
   if(s.getLastRow()>1001)s.deleteRows(2,s.getLastRow()-1001);
   SpreadsheetApp.flush();props.setProperty(slot,JSON.stringify({time:now,hour:hour,count:count+1}));return {ok:true};
+ }finally{lock.releaseLock();}
+}
+
+function memberLogin_(p,clan){
+ if(typeof p.nickname!=='string'||typeof p.password!=='string'||p.nickname.length>24||p.password.length<6||p.password.length>100)throw Error('닉네임과 비밀번호를 입력해주세요.');
+ var lock=LockService.getScriptLock();lock.waitLock(30000);
+ try{var s=sheet_(clan),rows=rows_(s),name=p.nickname.trim().normalize('NFKC'),index=rows.findIndex(function(r){return JSON.parse(r[0])===name;}),r=index>=0?rows[index]:null;
+ if(!r)throw Error('닉네임 또는 비밀번호가 맞지 않습니다.');
+ if(Number(r[7])>Date.now())throw Error('비밀번호 확인 시도가 많습니다. 10분 뒤 다시 시도해주세요.');
+ if(hash_(p.password,r[2])!==r[1]){var fails=Number(r[6]||0)+1;s.getRange(index+2,7,1,2).setValues([[fails,fails>=5?Date.now()+600000:0]]);SpreadsheetApp.flush();throw Error('닉네임 또는 비밀번호가 맞지 않습니다.');}
+ s.getRange(index+2,7,1,2).setValues([[0,0]]);SpreadsheetApp.flush();return {ok:true,record:publicRow_(r)};
  }finally{lock.releaseLock();}
 }

@@ -23,6 +23,15 @@ const access=c=>({clanId:c.clan.id,accessKey:c.clan.inviteKey});
 const payload={nickname:'same-name',password:'member-password',inventory,photos:[{kind:'skill',base64:jpeg}]};
 const savedA=call('save',{...access(a),...payload}),savedB=call('save',{...access(b),...payload,inventory:{...inventory,skill:{...inventory.skill,amount:'20'}}});
 assert.equal(savedA.ok,true);assert.equal(savedB.ok,true);
+assert.equal(action('capabilities').memberLogin,true);
+assert.equal(call('memberLogin',{...access(a),nickname:'same-name',password:'wrong-password'}).ok,false);
+const loginA=call('memberLogin',{...access(a),nickname:'same-name',password:'member-password'});
+assert.equal(loginA.record.details.skill.amount,'10');
+assert.equal(loginA.record.details.skill.progress,'0');
+assert.equal(call('memberLogin',{...access(b),nickname:'same-name',password:'member-password'}).record.details.skill.amount,'20');
+assert.equal(call('memberLogin',{...access(a),nickname:'missing',password:'member-password'}).ok,false);
+assert.equal('password_hash' in loginA.record,false);
+
 assert.equal(call('list',access(a)).records[0].details.skill.amount,'10');assert.equal(call('list',access(b)).records[0].details.skill.amount,'20');
 assert.equal(action('setClanServer',{clanId:b.clan.id,adminToken:a.adminToken,server:'99'}).ok,false);
 assert.equal(action('setClanServer',{...access(a),server:'99'}).ok,false);
