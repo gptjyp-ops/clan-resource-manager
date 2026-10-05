@@ -97,3 +97,46 @@ html[lang="en"] .panel-heading{flex-wrap:wrap;gap:8px}
  .resource-sort button{font-size:12px;padding:7px 9px}
  .sort-help{padding:8px 12px 12px;font-size:11px;word-break:keep-all}
 }
+
+/* Game-inspired resource overview, based on the compact mobile design preview. */
+.resource-overview{margin-bottom:0}
+.resource-overview>h2{font-size:19px;line-height:1.4;margin:0 0 12px;letter-spacing:-.025em}
+.resource-overview .summary article{position:relative;overflow:hidden;background:linear-gradient(145deg,#1b2638,#172131);border-color:#2d3a50;box-shadow:inset 0 1px #ffffff08,0 8px 24px #050a1330}
+.resource-overview .summary article::after{content:"";position:absolute;inset:auto -35px -55px auto;width:110px;height:110px;border-radius:50%;background:currentColor;opacity:.025;pointer-events:none}
+.resource-marker{width:52px;height:56px;background:transparent!important;color:inherit;border-radius:0}
+.resource-icon{display:block;width:52px;height:52px;overflow:visible;filter:drop-shadow(0 4px 5px #0007)}
+.resource-icon path,.resource-icon ellipse{stroke:#101723;stroke-width:3;stroke-linejoin:round;stroke-linecap:round}
+.resource-icon-skill{fill:#83f51b}.resource-icon-skill .icon-detail{fill:#101723;stroke:none}
+.resource-icon-egg{fill:#f5eee0}.resource-icon-egg .icon-spot{fill:#b99984;stroke:none}
+.resource-icon-mount{fill:#ff8b16}.resource-icon-mount path{fill-rule:evenodd}
+.resource-icon-potion>path:not(.vial-cap):not(.icon-liquid){fill:#dceef0aa}.resource-icon-potion .vial-cap{fill:#dfb580}.resource-icon-potion .icon-liquid{fill:#43e72f}.resource-icon-potion .icon-bubble{fill:#d7ff9a;stroke:none}
+.summary-content p{font-weight:700;color:#e6edf8}
+.summary-content .meta{display:block;margin-top:2px}
+.merge-summary{background:linear-gradient(145deg,#1b2638,#141e2d);box-shadow:inset 0 1px #ffffff08}
+.registration .panel-heading{background:linear-gradient(145deg,#1c2739,#172131)}
+.registration .upload{background:linear-gradient(145deg,#172235,#111a29);border-width:1.5px}
+.registration .submit{background:linear-gradient(90deg,#ffbd52,#ffc963);box-shadow:0 8px 22px #ffb65322;color:#111827}
+
+@media(max-width:600px){
+ .topbar{height:64px;background:#0f1828;border-bottom-color:#243149}
+ .brand{gap:9px;font-size:16px}.brand-icon{width:34px;height:34px;border-radius:9px}.brand-icon svg{width:20px}
+ .clan-badge{font-size:12px}.clan-badge>.quiet{padding:7px}
+ .workspace{padding-top:20px;background:radial-gradient(circle at 50% 0,#17233a 0,transparent 280px)}
+ .page-heading{align-items:center;margin-bottom:22px}
+ .page-heading h1{font-size:25px;line-height:1.3;margin-bottom:5px}
+ .page-heading .quiet{border-radius:9px;background:#182336}
+ .resource-overview>h2{font-size:18px;margin-bottom:12px}
+ .resource-overview .summary{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:12px}
+ .resource-overview .summary article{display:grid;grid-template-columns:40px minmax(0,1fr);column-gap:9px;row-gap:5px;min-height:142px;padding:15px 12px;align-content:start;border-radius:14px}
+ .resource-overview .summary-content{display:contents}
+ .resource-overview .resource-marker{grid-column:1;grid-row:1/3;width:40px;height:42px;align-self:center}
+ .resource-overview .resource-icon{width:40px;height:40px}
+ .resource-overview .summary p{grid-column:2;align-self:end;font-size:13px;line-height:1.3;margin:0}
+ .resource-overview .summary strong{grid-column:1/-1;display:flex;align-items:baseline;flex-wrap:wrap;font-size:clamp(21px,7vw,28px);line-height:1.2;gap:4px;margin-top:7px;letter-spacing:-.05em}
+ .resource-overview .summary strong small,.resource-overview .summary .approx{font-size:11px;letter-spacing:0}
+ .resource-overview .summary .meta{grid-column:1/-1;border-top:1px solid #2d3a50;margin-top:6px;padding-top:8px;font-size:11px}
+ .merge-summary{border-radius:14px;padding:13px 14px;gap:11px 16px;margin-bottom:20px}
+ .merge-summary>span:last-child{border-top-color:#2d3a50}
+ .panel{border-radius:14px}.panel-heading h2{font-size:19px}.step-badge{border-radius:999px;padding:5px 9px}
+ .upload{border-radius:12px}.submit{border-radius:11px;min-height:50px}
+}
