@@ -101,5 +101,16 @@ assert.equal(amountDecimal(dec,'114k'),'1.14k');
 assert.equal(amountDecimal(dec,'1.14k'),'1.14k');
 assert.equal(amountDecimal(dec,'11.4k'),null);
 assert.equal(amountDecimal(dec,'14k'),null);
-assert.equal(amountDecimal(numeric,'114k'),'114k');
-assert.equal(amountDecimal(numeric,'1140'),'1140');
+assert.equal(amountDecimal(numeric,'114k'),null);
+assert.equal(amountDecimal(dec,'114'),null);
+assert.equal(amountDecimal(dec,'1.14'),null);
+assert.equal(amountDecimal(numeric,'114'),'114');
+assert.equal(amountDecimal(numeric,'1140'),null);
+
+// Even when thresholding drops the dot, the remaining unit glyph must prevent
+// accepting three digits while four glyphs remain in the amount region.
+const noDot={...dec,data:new Uint8ClampedArray(dec.data)};
+for(let y=35;y<40;y++)for(let x=30;x<35;x++)noDot.data.set([255,255,255,255],(y*140+x)*4);
+assert.equal(amountDecimal(noDot,'114'),null);
+assert.equal(amountDecimal(noDot,'114k'),'114k');
+assert.equal(amountDecimal(noDot,'1140'),'1140');
