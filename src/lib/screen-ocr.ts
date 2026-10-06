@@ -1,7 +1,7 @@
 import {newScanReport,missingIssues,ScanFailure} from './scan-diagnostics';
 import {parseNumber} from './ocr';
 import type {PhotoKind,Group,Item} from './inventory';
-import {locateRegions,ratioCandidates,digitBands} from './screen-layout';
+import {locateRegions,ratioCandidates,digitBands,amountDecimal} from './screen-layout';
 import {maximumStatus} from './summon-status';
 export type Region={field:'amount'|'level'|'ratio'|'selected';rect:[number,number,number,number];mode:'white'|'black'|'yellow'|'mixed'|'raw'};
 export const regions:Record<PhotoKind,Region[]>={
@@ -27,6 +27,11 @@ export async function scanScreen(file:File,kind:PhotoKind,onProgress:(n:number)=
  for(const r of candidates){const canvas=document.createElement('canvas');const [x,y,w,h]=r.rect;const scale=Math.min(750/(bitmap.width*w),160/(bitmap.height*h));const cw=Math.round(bitmap.width*w*scale),ch=Math.round(bitmap.height*h*scale);canvas.width=cw;canvas.height=ch;const ctx=canvas.getContext('2d')!;ctx.drawImage(bitmap,bitmap.width*x,bitmap.height*y,bitmap.width*w,bitmap.height*h,0,0,cw,ch);
  const data=ctx.getImageData(0,0,canvas.width,canvas.height);for(let i=0;i<data.data.length;i+=4){if(r.mode==='raw')continue;const red=data.data[i],g=data.data[i+1],b=data.data[i+2];const ink=r.mode==='white'?Math.min(red,g,b)>180&&Math.max(red,g,b)-Math.min(red,g,b)<55:r.mode==='black'?Math.max(red,g,b)<100:r.mode==='mixed'?((Math.min(red,g,b)>180&&Math.max(red,g,b)-Math.min(red,g,b)<55)||(red>150&&g>150&&b<140)):red>150&&g>150&&b<140;const value=ink?0:255;data.data[i]=value;data.data[i+1]=value;data.data[i+2]=value;}ctx.putImageData(data,0,0);const padded=document.createElement('canvas');padded.width=canvas.width+40;padded.height=canvas.height+40;const paddedContext=padded.getContext('2d')!;paddedContext.fillStyle='white';paddedContext.fillRect(0,0,padded.width,padded.height);paddedContext.drawImage(canvas,20,20);
  await worker.setParameters({tessedit_char_whitelist:r.field==='ratio'?'0123456789/':r.field==='amount'?'0123456789.,kKmMbB':'0123456789',tessedit_pageseg_mode:PSM.SINGLE_LINE});const result=await worker.recognize(padded);original.push(result.data.text.trim());diagnostics.attempts.push({field:r.field,source:r===fallback?'fallback':'adaptive',text:result.data.text.trim()});let parsed=parseRead(r.field,result.data.text);
+ if(r.field==='amount'&&parsed.amount){
+  const checked=amountDecimal(data,parsed.amount);
+  if(checked===null){parsed={};diagnostics.issues.push({code:'OCR-04',field:'amount',message:'수량의 소수점 위치를 확인하지 못했습니다. 사진을 확대해 확인하고 다시 인식해 주세요.'});}
+  else {if(checked!==parsed.amount)diagnostics.attempts.push({field:'amount',source:r===fallback?'fallback':'adaptive',text:checked});parsed={amount:checked};}
+ }
  if(r.field==='selected'){
   const bands=digitBands(data);
   if(!bands.length||bands.length>8){parsed={};}

@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import ts from 'typescript';
 const source=ts.transpileModule(fs.readFileSync('src/lib/screen-layout.ts','utf8'),{compilerOptions:{module:ts.ModuleKind.ESNext,target:ts.ScriptTarget.ES2022}}).outputText;
-const {findLandmarks,locateRegions,ratioCandidates,digitBands}=await import('data:text/javascript;base64,'+Buffer.from(source).toString('base64'));
+const {findLandmarks,locateRegions,ratioCandidates,digitBands,amountDecimal}=await import('data:text/javascript;base64,'+Buffer.from(source).toString('base64'));
 // Three narrow neighbouring 1s must remain three glyphs even when the OCR
 // engine returns a syntactically valid single 1. Ignore isolated speckles.
 const numeric={width:90,height:50,data:new Uint8ClampedArray(90*50*4).fill(255)};
@@ -92,3 +92,14 @@ for(const vialY of [78,120]){
  assert.equal(findLandmarks(p,'potion').amount.y,vialY);
  assert.equal(locateRegions(p,'potion')[0].mode,'mixed');
 }
+
+// Small baseline decimal must survive a dropped OCR dot: 114k -> 1.14k.
+const dec={width:140,height:50,data:new Uint8ClampedArray(140*50*4).fill(255)};
+for(const left of [10,45,70,100])for(let y=10;y<40;y++)for(let x=left;x<left+8;x++)dec.data.set([0,0,0,255],(y*140+x)*4);
+for(let y=35;y<40;y++)for(let x=30;x<35;x++)dec.data.set([0,0,0,255],(y*140+x)*4);
+assert.equal(amountDecimal(dec,'114k'),'1.14k');
+assert.equal(amountDecimal(dec,'1.14k'),'1.14k');
+assert.equal(amountDecimal(dec,'11.4k'),null);
+assert.equal(amountDecimal(dec,'14k'),null);
+assert.equal(amountDecimal(numeric,'114k'),'114k');
+assert.equal(amountDecimal(numeric,'1140'),'1140');

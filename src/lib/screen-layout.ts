@@ -111,3 +111,19 @@ export function ratioCandidates(region:LocatedRegion):LocatedRegion[]{
  const barCandidates:LocatedRegion[]=region.alternativeRect?[{...region,rect:region.alternativeRect,mode:'raw'},{...region,rect:region.alternativeRect}]:[];
  return [region,...barCandidates,{...expanded,mode:'raw'},expanded,{...taller,mode:'white'},{...taller,mode:'raw'}];
 }
+
+// Verify a decimal against its own pixels, never infer it from the quantity.
+export function amountDecimal(p:Pixels,text:string):string|null{
+ const t=text.replace(/\s/g,'').replace(/^(\d+),(\d{1,2})([kKmMbB])$/,'$1.$2$3');
+ const match=t.match(/^(\d+)(?:\.(\d+))?([kKmMbB])$/);if(!match)return t;
+ const bands:Box[]=[];let start=-1,top=p.height,bottom=-1;
+ for(let x=0;x<=p.width;x++){let ink=false;for(let y=0;x<p.width&&y<p.height;y++)if(p.data[(y*p.width+x)*4]<100){ink=true;top=Math.min(top,y);bottom=Math.max(bottom,y);}if(ink&&start<0)start=x;if(!ink&&start>=0){bands.push({x:start,y:top,width:x-start,height:bottom-top+1});start=-1;top=p.height;bottom=-1;}}
+ const tall=digitBands(p),height=Math.max(0,...tall.map(b=>b.height)),digits=match[1]+(match[2]||'');
+ const dots=bands.filter(b=>b.width>=2&&b.height>=2&&b.height<=height*.3&&b.width<=height*.3&&b.y>=Math.min(...tall.map(g=>g.y))+height*.65&&tall.some(g=>g.x<b.x)&&tall.some(g=>g.x>b.x));
+ if(!dots.length)return t;
+ if(dots.length!==1||tall.length!==digits.length+1)return null;
+ const position=tall.filter(g=>g.x<dots[0].x).length;
+ if(position<1||position>=digits.length)return null;
+ if(match[2]&&position!==match[1].length)return null;
+ return digits.slice(0,position)+'.'+digits.slice(position)+match[3];
+}
