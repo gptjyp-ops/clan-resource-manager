@@ -27,6 +27,8 @@ assert.equal(action('capabilities').memberLogin,true);
 assert.equal(call('memberLogin',{...access(a),nickname:'same-name',password:'wrong-password'}).ok,false);
 const loginA=call('memberLogin',{...access(a),nickname:'same-name',password:'member-password'});
 assert.equal(loginA.record.details.skill.amount,'10');
+assert.equal(action('memberLogin',{...access(a),nickname:'same-name',password:'member-password'}).record.details.skill.amount,'10');
+assert.equal(action('memberLogin',{clanId:a.clan.id,accessKey:'wrong',nickname:'same-name',password:'member-password'}).ok,false);
 assert.equal(loginA.record.details.skill.progress,'0');
 assert.equal(call('memberLogin',{...access(b),nickname:'same-name',password:'member-password'}).record.details.skill.amount,'20');
 assert.equal(call('memberLogin',{...access(a),nickname:'missing',password:'member-password'}).ok,false);

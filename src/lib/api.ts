@@ -76,5 +76,5 @@ export async function memberLogin(nickname:string,password:string){
  if(!googleEnabled)throw Error('구글 저장 연결이 필요합니다.');
  const capability=await rpc('list',{operation:'capabilities'});
  if(!(capability as Reply & {memberLogin?:boolean}).memberLogin)throw Error('내 재화 로그인은 구글 스크립트 업데이트 후 사용할 수 있습니다.');
- return (await rpc('memberLogin',{nickname,password}) as Reply & {record:{nickname:string;details:Inventory;photos:Partial<Record<PhotoKind,string>>;updated_at:string}}).record;
+ return (await rpc('list',{operation:'memberLogin',nickname,password}) as Reply & {record:{nickname:string;details:Inventory;photos:Partial<Record<PhotoKind,string>>;updated_at:string}}).record;
 }
