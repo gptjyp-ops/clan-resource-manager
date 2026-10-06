@@ -21,3 +21,16 @@ assert.equal(JSON.stringify(rows),before);
 const ties=rows.slice(2,4).map(r=>({...r,details:{...r.details,skill:{...r.details.skill,amount:'1k'}}}));
 assert.deepEqual(sortResources(ties,{group:'skill',direction:'asc'}).map(r=>r.id),[3,2]);
 console.log('All four resource sorts handle units, zero, missing values, ties, toggles and preserve input.');
+
+// Merge ordering includes selected + extra, retains zero and keeps missing last.
+for(const group of ['egg','mount']){
+ const mergeRows=[['10','5'],['0','0'],['','0'],['','8'],['20','0']].map(([selected,extra],id)=>{const details=emptyInventory();details[group].selected=selected;details[group].extra=extra;details[group].amount=String(100-id);return {id,details,updated_at:'2026-10-06T00:00:00Z'};});
+ const key=group+'Merge',snapshot=JSON.stringify(mergeRows);
+ assert.deepEqual(sortResources(mergeRows,{group:key,direction:'desc'}).map(r=>r.id),[4,0,3,1,2]);
+ assert.deepEqual(sortResources(mergeRows,{group:key,direction:'asc'}).map(r=>r.id),[1,3,0,4,2]);
+ assert.deepEqual(nextResourceSort(null,key),{group:key,direction:'desc'});
+ assert.deepEqual(nextResourceSort({group:key,direction:'desc'},key),{group:key,direction:'asc'});
+ assert.deepEqual(nextResourceSort({group:key,direction:'asc'},key),{group:key,direction:'desc'});
+ assert.equal(JSON.stringify(mergeRows),snapshot);
+}
+console.log('Egg and mount merge sorts include extra counts and preserve missing/zero values.');
