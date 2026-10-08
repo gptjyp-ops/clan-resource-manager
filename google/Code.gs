@@ -190,3 +190,30 @@ function memberLogin_(p,clan){
  s.getRange(index+2,7,1,2).setValues([[0,0]]);SpreadsheetApp.flush();return {ok:true,record:publicRow_(r)};
  }finally{lock.releaseLock();}
 }
+
+// Operator tools: run in the Apps Script editor, never through clanRpc.
+function requireOperator_(){
+ var active=Session.getActiveUser().getEmail(),effective=Session.getEffectiveUser().getEmail();
+ if(!active||!effective||active!==effective)throw Error('구글 스크립트 운영 계정으로 편집기에서 실행해주세요.');
+}
+function listClansForRecovery(){
+ requireOperator_();
+ var clans=clanRows_(registry_()).map(function(r){return {id:String(r[0]),name:JSON.parse(r[1]),server:String(r[10]||'')};});
+ console.log(JSON.stringify(clans));return clans;
+}
+function recoverClanAdmin(){
+ requireOperator_();
+ var lock=LockService.getScriptLock();lock.waitLock(15000);
+ try{
+  var props=PropertiesService.getScriptProperties(),id=props.getProperty('CLAN_RECOVERY_ID'),password=props.getProperty('CLAN_RECOVERY_PASSWORD');
+  if(!id||!/^(legacy|[a-f0-9]{24})$/.test(id))throw Error('스크립트 속성 CLAN_RECOVERY_ID에 복구할 클랜 ID를 입력해주세요.');
+  clanPassword_(password);
+  var found=findClan_(id),salt=Utilities.getUuid();
+  found.sheet.getRange(found.index+2,4,1,2).setValues([[hash_(password,salt),salt]]);
+  found.sheet.getRange(found.index+2,9,1,2).setValues([[0,0]]);
+  props.deleteProperty('ADMIN_SESSION_'+id);SpreadsheetApp.flush();
+  props.deleteProperty('CLAN_RECOVERY_PASSWORD');props.deleteProperty('CLAN_RECOVERY_ID');
+  var result={id:id,name:JSON.parse(found.row[1]),managementUrl:CLAN_ORIGIN+'/clan-resource-manager/#manage='+id};
+  console.log('클랜장 비밀번호 변경 완료: '+JSON.stringify(result));return result;
+ }finally{lock.releaseLock();}
+}

@@ -6,7 +6,7 @@ const props=new Map(),sheets=new Map(),folders=new Map(),files=new Map();
 function makeSheet(name){const rows=[];const sheet={rows,getLastRow:()=>rows.length,setName(n){sheets.delete(name);name=n;sheets.set(n,sheet);},setFrozenRows(){},appendRow:r=>rows.push([...r]),getRange(row,col,count,width){return {getValues:()=>rows.slice(row-1,row-1+count).map(r=>r.slice(col-1,col-1+width)),setValues(values){values.forEach((r,i)=>r.forEach((v,j)=>rows[row-1+i][col-1+j]=v));}};}};sheets.set(name,sheet);return sheet;}
 const book={getId:()=> 'book',getSheets:()=>[...sheets.values()],getSheetByName:n=>sheets.get(n)||null,insertSheet:n=>makeSheet(n)};makeSheet('Sheet1');
 function makeFolder(){const id=crypto.randomUUID();const folder={getId:()=>id,createFile(blob){const fileId=crypto.randomUUID();const f={getId:()=>fileId,setTrashed(){f.trashed=true;},getBlob:()=>({getBytes:()=>blob.bytes,getContentType:()=>blob.type}),getParents:()=>{let used=false;return {hasNext:()=>!used,next:()=>{used=true;return folder;}};}};files.set(fileId,f);return f;}};folders.set(id,folder);return folder;}
-const context={console:{log(){},error(){}},PropertiesService:{getScriptProperties:()=>({getProperty:k=>props.get(k)||null,setProperty:(k,v)=>props.set(k,v)})},Utilities:{getUuid:()=>crypto.randomUUID(),computeHmacSha256Signature:(value,key)=>[...crypto.createHmac('sha256',key).update(value).digest()],base64Decode:s=>[...Buffer.from(s,'base64')],base64Encode:b=>Buffer.from(b).toString('base64'),newBlob:(bytes,type)=>({bytes,type})},LockService:{getScriptLock:()=>({waitLock(){},tryLock:()=>true,releaseLock(){}})},SpreadsheetApp:{create:()=>book,openById:()=>book,flush(){}},DriveApp:{createFolder:()=>makeFolder(),getFolderById:id=>folders.get(id),getFileById:id=>files.get(id)}};
+const context={console:{log(){},error(){}},PropertiesService:{getScriptProperties:()=>({getProperty:k=>props.get(k)||null,setProperty:(k,v)=>props.set(k,v),deleteProperty:k=>props.delete(k)})},Utilities:{getUuid:()=>crypto.randomUUID(),computeHmacSha256Signature:(value,key)=>[...crypto.createHmac('sha256',key).update(value).digest()],base64Decode:s=>[...Buffer.from(s,'base64')],base64Encode:b=>Buffer.from(b).toString('base64'),newBlob:(bytes,type)=>({bytes,type})},LockService:{getScriptLock:()=>({waitLock(){},tryLock:()=>true,releaseLock(){}})},SpreadsheetApp:{create:()=>book,openById:()=>book,flush(){}},DriveApp:{createFolder:()=>makeFolder(),getFolderById:id=>folders.get(id),getFileById:id=>files.get(id)}};
 vm.createContext(context);vm.runInContext(fs.readFileSync('google/Code.gs','utf8'),context);context.setup_();
 const call=(method,payload)=>JSON.parse(JSON.stringify(context.clanRpc(method,payload)));
 const action=(operation,p={})=>call('list',{operation,...p});
@@ -106,3 +106,28 @@ const legacy=action('claimLegacy',{name:'Original',server:'77',password:'legacy-
 assert.equal(action('claimLegacy',{name:'Hijack',password:'legacy-admin-password',accessKey:legacyKey}).ok,false);
 const legacyRotate=action('rotateInvite',{clanId:'legacy',adminToken:legacy.adminToken});assert.equal(call('list',{accessKey:legacyKey}).ok,false);assert.equal(call('list',{accessKey:legacyRotate.clan.inviteKey}).records.length,1);
 console.log('Clan isolation, photo ownership, administrator authority, lockout, session expiry, invite rotation and legacy migration passed.');
+
+// Operator recovery rejects anonymous/different identities and public RPC.
+let activeEmail='',effectiveEmail='owner@example.test';
+context.Session={getActiveUser:()=>({getEmail:()=>activeEmail}),getEffectiveUser:()=>({getEmail:()=>effectiveEmail})};
+assert.throws(()=>context.recoverClanAdmin());assert.throws(()=>context.listClansForRecovery());
+activeEmail='member@example.test';assert.throws(()=>context.recoverClanAdmin());
+assert.equal(action('recoverClanAdmin',{...access(b),password:'replacement-admin-password'}).ok,false);
+activeEmail=effectiveEmail;
+assert.equal(context.listClansForRecovery().some(c=>c.id===b.clan.id),true);
+const recoveryRecords=call('list',access(b)).records;
+const registryBefore=[...sheets.get('clans').rows[2]];
+props.set('CLAN_RECOVERY_ID',b.clan.id);props.set('CLAN_RECOVERY_PASSWORD','short');
+assert.throws(()=>context.recoverClanAdmin());assert.deepEqual(sheets.get('clans').rows[2],registryBefore);
+props.set('CLAN_RECOVERY_PASSWORD','replacement-admin-password');
+const recovered=context.recoverClanAdmin();assert.equal(recovered.id,b.clan.id);
+assert.equal(props.has('CLAN_RECOVERY_PASSWORD'),false);assert.equal(props.has('CLAN_RECOVERY_ID'),false);
+assert.equal(props.has('ADMIN_SESSION_'+b.clan.id),false);
+assert.equal(action('adminLogin',{clanId:b.clan.id,password:'administrator-b'}).ok,false);
+assert.equal(action('adminLogin',{clanId:b.clan.id,password:'replacement-admin-password'}).ok,true);
+assert.deepEqual(call('list',access(b)).records,recoveryRecords);
+assert.equal(call('photo',{...access(b),id:savedB.photos.skill}).ok,true);
+for(const i of [0,1,2,5,6,7,10])assert.equal(sheets.get('clans').rows[2][i],registryBefore[i]);
+for(const sheet of sheets.values())assert.equal(JSON.stringify(sheet.rows).includes('replacement-admin-password'),false);
+assert.equal(JSON.stringify(recovered).includes('replacement-admin-password'),false);
+console.log('Operator admin recovery preserves clan identity, invite, resources and photos; clears locks and sessions without exposing passwords.');
