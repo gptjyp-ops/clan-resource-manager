@@ -10,14 +10,15 @@ let accessKey=sessionStorage.getItem(keySlot)||'';
 export const invitedKey=route.get('code')||'';
 export let activeClanName='우리 클랜';
 export const savedAccessKey=()=>accessKey;
-export async function unlockGoogle(key:string){accessKey=key.trim();await rpc('list');sessionStorage.setItem(keySlot,accessKey);}
+export async function unlockGoogle(key:string){const capability=await rpc('list',{operation:'capabilities'});const candidate=key.trim();const reply=capability.entryPassword?await rpc('list',{operation:'enterClan',entryPassword:candidate,accessKey:candidate}):undefined;accessKey=reply?.entryAccessKey||candidate;await rpc('list');sessionStorage.setItem(keySlot,accessKey);}
 export function leaveClan(){accessKey='';sessionStorage.removeItem(keySlot);location.href=import.meta.env.BASE_URL;}
 const googleUrl=googleScriptUrl;
-export type ClanInfo={id:string;name:string;server?:string;inviteKey?:string};
+export type ClanInfo={id:string;name:string;server?:string;inviteKey?:string;entryPasswordRequired?:boolean};
 export let serverSelectionSupported=false;
 export let memberPasswordResetSupported=false;
+export let entryPasswordSupported=false;
 export let serverOptions:string[]=[];
-type Reply={members?:string[];memberPasswordReset?:boolean;clan?:ClanInfo;adminToken?:string;multiClan?:boolean;diagnosticReports?:boolean;preserveExisting?:boolean;details?:Inventory;serverSelection?:boolean;servers?:string[];ok:boolean;error?:string;records?:any[];photos?:Partial<Record<PhotoKind,string>>;base64?:string;type?:string};
+type Reply={operatorRecovery?:boolean;expiresAt?:number;entryPassword?:boolean;entryAccessKey?:string;memberSelfRecovery?:boolean;recoveryCode?:string;members?:string[];memberPasswordReset?:boolean;clan?:ClanInfo;adminToken?:string;multiClan?:boolean;diagnosticReports?:boolean;preserveExisting?:boolean;details?:Inventory;serverSelection?:boolean;servers?:string[];ok:boolean;error?:string;records?:any[];photos?:Partial<Record<PhotoKind,string>>;base64?:string;type?:string};
 let bridgePromise:Promise<{source:Window;origin:string;channel:string}>|undefined;
 let bridgeCleanup:(()=>void)|undefined;
 const pending=new Map<string,{resolve:(r:Reply)=>void;reject:(e:Error)=>void;timer:ReturnType<typeof setTimeout>}>();
@@ -58,9 +59,9 @@ export async function saveInventory(nickname:string,password:string,inventory:In
  if(googleUrl){const capability=await rpc('list',{operation:'capabilities'});if(!capability.preserveExisting)throw Error('기존 재화 보호를 위해 저장을 중단했습니다. 운영자가 구글 스크립트를 업데이트해야 합니다.');const photos=[];for(const [kind,file] of Object.entries(files))if(file)photos.push(await encodedPhoto(file,kind as PhotoKind));return rpc('save',{nickname,password,inventory,photos,changedFields});}
  const form=new FormData();form.set('nickname',nickname);form.set('password',password);form.set('inventory',JSON.stringify(inventory));if(changedFields)form.set('changedFields',JSON.stringify(changedFields));for(const [kind,file] of Object.entries(files))if(file)form.set('photo_'+kind,file);const r=await fetch(apiUrl('/api/records'),{method:'POST',body:form});const d:any=await r.json();if(!r.ok)throw Error(d.error);return d as Reply;
 }
-export async function supportsClans(){try{const reply=await rpc('list',{operation:'capabilities'});serverSelectionSupported=!!reply.serverSelection;memberPasswordResetSupported=!!reply.memberPasswordReset;serverOptions=(reply.servers||[]).filter(s=>/^\d{1,6}$/.test(s));return !!reply.multiClan;}catch(e){if(e instanceof Error&&e.message.includes('클랜 입장 코드가 맞지 않습니다'))return false;throw e;}}
+export async function supportsClans(){try{const reply=await rpc('list',{operation:'capabilities'});serverSelectionSupported=!!reply.serverSelection;memberPasswordResetSupported=!!reply.memberPasswordReset;entryPasswordSupported=!!reply.entryPassword;serverOptions=(reply.servers||[]).filter(s=>/^\d{1,6}$/.test(s));return !!reply.multiClan;}catch(e){if(e instanceof Error&&e.message.includes('클랜 입장 코드가 맞지 않습니다'))return false;throw e;}}
 export async function clanAction(operation:string,payload:Record<string,unknown>={}){return rpc('list',{operation,...payload});}
-export function invitationLink(clan:ClanInfo){return location.origin+import.meta.env.BASE_URL+'#'+new URLSearchParams({clan:clan.id,code:clan.inviteKey||''}).toString();}
+export function invitationLink(clan:ClanInfo){return location.origin+import.meta.env.BASE_URL+'#'+new URLSearchParams(clan.entryPasswordRequired?{clan:clan.id}:{clan:clan.id,code:clan.inviteKey||''}).toString();}
 const photoCache=new Map<string,Promise<string>>();
 export function photoUrl(id:string):Promise<string>{if(!googleUrl)return Promise.resolve(apiUrl('/api/photos/'+id));let p=photoCache.get(id);if(!p){p=rpc('photo',{id}).then(d=>{if(!/^image\/(jpeg|png|webp)$/.test(d.type||'')||!d.base64)throw Error('사진을 읽지 못했습니다.');return 'data:'+d.type+';base64,'+d.base64;}).catch(e=>{photoCache.delete(id);throw e;});photoCache.set(id,p);}return p;}
 
@@ -78,4 +79,17 @@ export async function memberLogin(nickname:string,password:string){
  const capability=await rpc('list',{operation:'capabilities'});
  if(!(capability as Reply & {memberLogin?:boolean}).memberLogin)throw Error('내 재화 로그인은 구글 스크립트 업데이트 후 사용할 수 있습니다.');
  return (await rpc('list',{operation:'memberLogin',nickname,password}) as Reply & {record:{nickname:string;details:Inventory;photos:Partial<Record<PhotoKind,string>>;updated_at:string}}).record;
+}
+
+export async function memberRecovery(operation:'issueMemberRecovery'|'recoverMemberPassword',payload:Record<string,string>){
+ if(!googleEnabled)throw Error('구글 저장 연결이 필요합니다.');
+ const capability=await rpc('list',{operation:'capabilities'});
+ if(!capability.memberSelfRecovery)throw Error('직접 비밀번호 재설정은 구글 스크립트 업데이트 후 사용할 수 있습니다.');
+ return rpc('list',{operation,...payload});
+}
+
+export async function issueOperatorRecoveryCode(password:string){
+ const capability=await rpc('list',{operation:'capabilities'});
+ if(!capability.operatorRecovery)throw Error('운영자 복구 코드는 구글 스크립트 업데이트 후 사용할 수 있습니다.');
+ return rpc('list',{operation:'issueOperatorRecoveryCode',password});
 }

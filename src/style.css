@@ -198,3 +198,5 @@ html[lang="en"] .panel-heading{flex-wrap:wrap;gap:8px}
 .member-password-reset{margin:24px 0;padding-top:20px;border-top:1px solid #34415a}
 .member-password-reset select{width:100%;padding:12px;border:1px solid #3d4d65;border-radius:8px;background:#121c2b;color:inherit;margin-top:8px}
 .reset-confirm{display:block;margin:16px 0;font-size:13px;line-height:1.6}.reset-confirm input{width:auto;margin-right:8px}
+
+.recovery-receipt{padding:16px;border:1px solid var(--border);border-radius:12px;margin-bottom:16px}.recovery-code{display:block;overflow-wrap:anywhere;white-space:normal;user-select:all;font-size:16px;padding:12px;background:rgba(255,255,255,.05);border-radius:8px;margin:12px 0}.self-recovery summary{cursor:pointer;margin:12px 0}.self-recovery .save-mode{margin:16px 0}

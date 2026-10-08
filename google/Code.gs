@@ -67,7 +67,7 @@ function save_(p,clan){
   var row=[JSON.stringify(nickname),hash,salt,JSON.stringify(details),JSON.stringify(photos),new Date().toISOString(),0,0];
   if(old)s.getRange(index+2,1,1,8).setValues([row]);else s.appendRow(row);SpreadsheetApp.flush();committed=true;
   obsolete.forEach(function(id){try{DriveApp.getFileById(id).setTrashed(true);}catch(e){console.error('이전 사진 정리 실패');}});
-  return {ok:true,photos:photos,details:details};
+  var recoveryCode=old?undefined:issueRecovery_(clan.id,nickname,salt);return {ok:true,photos:photos,details:details,recoveryCode:recoveryCode};
  }finally{
   if(!committed)fresh.forEach(function(id){try{DriveApp.getFileById(id).setTrashed(true);}catch(e){}});
   lock.releaseLock();
@@ -94,7 +94,8 @@ function registry_(){
 }
 function clanRows_(s){return s.getLastRow()<2?[]:s.getRange(2,1,s.getLastRow()-1,11).getValues();}
 function clanFrom_(r){return {id:String(r[0]),name:JSON.parse(r[1]),key:String(r[2]),sheetName:String(r[5]),folderId:String(r[6]),server:String(r[10]||'')};}
-function publicClan_(r){return {id:r[0],name:JSON.parse(r[1]),inviteKey:r[2],server:String(r[10]||'')};}
+function entrySettings_(id){return JSON.parse(PropertiesService.getScriptProperties().getProperty('CLAN_ENTRY_'+id)||'null');}
+function publicClan_(r){var entry=entrySettings_(r[0]);return {id:r[0],name:JSON.parse(r[1]),inviteKey:entry?undefined:r[2],entryPasswordRequired:!!entry,server:String(r[10]||'')};}
 function findClan_(id){var s=registry_(),rows=clanRows_(s),index=rows.findIndex(function(r){return r[0]===id;});if(index<0)throw Error('클랜을 찾을 수 없습니다. 클랜 주소를 확인해주세요.');return {sheet:s,row:rows[index],index:index};}
 function authorizeClan_(p){
  var id=String(p.clanId||'legacy');if(!/^(legacy|[a-f0-9]{24})$/.test(id))throw Error('클랜 주소를 확인해주세요.');
@@ -117,7 +118,7 @@ function clanServer_(server){if(server===undefined||server==='')return '';if(typ
 function clanName_(name){if(typeof name!=='string'||!name.trim()||name.trim().length>40)throw Error('클랜 이름은 1~40자로 입력해주세요.');return name.trim().normalize('NFKC');}
 function clanPassword_(password){if(typeof password!=='string'||password.length<10||password.length>100)throw Error('클랜장 비밀번호는 10~100자로 정해주세요.');return password;}
 function clanOperation_(p){
- var op=p.operation;if(op==='memberLogin')return memberLogin_(p,authorizeClan_(p));if(op==='capabilities')return {ok:true,multiClan:true,memberLogin:true,memberPasswordReset:true,preserveExisting:true,diagnosticReports:true,serverSelection:true,servers:Array.from(new Set(clanRows_(registry_()).map(function(r){return String(r[10]||'');}).filter(function(s){return /^\d{1,6}$/.test(s);}))).sort(function(a,b){return Number(a)-Number(b);})};
+ var op=p.operation;if(op==='issueMemberRecovery'||op==='recoverMemberPassword')return memberRecovery_(p,op);if(op==='memberLogin')return memberLogin_(p,authorizeClan_(p));if(op==='capabilities')return {ok:true,multiClan:true,memberLogin:true,memberPasswordReset:true,memberSelfRecovery:true,operatorRecovery:true,entryPassword:true,preserveExisting:true,diagnosticReports:true,serverSelection:true,servers:Array.from(new Set(clanRows_(registry_()).map(function(r){return String(r[10]||'');}).filter(function(s){return /^\d{1,6}$/.test(s);}))).sort(function(a,b){return Number(a)-Number(b);})};
  var lock=LockService.getScriptLock();if(!lock.tryLock(15000))throw Error('다른 요청을 처리 중입니다. 잠시 후 다시 시도해주세요.');
  try{
   if(op==='createClan'||op==='claimLegacy'){
@@ -135,6 +136,17 @@ function clanOperation_(p){
    }
    var salt=Utilities.getUuid();s.appendRow([id,JSON.stringify(name),key,hash_(password,salt),salt,memberSheet,folderId,new Date().toISOString(),0,0,server]);SpreadsheetApp.flush();return adminReply_({row:clanRows_(s).find(function(r){return r[0]===id;})});
   }
+  if(op==='issueOperatorRecoveryCode')return operatorRecoveryCode_(p);
+  if(op==='enterClan'){
+   var id=String(p.clanId||'legacy'),entry=entrySettings_(id);
+   if(!entry){authorizeClan_(p);return {ok:true,entryAccessKey:p.accessKey};}
+   var found=findClan_(id);
+   if(typeof p.accessKey==='string'&&hash_(p.accessKey,'clan-access')===hash_(String(found.row[2]),'clan-access'))return {ok:true,entryAccessKey:p.accessKey};
+   if(Number(entry.lockUntil)>Date.now())throw Error('입장 비밀번호 확인 시도가 많습니다. 10분 뒤 다시 시도해주세요.');
+   if(typeof p.entryPassword!=='string'||p.entryPassword.length>100||hash_(p.entryPassword,entry.salt)!==entry.hash){entry.fails=Number(entry.fails||0)+1;entry.lockUntil=entry.fails>=10?Date.now()+600000:0;PropertiesService.getScriptProperties().setProperty('CLAN_ENTRY_'+id,JSON.stringify(entry));throw Error('클랜 입장 비밀번호가 맞지 않습니다.');}
+   entry.fails=0;entry.lockUntil=0;PropertiesService.getScriptProperties().setProperty('CLAN_ENTRY_'+id,JSON.stringify(entry));
+   return {ok:true,entryAccessKey:String(found.row[2])};
+  }
   if(op==='adminLogin'){
    var found=findClan_(String(p.clanId||'')),r=found.row;if(Number(r[9])>Date.now())throw Error('클랜장 비밀번호 확인 시도가 많습니다. 10분 뒤 다시 시도해주세요.');
    if(typeof p.password!=='string'||p.password.length>100||hash_(p.password,r[4])!==r[3]){var fails=Number(r[8]||0)+1;found.sheet.getRange(found.index+2,9,1,2).setValues([[fails,fails>=5?Date.now()+600000:0]]);SpreadsheetApp.flush();throw Error('클랜장 비밀번호가 맞지 않습니다.');}
@@ -143,6 +155,14 @@ function clanOperation_(p){
   var found=clanAdmin_(p);
   if(op==='adminInfo')return {ok:true,clan:publicClan_(found.row)};
   if(op==='adminMembers')return {ok:true,members:rows_(sheet_(clanFrom_(found.row))).map(function(r){return JSON.parse(r[0]);}).sort()};
+  if(op==='setEntryPassword'){
+   if(typeof p.entryPassword!=='string'||p.entryPassword.length<6||p.entryPassword.length>100||p.entryPassword.trim()!==p.entryPassword)throw Error('입장 비밀번호는 앞뒤 공백 없이 6~100자로 정해주세요.');
+   var salt=Utilities.getUuid(),entry={hash:hash_(p.entryPassword,salt),salt:salt,fails:0,lockUntil:0};
+   // Rotate the bearer credential so old invitation URLs and sessions stop working.
+   found.row[2]=Utilities.getUuid().replace(/-/g,'')+Utilities.getUuid().replace(/-/g,'');
+   found.sheet.getRange(found.index+2,3,1,1).setValues([[found.row[2]]]);
+   PropertiesService.getScriptProperties().setProperty('CLAN_ENTRY_'+found.row[0],JSON.stringify(entry));SpreadsheetApp.flush();return {ok:true,clan:publicClan_(found.row)};
+  }
   if(op==='resetMemberPassword'){
    if(typeof p.nickname!=='string'||!p.nickname.trim()||p.nickname.length>24||typeof p.newPassword!=='string'||p.newPassword.length<6||p.newPassword.length>100)throw Error('회원 닉네임과 새 수정 비밀번호(6~100자)를 확인해주세요.');
    var name=p.nickname.trim().normalize('NFKC'),members=sheet_(clanFrom_(found.row)),memberRows=rows_(members),index=memberRows.findIndex(function(r){return JSON.parse(r[0])===name;});
@@ -216,4 +236,59 @@ function recoverClanAdmin(){
   var result={id:id,name:JSON.parse(found.row[1]),managementUrl:CLAN_ORIGIN+'/clan-resource-manager/#manage='+id};
   console.log('클랜장 비밀번호 변경 완료: '+JSON.stringify(result));return result;
  }finally{lock.releaseLock();}
+}
+
+function recoverySlot_(clanId,name){return 'MEMBER_RECOVERY_'+clanId+'_'+hash_(name,'recovery-name');}
+function issueRecovery_(clanId,name,memberSalt){
+ var code=Utilities.getUuid().replace(/-/g,'')+Utilities.getUuid().replace(/-/g,''),salt=Utilities.getUuid();
+ PropertiesService.getScriptProperties().setProperty(recoverySlot_(clanId,name),JSON.stringify({hash:hash_(code,salt),salt:salt,memberSalt:memberSalt,fails:0,lockUntil:0}));return code;
+}
+function memberRecovery_(p,operation){
+ var clan=authorizeClan_(p);
+ if(typeof p.nickname!=='string'||!p.nickname.trim()||p.nickname.trim().normalize('NFKC').length>24)throw Error('게임 닉네임을 확인해주세요.');
+ var name=p.nickname.trim().normalize('NFKC');
+ if(operation==='issueMemberRecovery'&&(typeof p.password!=='string'||p.password.length<6||p.password.length>100))throw Error('닉네임과 비밀번호를 입력해주세요.');
+ if(operation==='recoverMemberPassword'&&(typeof p.recoveryCode!=='string'||typeof p.newPassword!=='string'||p.newPassword.length<6||p.newPassword.length>100))throw Error('복구 코드와 새 수정 비밀번호(6~100자)를 확인해주세요.');
+ var lock=LockService.getScriptLock();if(!lock.tryLock(15000))throw Error('다른 요청을 처리 중입니다. 잠시 후 다시 시도해주세요.');
+ try{
+  var s=sheet_(clan),rows=rows_(s),index=rows.findIndex(function(r){return JSON.parse(r[0])===name;}),r=index>=0?rows[index]:null,props=PropertiesService.getScriptProperties(),slot=recoverySlot_(clan.id,name),recovery=JSON.parse(props.getProperty(slot)||'null');
+  if(operation==='issueMemberRecovery'){
+   if(!r)throw Error('닉네임 또는 비밀번호가 맞지 않습니다.');
+   if(Number(r[7])>Date.now())throw Error('비밀번호 확인 시도가 많습니다. 10분 뒤 다시 시도해주세요.');
+   if(hash_(p.password,r[2])!==r[1]){var fails=Number(r[6]||0)+1;s.getRange(index+2,7,1,2).setValues([[fails,fails>=5?Date.now()+600000:0]]);SpreadsheetApp.flush();throw Error('닉네임 또는 비밀번호가 맞지 않습니다.');}
+   var code=issueRecovery_(clan.id,name,r[2]);s.getRange(index+2,7,1,2).setValues([[0,0]]);SpreadsheetApp.flush();return {ok:true,recoveryCode:code};
+  }
+  var code=p.recoveryCode.replace(/[\s-]/g,'').toLowerCase(),operator=JSON.parse(props.getProperty('OPERATOR_RECOVERY_CODE')||'null');
+  var operatorValid=!!(operator&&operator.expires>Date.now()&&/^[a-f0-9]{64}$/.test(code)&&hash_(code,operator.salt)===operator.hash);
+  if(!r)throw Error('닉네임 또는 복구 코드가 맞지 않습니다.');
+  if(!operatorValid){
+   if(!recovery||recovery.memberSalt!==r[2])throw Error('닉네임 또는 복구 코드가 맞지 않습니다.');
+   if(Number(recovery.lockUntil)>Date.now())throw Error('복구 코드 확인 시도가 많습니다. 10분 뒤 다시 시도해주세요.');
+   if(!/^[a-f0-9]{64}$/.test(code)||hash_(code,recovery.salt)!==recovery.hash){recovery.fails=Number(recovery.fails||0)+1;recovery.lockUntil=recovery.fails>=5?Date.now()+600000:0;props.setProperty(slot,JSON.stringify(recovery));throw Error('닉네임 또는 복구 코드가 맞지 않습니다.');}
+  }else{
+   // Consume before changing credentials: parallel/repeated requests cannot reuse it.
+   props.deleteProperty('OPERATOR_RECOVERY_CODE');
+  }
+  var salt=Utilities.getUuid(),replacement=issueRecovery_(clan.id,name,salt);
+  s.getRange(index+2,2,1,2).setValues([[hash_(p.newPassword,salt),salt]]);s.getRange(index+2,7,1,2).setValues([[0,0]]);SpreadsheetApp.flush();
+  return {ok:true,recoveryCode:replacement};
+ }finally{lock.releaseLock();}
+}
+
+// Bootstrap only in the owner's Apps Script editor. Never expose this function via RPC.
+function setOperatorRecoveryPassword(){
+ requireOperator_();var lock=LockService.getScriptLock();lock.waitLock(15000);
+ try{var props=PropertiesService.getScriptProperties(),password=clanPassword_(props.getProperty('OPERATOR_RECOVERY_PASSWORD')),salt=Utilities.getUuid();
+ props.setProperty('OPERATOR_RECOVERY_ADMIN',JSON.stringify({hash:hash_(password,salt),salt:salt,fails:0,lockUntil:0}));
+ props.deleteProperty('OPERATOR_RECOVERY_PASSWORD');props.deleteProperty('OPERATOR_RECOVERY_CODE');return {ok:true};
+ }finally{lock.releaseLock();}
+}
+function operatorRecoveryCode_(p){
+ var props=PropertiesService.getScriptProperties(),admin=JSON.parse(props.getProperty('OPERATOR_RECOVERY_ADMIN')||'null');
+ if(!admin)throw Error('운영자 복구 비밀번호 설정이 필요합니다.');
+ if(Number(admin.lockUntil)>Date.now())throw Error('운영자 비밀번호 확인 시도가 많습니다. 10분 뒤 다시 시도해주세요.');
+ if(typeof p.password!=='string'||p.password.length>100||hash_(p.password,admin.salt)!==admin.hash){admin.fails=Number(admin.fails||0)+1;admin.lockUntil=admin.fails>=5?Date.now()+600000:0;props.setProperty('OPERATOR_RECOVERY_ADMIN',JSON.stringify(admin));throw Error('운영자 복구 비밀번호가 맞지 않습니다.');}
+ var code=Utilities.getUuid().replace(/-/g,'')+Utilities.getUuid().replace(/-/g,''),salt=Utilities.getUuid(),expires=Date.now()+600000;
+ props.setProperty('OPERATOR_RECOVERY_CODE',JSON.stringify({hash:hash_(code,salt),salt:salt,expires:expires}));admin.fails=0;admin.lockUntil=0;props.setProperty('OPERATOR_RECOVERY_ADMIN',JSON.stringify(admin));
+ return {ok:true,recoveryCode:code,expiresAt:expires};
 }

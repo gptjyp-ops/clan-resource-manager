@@ -131,3 +131,110 @@ for(const i of [0,1,2,5,6,7,10])assert.equal(sheets.get('clans').rows[2][i],regi
 for(const sheet of sheets.values())assert.equal(JSON.stringify(sheet.rows).includes('replacement-admin-password'),false);
 assert.equal(JSON.stringify(recovered).includes('replacement-admin-password'),false);
 console.log('Operator admin recovery preserves clan identity, invite, resources and photos; clears locks and sessions without exposing passwords.');
+
+// Self recovery uses a private code and preserves resources and photos.
+const nicknameAdmin=action('adminLogin',{clanId:legacy.clan.id,password:'legacy-admin-password'});
+const nicknameScope={clanId:legacy.clan.id,adminToken:nicknameAdmin.adminToken};
+const legacyAccess={clanId:legacy.clan.id,accessKey:legacyRotate.clan.inviteKey};
+const original=call('list',legacyAccess).records[0];
+const changed={record:original};
+// Password mode invalidates all old invitations/sessions; credentials never appear in admin links.
+assert.equal(action('capabilities').entryPassword,true);
+assert.equal(action('setEntryPassword',{...legacyAccess,entryPassword:'entry-secret'}).ok,false);
+assert.equal(action('setEntryPassword',{...nicknameScope,entryPassword:'short'}).ok,false);
+assert.equal(action('setEntryPassword',{...nicknameScope,entryPassword:' entry-secret'}).ok,false);
+const protectedClan=action('setEntryPassword',{...nicknameScope,entryPassword:'entry-secret'});
+assert.equal(protectedClan.ok,true);assert.equal(protectedClan.clan.entryPasswordRequired,true);
+assert.equal(protectedClan.clan.inviteKey,undefined);
+assert.equal(JSON.stringify(protectedClan).includes('entry-secret'),false);
+assert.equal(call('list',legacyAccess).ok,false);
+assert.equal(call('photo',{...legacyAccess,id:old.photos.skill}).ok,false);
+assert.equal(call('save',{...legacyAccess,...payload}).ok,false);
+assert.equal(action('enterClan',{clanId:'legacy',entryPassword:'wrong',accessKey:legacyRotate.clan.inviteKey}).ok,false);
+assert.equal(call('list',{clanId:'legacy',accessKey:'entry-secret'}).ok,false);
+const entry=action('enterClan',{clanId:'legacy',entryPassword:'entry-secret'});
+assert.equal(entry.ok,true);assert.notEqual(entry.entryAccessKey,'entry-secret');
+const protectedAccess={clanId:'legacy',accessKey:entry.entryAccessKey};
+assert.deepEqual(call('list',protectedAccess).records.find(r=>r.nickname==='same-name'),changed.record);
+assert.equal(action('enterClan',protectedAccess).ok,true);
+assert.equal(call('photo',{...protectedAccess,id:old.photos.skill}).ok,true);
+assert.equal(action('adminInfo',nicknameScope).clan.inviteKey,undefined);
+assert.equal(JSON.stringify([...props.values()]).includes('entry-secret'),false);
+assert.equal(action('enterClan',{clanId:a.clan.id,entryPassword:'entry-secret'}).ok,false);
+assert.equal(action('setEntryPassword',{...nicknameScope,entryPassword:'replacement-entry-secret'}).ok,true);
+assert.equal(call('list',protectedAccess).ok,false);
+assert.equal(action('enterClan',{clanId:'legacy',entryPassword:'entry-secret'}).ok,false);
+assert.equal(action('enterClan',{clanId:'legacy',entryPassword:'replacement-entry-secret'}).ok,true);
+for(let i=0;i<10;i++)assert.equal(action('enterClan',{clanId:'legacy',entryPassword:'wrong'}).ok,false);
+assert.equal(action('enterClan',{clanId:'legacy',entryPassword:'replacement-entry-secret'}).ok,false);
+console.log('Password entry gates data, invalidates old codes and does not expose passwords.');
+
+// Member self-service recovery: private proof, scope, one-time rotation and data preservation.
+assert.equal(action('capabilities').memberSelfRecovery,true);
+const currentEntry=action('enterClan',{clanId:'legacy',accessKey:entry.entryAccessKey,entryPassword:'replacement-entry-secret'});
+// Clear the entry lock created by the preceding lockout test via an authenticated admin change.
+assert.equal(action('setEntryPassword',{...nicknameScope,entryPassword:'self-service-entry'}).ok,true);
+const selfEntry=action('enterClan',{clanId:'legacy',entryPassword:'self-service-entry'});
+const selfAccess={clanId:'legacy',accessKey:selfEntry.entryAccessKey};
+const selfBefore=call('list',selfAccess).records[0];
+const newMember=call('save',{...selfAccess,...payload,nickname:'new-self-member',photos:[]});
+assert.equal(newMember.ok,true);assert.match(newMember.recoveryCode,/^[a-f0-9]{64}$/);
+const recoverNew={...selfAccess,nickname:'new-self-member',recoveryCode:newMember.recoveryCode,newPassword:'first-recovered-password'};
+assert.equal(action('recoverMemberPassword',{...recoverNew,accessKey:'wrong'}).ok,false);
+assert.equal(action('recoverMemberPassword',{...recoverNew,clanId:b.clan.id,accessKey:b.clan.inviteKey}).ok,false);
+for(const newPassword of ['', 'short', 'x'.repeat(101)])assert.equal(action('recoverMemberPassword',{...recoverNew,newPassword}).ok,false);
+const newBefore=call('list',selfAccess).records.find(r=>r.nickname==='new-self-member');
+for(let i=0;i<5;i++)assert.equal(action('memberLogin',{...selfAccess,nickname:'new-self-member',password:'wrong-password'}).ok,false);
+const newReset=action('recoverMemberPassword',recoverNew);assert.equal(newReset.ok,true);assert.notEqual(newReset.recoveryCode,newMember.recoveryCode);
+assert.equal(action('recoverMemberPassword',recoverNew).ok,false);
+assert.equal(action('memberLogin',{...selfAccess,nickname:'new-self-member',password:'member-password'}).ok,false);
+assert.deepEqual(action('memberLogin',{...selfAccess,nickname:'new-self-member',password:'first-recovered-password'}).record,newBefore);
+assert.deepEqual(call('list',selfAccess).records.find(r=>r.nickname===selfBefore.nickname),selfBefore);
+assert.equal(action('issueMemberRecovery',{...selfAccess,nickname:'same-name',password:'wrong-password'}).ok,false);
+const issued=action('issueMemberRecovery',{...selfAccess,nickname:'same-name',password:'member-password'});assert.equal(issued.ok,true);
+const reissued=action('issueMemberRecovery',{...selfAccess,nickname:'same-name',password:'member-password'});assert.equal(reissued.ok,true);assert.notEqual(issued.recoveryCode,reissued.recoveryCode);
+assert.equal(action('recoverMemberPassword',{...selfAccess,nickname:'same-name',recoveryCode:issued.recoveryCode,newPassword:'self-new-password'}).ok,false);
+const selfReset=action('recoverMemberPassword',{...selfAccess,nickname:'same-name',recoveryCode:reissued.recoveryCode.toUpperCase().match(/.{1,8}/g).join('-'),newPassword:'self-new-password'});
+assert.equal(selfReset.ok,true);assert.deepEqual(action('memberLogin',{...selfAccess,nickname:'same-name',password:'self-new-password'}).record,selfBefore);
+assert.equal(call('photo',{...selfAccess,id:old.photos.skill}).ok,true);
+for(let i=0;i<5;i++)assert.equal(action('recoverMemberPassword',{...selfAccess,nickname:'same-name',recoveryCode:'bad',newPassword:'self-next-password'}).ok,false);
+assert.equal(action('recoverMemberPassword',{...selfAccess,nickname:'same-name',recoveryCode:selfReset.recoveryCode,newPassword:'self-next-password'}).ok,false);
+assert.equal(action('resetMemberPassword',{...nicknameScope,nickname:'same-name',newPassword:'admin-replacement-password'}).ok,true);
+assert.equal(action('recoverMemberPassword',{...selfAccess,nickname:'same-name',recoveryCode:selfReset.recoveryCode,newPassword:'self-next-password'}).ok,false);
+assert.equal(action('issueMemberRecovery',{...selfAccess,nickname:'same-name',password:'admin-replacement-password'}).ok,true);
+const publicData=JSON.stringify(call('list',selfAccess));
+const persisted=JSON.stringify([...props.values()])+JSON.stringify([...sheets.values()].map(s=>s.rows));
+for(const secret of [issued.recoveryCode,reissued.recoveryCode,selfReset.recoveryCode,newMember.recoveryCode,newReset.recoveryCode,'self-new-password','first-recovered-password']){assert.equal(persisted.includes(secret),false);assert.equal(publicData.includes(secret),false);}
+console.log('Self-service recovery preserves data, requires private proof, rotates codes, invalidates passwords, scopes clans and throttles guessing.');
+
+// Global operator recovery credentials are owner-provisioned, private and single-use.
+assert.equal(action('capabilities').operatorRecovery,true);
+assert.equal(action('setOperatorRecoveryPassword',{password:'attempted-setup'}).ok,false);
+activeEmail='member@example.test';props.set('OPERATOR_RECOVERY_PASSWORD','operator-master-password');
+assert.throws(()=>context.setOperatorRecoveryPassword());
+assert.equal(action('issueOperatorRecoveryCode',{password:'operator-master-password'}).ok,false);
+activeEmail=effectiveEmail;assert.equal(context.setOperatorRecoveryPassword().ok,true);
+assert.equal(props.has('OPERATOR_RECOVERY_PASSWORD'),false);
+for(let i=0;i<5;i++)assert.equal(action('issueOperatorRecoveryCode',{password:'wrong-password'}).ok,false);
+assert.equal(action('issueOperatorRecoveryCode',{password:'operator-master-password'}).ok,false);
+props.set('OPERATOR_RECOVERY_PASSWORD','operator-master-password');context.setOperatorRecoveryPassword();
+const opOne=action('issueOperatorRecoveryCode',{password:'operator-master-password'});assert.equal(opOne.ok,true);assert.match(opOne.recoveryCode,/^[a-f0-9]{64}$/);
+const opTwo=action('issueOperatorRecoveryCode',{password:'operator-master-password'});assert.equal(opTwo.ok,true);
+assert.equal(action('recoverMemberPassword',{...selfAccess,nickname:'same-name',recoveryCode:opOne.recoveryCode,newPassword:'operator-new-password'}).ok,false);
+const expired=props.get('OPERATOR_RECOVERY_CODE');props.set('OPERATOR_RECOVERY_CODE',JSON.stringify({...JSON.parse(expired),expires:0}));
+assert.equal(action('recoverMemberPassword',{...selfAccess,nickname:'same-name',recoveryCode:opTwo.recoveryCode,newPassword:'operator-new-password'}).ok,false);
+props.set('OPERATOR_RECOVERY_CODE',expired);
+assert.equal(action('recoverMemberPassword',{clanId:'legacy',accessKey:'wrong',nickname:'same-name',recoveryCode:opTwo.recoveryCode,newPassword:'operator-new-password'}).ok,false);
+const opBefore=call('list',selfAccess).records.find(r=>r.nickname==='same-name');
+assert.equal(action('recoverMemberPassword',{...selfAccess,nickname:'same-name',recoveryCode:opTwo.recoveryCode,newPassword:'operator-new-password'}).ok,true);
+assert.equal(props.has('OPERATOR_RECOVERY_CODE'),false);
+assert.deepEqual(action('memberLogin',{...selfAccess,nickname:'same-name',password:'operator-new-password'}).record,opBefore);
+assert.equal(action('recoverMemberPassword',{...selfAccess,nickname:'new-self-member',recoveryCode:opTwo.recoveryCode,newPassword:'hijack-password'}).ok,false);
+// This member has never had a valid personal recovery code issued for its current password.
+const opOther=action('issueOperatorRecoveryCode',{password:'operator-master-password'});
+const targetBefore=call('list',access(b)).records[0];
+assert.equal(action('recoverMemberPassword',{...access(b),nickname:'same-name',recoveryCode:opOther.recoveryCode,newPassword:'operator-other-password'}).ok,true);
+assert.deepEqual(action('memberLogin',{...access(b),nickname:'same-name',password:'operator-other-password'}).record,targetBefore);
+const privateOperator=JSON.stringify([...props.values()])+JSON.stringify([...sheets.values()].map(s=>s.rows));
+for(const secret of ['operator-master-password',opOne.recoveryCode,opTwo.recoveryCode,opOther.recoveryCode,'operator-new-password'])assert.equal(privateOperator.includes(secret),false);
+console.log('Owner-provisioned operator codes require master authentication, expire, rotate, recover any member once and preserve data.');
