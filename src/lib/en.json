@@ -331,5 +331,22 @@
   "로그인 · 내 재화 보기": "Sign in · View my resources",
   "닉네임 또는 비밀번호가 맞지 않습니다.": "Incorrect nickname or password.",
   "내 재화 로그인은 구글 스크립트 업데이트 후 사용할 수 있습니다.": "Update the Google script to enable member sign-in.",
-  "구글 저장 연결이 필요합니다.": "A Google storage connection is required."
+  "구글 저장 연결이 필요합니다.": "A Google storage connection is required.",
+  "회원 수정 비밀번호 초기화": "Reset member edit password",
+  "비밀번호를 잊은 회원의 본인 여부를 확인한 뒤 새 비밀번호를 정해주세요. 기존 재화·사진·등록일은 그대로 유지됩니다.": "Verify the member before setting a new password. Resources, photos and registration dates are preserved.",
+  "회원 비밀번호 초기화는 구글 스크립트 업데이트 후 사용할 수 있습니다.": "Member password reset is available after the Google script update.",
+  "회원 목록 불러오기": "Load member list",
+  "초기화할 회원": "Member to reset",
+  "등록한 닉네임 선택": "Select a registered nickname",
+  "새 수정 비밀번호": "New edit password",
+  "새 비밀번호 확인": "Confirm new password",
+  "이 회원의 비밀번호를 변경하는 것이 맞습니다.": "I confirm this is the member whose password should change.",
+  "선택한 회원 비밀번호 변경": "Change selected member password",
+  "새 비밀번호가 서로 다릅니다.": "The new passwords do not match.",
+  "수정 비밀번호를 변경했습니다. 기존 재화와 사진은 유지됩니다.": "Edit password changed. Existing resources and photos are preserved.",
+  "회원 목록을 불러오지 못했습니다.": "Could not load members.",
+  "회원 비밀번호 변경 실패": "Member password change failed",
+  "변경 후 회원에게 새 비밀번호를 개인적으로 전달하세요. 회원은 기존 닉네임과 새 비밀번호로 내 재화를 불러오고 수정할 수 있습니다. 이전 비밀번호는 사용할 수 없습니다.": "Send the new password privately to the member. They can load and edit their resources using their existing nickname and new password. The previous password no longer works.",
+  "회원 닉네임과 새 수정 비밀번호(6~100자)를 확인해주세요.": "Check the member nickname and new edit password (6–100 characters).",
+  "등록된 회원 닉네임을 찾을 수 없습니다.": "Registered member nickname not found."
 }

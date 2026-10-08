@@ -195,3 +195,6 @@ html[lang="en"] .panel-heading{flex-wrap:wrap;gap:8px}
 .resource-overview .resource-marker{position:relative}
 .merge-icon-badge{position:absolute;right:-3px;bottom:-3px;display:grid;place-items:center;width:24px;height:24px;border:1px solid #50613c;border-radius:7px;background:#24342a;color:#c9efb2}
 @media(max-width:1050px){.resource-overview .summary{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.member-password-reset{margin:24px 0;padding-top:20px;border-top:1px solid #34415a}
+.member-password-reset select{width:100%;padding:12px;border:1px solid #3d4d65;border-radius:8px;background:#121c2b;color:inherit;margin-top:8px}
+.reset-confirm{display:block;margin:16px 0;font-size:13px;line-height:1.6}.reset-confirm input{width:auto;margin-right:8px}

@@ -117,7 +117,7 @@ function clanServer_(server){if(server===undefined||server==='')return '';if(typ
 function clanName_(name){if(typeof name!=='string'||!name.trim()||name.trim().length>40)throw Error('클랜 이름은 1~40자로 입력해주세요.');return name.trim().normalize('NFKC');}
 function clanPassword_(password){if(typeof password!=='string'||password.length<10||password.length>100)throw Error('클랜장 비밀번호는 10~100자로 정해주세요.');return password;}
 function clanOperation_(p){
- var op=p.operation;if(op==='memberLogin')return memberLogin_(p,authorizeClan_(p));if(op==='capabilities')return {ok:true,multiClan:true,memberLogin:true,preserveExisting:true,diagnosticReports:true,serverSelection:true,servers:Array.from(new Set(clanRows_(registry_()).map(function(r){return String(r[10]||'');}).filter(function(s){return /^\d{1,6}$/.test(s);}))).sort(function(a,b){return Number(a)-Number(b);})};
+ var op=p.operation;if(op==='memberLogin')return memberLogin_(p,authorizeClan_(p));if(op==='capabilities')return {ok:true,multiClan:true,memberLogin:true,memberPasswordReset:true,preserveExisting:true,diagnosticReports:true,serverSelection:true,servers:Array.from(new Set(clanRows_(registry_()).map(function(r){return String(r[10]||'');}).filter(function(s){return /^\d{1,6}$/.test(s);}))).sort(function(a,b){return Number(a)-Number(b);})};
  var lock=LockService.getScriptLock();if(!lock.tryLock(15000))throw Error('다른 요청을 처리 중입니다. 잠시 후 다시 시도해주세요.');
  try{
   if(op==='createClan'||op==='claimLegacy'){
@@ -142,6 +142,14 @@ function clanOperation_(p){
   }
   var found=clanAdmin_(p);
   if(op==='adminInfo')return {ok:true,clan:publicClan_(found.row)};
+  if(op==='adminMembers')return {ok:true,members:rows_(sheet_(clanFrom_(found.row))).map(function(r){return JSON.parse(r[0]);}).sort()};
+  if(op==='resetMemberPassword'){
+   if(typeof p.nickname!=='string'||!p.nickname.trim()||p.nickname.length>24||typeof p.newPassword!=='string'||p.newPassword.length<6||p.newPassword.length>100)throw Error('회원 닉네임과 새 수정 비밀번호(6~100자)를 확인해주세요.');
+   var name=p.nickname.trim().normalize('NFKC'),members=sheet_(clanFrom_(found.row)),memberRows=rows_(members),index=memberRows.findIndex(function(r){return JSON.parse(r[0])===name;});
+   if(index<0)throw Error('등록된 회원 닉네임을 찾을 수 없습니다.');
+   var salt=Utilities.getUuid();members.getRange(index+2,2,1,2).setValues([[hash_(p.newPassword,salt),salt]]);members.getRange(index+2,7,1,2).setValues([[0,0]]);SpreadsheetApp.flush();
+   return {ok:true,nickname:name};
+  }
   if(op==='renameClan'){found.row[1]=JSON.stringify(clanName_(p.name));found.sheet.getRange(found.index+2,2,1,1).setValues([[found.row[1]]]);}
   else if(op==='setClanServer'){var server=clanServer_(p.server);if(!server)throw Error('서버 번호를 입력해주세요.');found.row[10]=server;found.sheet.getRange(found.index+2,11,1,1).setValues([[server]]);}
   else if(op==='rotateInvite'){found.row[2]=Utilities.getUuid().replace(/-/g,'');found.sheet.getRange(found.index+2,3,1,1).setValues([[found.row[2]]]);}
