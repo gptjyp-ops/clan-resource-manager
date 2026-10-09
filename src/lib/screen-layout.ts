@@ -2,6 +2,22 @@ import type {PhotoKind} from './inventory';
 export type Box={x:number;y:number;width:number;height:number};
 export type Pixels={width:number;height:number;data:ArrayLike<number>};
 
+// Thresholding the white page around a rounded gray resource bar creates a
+// black frame. Remove only edge-connected background, before counting glyphs.
+export function cleanAmountPixels(p:Pixels):Pixels{
+ const data=new Uint8ClampedArray(p.data),seen=new Uint8Array(p.width*p.height),queue=new Int32Array(seen.length);
+ const clear=(start:number)=>{if(seen[start]||data[start*4]>=100)return;let read=0,write=1,minX=p.width,maxX=0,minY=p.height,maxY=0;queue[0]=start;seen[start]=1;
+  while(read<write){const i=queue[read++],x=i%p.width,y=Math.floor(i/p.width);minX=Math.min(minX,x);maxX=Math.max(maxX,x);minY=Math.min(minY,y);maxY=Math.max(maxY,y);
+   for(const n of [x>0?i-1:-1,x<p.width-1?i+1:-1,y>0?i-p.width:-1,y<p.height-1?i+p.width:-1])if(n>=0&&!seen[n]&&data[n*4]<100){seen[n]=1;queue[write++]=n;}
+  }
+  // Keep narrow edge-touching glyphs: erasing a clipped k would make 4k
+  // look like a valid 4. Only broad frame components can be removed.
+  if(maxX-minX+1>p.width*.6||(maxY-minY+1>p.height*.9&&maxX-minX+1>p.width*.15))for(let n=0;n<write;n++){const i=queue[n]*4;data[i]=data[i+1]=data[i+2]=255;}
+ };
+ for(let x=0;x<p.width;x++){clear(x);clear((p.height-1)*p.width+x);}for(let y=0;y<p.height;y++){clear(y*p.width);clear(y*p.width+p.width-1);}
+ return {...p,data};
+}
+
 // Count separated glyphs in an already thresholded numeric crop. A valid
 // one-digit OCR result can still have dropped two neighbouring digits.
 export function digitBands(p:Pixels):Box[]{

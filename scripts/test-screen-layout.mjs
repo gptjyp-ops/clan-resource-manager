@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import ts from 'typescript';
 const source=ts.transpileModule(fs.readFileSync('src/lib/screen-layout.ts','utf8'),{compilerOptions:{module:ts.ModuleKind.ESNext,target:ts.ScriptTarget.ES2022}}).outputText;
-const {findLandmarks,locateRegions,ratioCandidates,digitBands,amountDecimal}=await import('data:text/javascript;base64,'+Buffer.from(source).toString('base64'));
+const {findLandmarks,locateRegions,ratioCandidates,digitBands,amountDecimal,cleanAmountPixels}=await import('data:text/javascript;base64,'+Buffer.from(source).toString('base64'));
 // Three narrow neighbouring 1s must remain three glyphs even when the OCR
 // engine returns a syntactically valid single 1. Ignore isolated speckles.
 const numeric={width:90,height:50,data:new Uint8ClampedArray(90*50*4).fill(255)};
@@ -114,3 +114,25 @@ for(let y=35;y<40;y++)for(let x=30;x<35;x++)noDot.data.set([255,255,255,255],(y*
 assert.equal(amountDecimal(noDot,'114'),null);
 assert.equal(amountDecimal(noDot,'114k'),'114k');
 assert.equal(amountDecimal(noDot,'1140'),'1140');
+
+// White page outside a rounded resource bar becomes a connected black frame
+// after thresholding. It must not join all four glyph columns into one band.
+const framed={...dec,data:new Uint8ClampedArray(dec.data)};
+for(let x=0;x<framed.width;x++)framed.data.set([0,0,0,255],((framed.height-1)*framed.width+x)*4);
+for(let y=0;y<framed.height;y++)framed.data.set([0,0,0,255],(y*framed.width+framed.width-1)*4);
+const frameBefore=new Uint8ClampedArray(framed.data),cleaned=cleanAmountPixels(framed);
+assert.equal(digitBands(framed).length,1);
+assert.equal(amountDecimal(cleaned,'1.14k'),'1.14k');
+assert.equal(amountDecimal(cleaned,'1.14'),null);
+assert.equal(amountDecimal(cleaned,'114'),null);
+assert.equal(amountDecimal(cleanAmountPixels(numeric),'114'),'114');
+assert.deepEqual(framed.data,frameBefore);
+// 4k needs two glyphs; accepting the one-digit OCR result would lose 1000x.
+const compact={width:90,height:50,data:new Uint8ClampedArray(90*50*4).fill(255)};
+for(const left of [10,40])for(let y=10;y<40;y++)for(let x=left;x<left+10;x++)compact.data.set([0,0,0,255],(y*90+x)*4);
+assert.equal(amountDecimal(cleanAmountPixels(compact),'4k'),'4k');
+assert.equal(amountDecimal(cleanAmountPixels(compact),'4'),null);
+const clippedUnit={...compact,data:new Uint8ClampedArray(compact.data)};
+for(let y=10;y<40;y++)for(let x=80;x<90;x++)clippedUnit.data.set([0,0,0,255],(y*90+x)*4);
+assert.equal(digitBands(cleanAmountPixels(clippedUnit)).length,3);
+console.log('Resource bar frame and missing unit regression checks passed');
