@@ -1,9 +1,15 @@
-import type {Item,PhotoKind} from './inventory';
-export const scanVersion='2026-10-09.2';
+import {photoKinds,type Item,type PhotoKind} from './inventory';
+export const scanVersion='2026-10-09.3';
 export type ScanField='amount'|'level'|'ratio'|'selected';
 export type ScanAttempt={field:ScanField;source:'adaptive'|'fallback';text:string};
 export type ScanIssue={code:string;field?:ScanField;message:string};
 export type ScanReport={version:string;kind:PhotoKind;mode:string;image:{width?:number;height?:number;bytes:number;type:string};attempts:ScanAttempt[];issues:ScanIssue[]};
+export type ScanReports=Partial<Record<PhotoKind,ScanReport>>;
+export function updateScanReports(previous:ScanReports,report:ScanReport):ScanReports{return {...previous,[report.kind]:report};}
+export function visibleScanReports(reports:ScanReports,latest?:PhotoKind):ScanReport[]{
+ const errors=photoKinds.map(kind=>reports[kind]).filter((report):report is ScanReport=>!!report?.issues.length);
+ return errors.length?errors:latest&&reports[latest]?[reports[latest]!]:[];
+}
 const labels:Record<ScanField,string>={amount:'보유 수량',level:'소환 레벨',ratio:'현재 단계',selected:'합성 수량'};
 export function missingIssues(kind:PhotoKind,item:Partial<Item>,located:Partial<Record<ScanField,unknown>>):ScanIssue[]{
  const fields:ScanField[]=kind.endsWith('Merge')?['selected']:kind==='potion'?['amount']:item.level==='100'?['amount','level']:['amount','level','ratio'];

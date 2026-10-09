@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {build} from 'esbuild';
 const bundled=await build({entryPoints:['src/lib/scan-diagnostics.ts'],bundle:true,write:false,platform:'node',format:'esm'});
-const {missingIssues,newScanReport,reportText,ScanFailure}=await import('data:text/javascript;base64,'+Buffer.from(bundled.outputFiles[0].text).toString('base64'));
+const {missingIssues,newScanReport,reportText,ScanFailure,updateScanReports,visibleScanReports}=await import('data:text/javascript;base64,'+Buffer.from(bundled.outputFiles[0].text).toString('base64'));
 assert.deepEqual(missingIssues('egg',{amount:'4.96k',level:'66',progress:'0',target:'23'},{}),[]);
 assert.deepEqual(missingIssues('potion',{amount:'69'},{}),[]);
 assert.deepEqual(missingIssues('skill',{amount:'0',level:'100'},{}),[]);
@@ -14,3 +14,25 @@ assert.match(new ScanFailure(report).message,/IMG-01/);
 assert.doesNotMatch(reportText(report),/private-name/);
 assert.equal(report.mode,'호환');
 console.log('Scan diagnostics: zero, maximum, partial failure, and private filename checks passed.');
+
+// A later successful merge scan must not hide an earlier summon error.
+const failure=kind=>({...newScanReport({size:123,type:'image/png'},kind,false),issues:[{code:'OCR-02',field:kind.endsWith('Merge')?'selected':'amount',message:'test'}]});
+const success=kind=>newScanReport({size:123,type:'image/png'},kind,false);
+let reports=updateScanReports({},failure('egg'));
+const eggFailure=reports.egg;
+reports=updateScanReports(reports,success('eggMerge'));
+assert.deepEqual(visibleScanReports(reports,'eggMerge').map(r=>r.kind),['egg']);
+assert.equal(reports.egg,eggFailure,'unrelated scans preserve the same report object and delivery state');
+reports=updateScanReports(reports,failure('mountMerge'));
+reports=updateScanReports(reports,success('potion'));
+assert.deepEqual(visibleScanReports(reports,'potion').map(r=>r.kind),['egg','mountMerge']);
+reports=updateScanReports(reports,success('egg'));
+assert.deepEqual(visibleScanReports(reports,'egg').map(r=>r.kind),['mountMerge']);
+reports=updateScanReports(reports,success('mountMerge'));
+assert.deepEqual(visibleScanReports(reports,'mountMerge').map(r=>r.kind),['mountMerge']);
+assert.equal(visibleScanReports(reports,'mountMerge')[0].issues.length,0);
+reports=updateScanReports(reports,failure('eggMerge'));
+reports=updateScanReports(reports,failure('egg'));
+assert.deepEqual(visibleScanReports(reports,'egg').map(r=>r.kind),['egg','eggMerge']);
+assert.deepEqual(visibleScanReports({},undefined),[]);
+console.log('Independent summon/merge failures survive successful scans and clear only on matching success.');

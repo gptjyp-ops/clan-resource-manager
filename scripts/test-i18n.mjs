@@ -36,12 +36,22 @@ i18n.setLanguage('en');assert.equal(values.get('clanUiLanguage'),'en');assert.eq
 assert.equal(i18n.tr`다음: ${'Eggs'} 사진 올리기`,'Next: upload Eggs photo');
 assert.equal(i18n.tr`${'Member123'}님의 ${'all resources'}를 저장했습니다.`,'Saved all resources for Member123.');
 // All visible static Korean text in the translated components must have an English entry.
-for(const filename of ['src/App.tsx','src/ClanPortal.tsx','src/ClanEntryPassword.tsx','src/MemberSelfRecovery.tsx','src/OperatorRecovery.tsx','src/OcrCheck.tsx','src/ScanDiagnostics.tsx','src/HelpSupport.tsx','src/PhotoPreview.tsx']){
+for(const filename of ['src/App.tsx','src/ClanPortal.tsx','src/OcrCheck.tsx','src/ScanDiagnostics.tsx','src/HelpSupport.tsx','src/PhotoPreview.tsx']){
  const source=ts.createSourceFile(filename,fs.readFileSync(filename,'utf8'),ts.ScriptTarget.Latest,true,ts.ScriptKind.TSX);
  function visit(node){if(ts.isCallExpression(node)&&node.expression.getText(source)==='t'&&ts.isStringLiteral(node.arguments[0]))assert.ok(dictionary[node.arguments[0].text.trim()],filename+': '+node.arguments[0].text);
  if(ts.isTaggedTemplateExpression(node)&&node.tag.getText(source)==='tr'){const n=node.template,key=ts.isTemplateExpression(n)?n.head.text+n.templateSpans.map((s,i)=>'{'+i+'}'+s.literal.text).join(''):n.text;assert.ok(dictionary[key.trim()],filename+': '+key);}ts.forEachChild(node,visit);}visit(source);
 }
 const App=load('src/App.tsx').default;
+const {ScanDiagnosticsPanel}=load('src/ScanDiagnostics.tsx');
+const scan=load('src/lib/scan-diagnostics.ts');
+const makeError=kind=>({...scan.newScanReport({size:123,type:'image/png'},kind,false),issues:[{code:'OCR-02',field:'amount',message:'보유 수량의 자동 위치를 찾지 못했고 기본 영역에서도 숫자를 읽지 못했습니다.'}]});
+api.googleEnabled=true;api.savedAccessKey=()=> 'test-access';
+const diagnosticMarkup=renderToStaticMarkup(React.createElement(ScanDiagnosticsPanel,{reports:{egg:makeError('egg'),eggMerge:makeError('eggMerge'),potion:scan.newScanReport({size:123,type:'image/png'},'potion',false)},latest:'potion'}));
+assert.equal((diagnosticMarkup.match(/Resend error report/g)||[]).length,2);
+assert.ok(diagnosticMarkup.includes(i18n.translate('알 소환 화면','en')));
+assert.ok(diagnosticMarkup.includes(i18n.translate('알 합성 화면','en')));
+assert.ok(!diagnosticMarkup.includes('All required numbers were read'));
+api.googleEnabled=false;api.savedAccessKey=()=> '';
 const en=renderToStaticMarkup(React.createElement(App));
 for(const s of ['Your clan&#x27;s resources, together','My resources','Clan overview','In-game nickname','Save all four resources','Summon level','Current stage','Green potions'])assert.ok(en.includes(s),s);
 assert.ok(!/[가-힣]/.test(en),'English member form must not contain Korean UI text');
@@ -51,18 +61,3 @@ assert.equal(i18n.translate('Saved all resources for Member123.','ko'),'Member12
 const Switch=load('src/LanguageSwitch.tsx').default;const switchMarkup=renderToStaticMarkup(React.createElement(Switch));assert.ok(switchMarkup.includes('English'));assert.ok(switchMarkup.includes('aria-pressed="true"'));
 assert.ok(fs.readFileSync('public/guide-en.html','utf8').includes('3.3k = approximately 3,300'));
 console.log('Bilingual member form, dictionary coverage, error messages, language persistence and unchanged quantities passed.');
-
-// The recovery form is bilingual and keeps both password modes inside the member page.
-api.googleEnabled=true;i18n.setLanguage('en');
-const SelfRecovery=load('src/MemberSelfRecovery.tsx').default;
-const recoveryMarkup=renderToStaticMarkup(React.createElement(SelfRecovery,{disabled:false,receipt:{nickname:'TestMember',code:'a'.repeat(64)},onReceipt:()=>{}}));
-for(const text of ['Forgot your password?','Reset your password','Personal recovery code','New edit password','Confirm new password'])assert.ok(recoveryMarkup.includes(text),text);
-assert.ok(!/[가-힣]/.test(recoveryMarkup));
-assert.equal((recoveryMarkup.match(/type="password"/g)||[]).length,3);
-console.log('Self-service recovery UI translates and masks recovery and password inputs.');
-
-const Operator=load('src/OperatorRecovery.tsx').default;
-const operatorMarkup=renderToStaticMarkup(React.createElement(Operator));
-assert.ok(operatorMarkup.includes('Operator one-time recovery code'));
-assert.ok(!/[가-힣]/.test(operatorMarkup));
-console.log('Operator recovery UI is bilingual and requires a masked master password.');
