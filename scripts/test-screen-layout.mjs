@@ -135,4 +135,12 @@ assert.equal(amountDecimal(cleanAmountPixels(compact),'4'),null);
 const clippedUnit={...compact,data:new Uint8ClampedArray(compact.data)};
 for(let y=10;y<40;y++)for(let x=80;x<90;x++)clippedUnit.data.set([0,0,0,255],(y*90+x)*4);
 assert.equal(digitBands(cleanAmountPixels(clippedUnit)).length,3);
+// A distant slice of the egg icon at the left edge is decoration, while a
+// clipped first digit adjacent to the rest of the number must remain.
+const iconSlice={...numeric,data:new Uint8ClampedArray(numeric.data)};
+for(let y=10;y<40;y++)for(let x=0;x<3;x++)iconSlice.data.set([0,0,0,255],(y*90+x)*4);
+assert.equal(digitBands(cleanAmountPixels(iconSlice)).length,4);
+const distant={width:200,height:50,data:new Uint8ClampedArray(200*50*4).fill(255)};
+for(const left of [0,100,130,160])for(let y=10;y<40;y++)for(let x=left;x<left+8;x++)distant.data.set([0,0,0,255],(y*200+x)*4);
+assert.equal(amountDecimal(cleanAmountPixels(distant),'822'),'822');
 console.log('Resource bar frame and missing unit regression checks passed');

@@ -12,7 +12,10 @@ export function cleanAmountPixels(p:Pixels):Pixels{
   }
   // Keep narrow edge-touching glyphs: erasing a clipped k would make 4k
   // look like a valid 4. Only broad frame components can be removed.
-  if(maxX-minX+1>p.width*.6||(maxY-minY+1>p.height*.9&&maxX-minX+1>p.width*.15))for(let n=0;n<write;n++){const i=queue[n]*4;data[i]=data[i+1]=data[i+2]=255;}
+  let nextInk=p.width;
+  if(minX===0&&maxX<p.width*.15){for(let x=maxX+1;x<p.width&&nextInk===p.width;x++)for(let y=minY;y<=maxY;y++)if(data[(y*p.width+x)*4]<100){nextInk=x;break;}}
+  const distantLeftIcon=nextInk<p.width&&nextInk-maxX>p.height*.5;
+  if(distantLeftIcon||maxX-minX+1>p.width*.6||(maxY-minY+1>p.height*.9&&maxX-minX+1>p.width*.15))for(let n=0;n<write;n++){const i=queue[n]*4;data[i]=data[i+1]=data[i+2]=255;}
  };
  for(let x=0;x<p.width;x++){clear(x);clear((p.height-1)*p.width+x);}for(let y=0;y<p.height;y++){clear(y*p.width);clear(y*p.width+p.width-1);}
  return {...p,data};
