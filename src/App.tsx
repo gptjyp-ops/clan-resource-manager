@@ -1,3 +1,4 @@
+import {flushErrorReports} from './lib/error-outbox';
 import OperatorRecovery from './OperatorRecovery';
 import MemberSelfRecovery, {type RecoveryReceipt} from './MemberSelfRecovery';
 import PhotoPreview from './PhotoPreview';
@@ -72,7 +73,7 @@ function Home(){
  async function restoreDraft(draft:Draft){if(busy||saving)return;try{if(Object.keys(files).length||Object.values(changedFields.current).some(keys=>keys.length)){await keepDraft();draft=(await listDrafts(activeClanId)).find(d=>d.id===draft.id)||draft;}clearTimeout(draftTimer.current);++draftEpoch.current;setDiagnostics({});setLatestScanKind(undefined);setNickname(draft.nickname);setInventory(structuredClone(draft.inventory));changedFields.current=structuredClone(draft.changedFields);setFiles(draft.files);setPhotos(draft.photos);setSaveMode(draft.saveMode);setPassword('');setError('');setConnectionStatus('');setNotice(t("임시 보관 내용을 불러왔습니다. 비밀번호를 다시 입력하고 서버에 저장해주세요."));}catch{setError(t("현재 입력을 임시 보관하지 못해 불러오기를 중단했습니다."));}}
  async function reconnect(){setCheckingConnection(true);setConnectionStatus(t("저장 연결 확인 중…"));try{await checkSaveConnection();setConnectionStatus(t("저장 연결이 준비됐습니다. 비밀번호를 입력하고 저장 버튼을 눌러주세요."));}catch(e){setConnectionStatus(e instanceof Error?t(e.message):t("저장 연결을 확인하지 못했습니다. 잠시 후 다시 시도해주세요."));}finally{setCheckingConnection(false);}}
  async function refresh(){setLoading(true);try{const rows=await getRecords();setClanName(activeClanName);setRecords(rows.map((r:Row)=>({...r,details:{...emptyInventory(),...r.details}})));setError('');}catch(e){setError(e instanceof Error?e.message:t("현황을 불러오지 못했습니다."));}finally{setLoading(false);}}
- useEffect(()=>{refresh();},[]);
+ useEffect(()=>{refresh();const retry=()=>void flushErrorReports().catch(()=>{});retry();const timer=setInterval(retry,60000);window.addEventListener('online',retry);return()=>{clearInterval(timer);window.removeEventListener('online',retry);};},[]);
  useEffect(()=>{const context=(document as any).modelContext;if(!context?.registerTool)return;const lifecycle=new AbortController();Promise.resolve(context.registerTool({name:'read_clan_resources',description:t("클랜원이 등록한 재화·소환 레벨·합성 수량을 읽습니다."),inputSchema:{type:'object',properties:{},additionalProperties:false},annotations:{readOnlyHint:true,untrustedContentHint:true},async execute(){return {records:await getRecords()};}},{signal:lifecycle.signal})).catch(console.error);return()=>lifecycle.abort();},[]);
  function patch(g:Group,key:keyof Item,value:string){changedFields.current[g]=Array.from(new Set([...(changedFields.current[g]||[]),key]));setInventory(v=>({...v,[g]:{...v[g],[key]:value}}));}
  const uploading=useRef(false);

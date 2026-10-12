@@ -118,7 +118,7 @@ function clanServer_(server){if(server===undefined||server==='')return '';if(typ
 function clanName_(name){if(typeof name!=='string'||!name.trim()||name.trim().length>40)throw Error('클랜 이름은 1~40자로 입력해주세요.');return name.trim().normalize('NFKC');}
 function clanPassword_(password){if(typeof password!=='string'||password.length<10||password.length>100)throw Error('클랜장 비밀번호는 10~100자로 정해주세요.');return password;}
 function clanOperation_(p){
- var op=p.operation;if(op==='issueMemberRecovery'||op==='recoverMemberPassword')return memberRecovery_(p,op);if(op==='memberLogin')return memberLogin_(p,authorizeClan_(p));if(op==='capabilities')return {ok:true,multiClan:true,memberLogin:true,memberPasswordReset:true,memberSelfRecovery:true,operatorRecovery:true,entryPassword:true,preserveExisting:true,diagnosticReports:true,serverSelection:true,servers:Array.from(new Set(clanRows_(registry_()).map(function(r){return String(r[10]||'');}).filter(function(s){return /^\d{1,6}$/.test(s);}))).sort(function(a,b){return Number(a)-Number(b);})};
+ var op=p.operation;if(op==='issueMemberRecovery'||op==='recoverMemberPassword')return memberRecovery_(p,op);if(op==='memberLogin')return memberLogin_(p,authorizeClan_(p));if(op==='capabilities')return {ok:true,multiClan:true,memberLogin:true,memberPasswordReset:true,memberSelfRecovery:true,operatorRecovery:true,entryPassword:true,preserveExisting:true,diagnosticReports:true,diagnosticPhotos:true,serverSelection:true,servers:Array.from(new Set(clanRows_(registry_()).map(function(r){return String(r[10]||'');}).filter(function(s){return /^\d{1,6}$/.test(s);}))).sort(function(a,b){return Number(a)-Number(b);})};
  var lock=LockService.getScriptLock();if(!lock.tryLock(15000))throw Error('다른 요청을 처리 중입니다. 잠시 후 다시 시도해주세요.');
  try{
   if(op==='createClan'||op==='claimLegacy'){
@@ -184,18 +184,25 @@ function reportScan_(p,clan){
  var r=p.report,fields=['amount','level','ratio','selected'];
  if(!r||KINDS_.indexOf(r.kind)<0||typeof r.version!=='string'||!/^\d{4}-\d{2}-\d{2}\.\d+$/.test(r.version)||['일반','호환'].indexOf(r.mode)<0)throw Error('오류 진단 형식을 확인해주세요.');
  if(!Array.isArray(r.issues)||!r.issues.length||r.issues.length>8||!Array.isArray(r.attempts)||r.attempts.length>30)throw Error('오류 진단 형식을 확인해주세요.');
- var issues=r.issues.map(function(i){if(!i||! /^(OCR-0[1-5]|IMG-01)$/.test(i.code)||i.field!==undefined&&fields.indexOf(i.field)<0)throw Error('오류 진단 형식을 확인해주세요.');return {code:i.code,field:i.field||''};});
+ var issues=r.issues.map(function(i){if(!i||! /^(OCR-0[1-5]|IMG-0[12])$/.test(i.code)||i.field!==undefined&&fields.indexOf(i.field)<0)throw Error('오류 진단 형식을 확인해주세요.');return {code:i.code,field:i.field||''};});
  var attempts=r.attempts.map(function(a){if(!a||fields.indexOf(a.field)<0||['adaptive','fallback'].indexOf(a.source)<0||typeof a.text!=='string')throw Error('오류 진단 형식을 확인해주세요.');return {field:a.field,source:a.source,text:a.text.replace(/[^0-9.,/kKmMbB\s]/g,'').slice(0,80)};});
  var image={};['bytes','width','height'].forEach(function(k){var n=r.image&&r.image[k];if(n!==undefined){if(!Number.isSafeInteger(n)||n<0||n>100000000)throw Error('오류 진단 형식을 확인해주세요.');image[k]=n;}});image.type=r.image&&/^image\/(png|jpeg|webp)$/.test(r.image.type)?r.image.type:'unknown';
  var lock=LockService.getScriptLock();if(!lock.tryLock(15000))throw Error('다른 요청을 처리 중입니다. 잠시 후 다시 시도해주세요.');
  try{
   var props=PropertiesService.getScriptProperties(),slot='OCR_REPORT_'+clan.id,now=Date.now(),previous=JSON.parse(props.getProperty(slot)||'{}');
-  if(previous.time&&now-previous.time<30000)throw Error('오류는 30초마다 전송할 수 있습니다.');
+
   var hour=Math.floor(now/3600000),count=previous.hour===hour?Number(previous.count||0):0;if(count>=120)throw Error('오류 전송 한도에 도달했습니다. 진단 내용을 복사해주세요.');
   var book=SpreadsheetApp.openById(props.getProperty('SHEET_ID')),s=book.getSheetByName('ocr_errors');
   if(!s){s=book.insertSheet('ocr_errors');s.appendRow(['received_at','clan_id','version','kind','mode','image_json','issues_json','attempts_json']);s.setFrozenRows(1);}
-  s.appendRow([new Date(now).toISOString(),clan.id,r.version,r.kind,r.mode,JSON.stringify(image),JSON.stringify(issues),JSON.stringify(attempts)]);
-  if(s.getLastRow()>1001)s.deleteRows(2,s.getLastRow()-1001);
+  var reportId=String(p.id||'');if(reportId&&!/^[a-zA-Z0-9-]{36}$/.test(reportId))throw Error('오류 진단 형식을 확인해주세요.');
+  if(reportId&&s.getLastRow()>1){var stored=s.getRange(2,9,s.getLastRow()-1,1).getValues();if(stored.some(function(row){return row[0]===reportId;}))return {ok:true};}
+  var photoId='';if(p.photo){var u=p.photo;if(u.kind!==r.kind||typeof u.base64!=='string'||u.base64.length>1400000)throw Error('사진 크기와 종류를 확인해주세요.');var bytes=Utilities.base64Decode(u.base64);if(bytes.length>1024*1024||bytes.length<12||(bytes[0]+256)%256!==255||(bytes[1]+256)%256!==216)throw Error('유효한 사진이 아닙니다.');
+   var folderId=props.getProperty('OCR_ERROR_FOLDER_ID');if(!folderId){folderId=DriveApp.createFolder('클랜 재화관리 오류 사진').getId();props.setProperty('OCR_ERROR_FOLDER_ID',folderId);}
+   photoId=DriveApp.getFolderById(folderId).createFile(Utilities.newBlob(bytes,'image/jpeg',clan.id+'-'+r.kind+'-'+(reportId||now)+'.jpg')).getId();
+  }
+  s.getRange(1,9,1,2).setValues([['report_id','error_photo_url']]);
+  try{s.appendRow([new Date(now).toISOString(),clan.id,r.version,r.kind,r.mode,JSON.stringify(image),JSON.stringify(issues),JSON.stringify(attempts),reportId,photoId?'https://drive.google.com/file/d/'+photoId+'/view':'']);}catch(e){if(photoId)DriveApp.getFileById(photoId).setTrashed(true);throw e;}
+
   SpreadsheetApp.flush();props.setProperty(slot,JSON.stringify({time:now,hour:hour,count:count+1}));return {ok:true};
  }finally{lock.releaseLock();}
 }

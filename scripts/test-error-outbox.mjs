@@ -1,0 +1,13 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';import vm from 'node:vm';import ts from 'typescript';import crypto from 'node:crypto';
+const rows=new Map(),sent=[];let fail=true;
+const indexedDB={open(){const req={};queueMicrotask(()=>{req.result={createObjectStore(){},close(){},transaction(){const tx={};tx.objectStore=()=>({put(value){return run(()=>rows.set(value.id,structuredClone(value)));},getAll(){return run(()=>[...rows.values()]);},delete(id){return run(()=>rows.delete(id));}});function run(fn){const request={};queueMicrotask(()=>{request.result=fn();tx.oncomplete();});return request;}return tx;}};req.onupgradeneeded();req.onsuccess();});return req;}};
+const api={activeClanId:'a',googleEnabled:true,savedAccessKey:()=> 'key',sendScanReport:async report=>{if(fail)throw Error('offline');sent.push(report);}};
+const exports={};const source=ts.transpileModule(fs.readFileSync('src/lib/error-outbox.ts','utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;
+vm.runInNewContext(source,{exports,require:()=>api,indexedDB,crypto,console});
+const first={id:crypto.randomUUID(),kind:'potion',photo:new Blob(['evidence']),issues:[{code:'OCR-02'}]};
+await exports.saveErrorReport(first);await assert.rejects(exports.flushErrorReports(),/offline/);assert.equal(rows.size,1);assert.equal(rows.get(first.id).report.photo.size,8);
+api.activeClanId='b';await exports.saveErrorReport({...first,id:crypto.randomUUID(),kind:'egg'});
+fail=false;api.activeClanId='a';await exports.flushErrorReports();assert.equal(sent.length,1);assert.equal(sent[0].kind,'potion');assert.equal(rows.size,1);
+await exports.flushErrorReports();assert.equal(sent.length,1);api.activeClanId='b';await exports.flushErrorReports();assert.equal(sent.length,2);assert.equal(rows.size,0);
+console.log('Error outbox: evidence survives failed transfers, retries remove only acknowledged reports, and clans stay isolated.');

@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import vm from 'node:vm';
@@ -16,13 +17,13 @@ function load(filename){filename=path.resolve(filename);if(cache.has(filename))r
  const output=ts.transpileModule(source,{compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.CommonJS,jsx:ts.JsxEmit.ReactJSX,esModuleInterop:true,resolveJsonModule:true}}).outputText;
  const exports={};cache.set(filename,exports);
  const localRequire=specifier=>{
-  if(specifier.endsWith('/lib/api')||specifier==='./lib/api')return api;
+  if(specifier.endsWith('/lib/api')||specifier==='./lib/api'||specifier==='./api')return api;
   if(specifier.endsWith('/lib/screen-ocr')||specifier==='./lib/screen-ocr')return {regions:{skill:[],egg:[],mount:[],potion:[]}};
   if(specifier.endsWith('.json'))return JSON.parse(fs.readFileSync(path.resolve(path.dirname(filename),specifier),'utf8'));
   if(specifier.startsWith('.')||specifier.startsWith('@/')){const base=specifier.startsWith('@/')?path.resolve('src',specifier.slice(2)):path.resolve(path.dirname(filename),specifier);return load(fs.existsSync(base+'.tsx')?base+'.tsx':base+'.ts');}
   return require(specifier);
  };
- vm.runInNewContext(output,{exports,require:localRequire,localStorage:storage,document,location,URLSearchParams,console,window:{},setTimeout,clearTimeout},{filename});return exports;
+ vm.runInNewContext(output,{crypto,exports,require:localRequire,localStorage:storage,document,location,URLSearchParams,console,window:{},setTimeout,clearTimeout},{filename});return exports;
 }
 const i18n=load('src/lib/i18n.ts');
 assert.equal(i18n.getLanguage(),'ko');

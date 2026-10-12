@@ -18,7 +18,7 @@ export let serverSelectionSupported=false;
 export let memberPasswordResetSupported=false;
 export let entryPasswordSupported=false;
 export let serverOptions:string[]=[];
-type Reply={operatorRecovery?:boolean;expiresAt?:number;entryPassword?:boolean;entryAccessKey?:string;memberSelfRecovery?:boolean;recoveryCode?:string;members?:string[];memberPasswordReset?:boolean;clan?:ClanInfo;adminToken?:string;multiClan?:boolean;diagnosticReports?:boolean;preserveExisting?:boolean;details?:Inventory;serverSelection?:boolean;servers?:string[];ok:boolean;error?:string;records?:any[];photos?:Partial<Record<PhotoKind,string>>;base64?:string;type?:string};
+type Reply={operatorRecovery?:boolean;expiresAt?:number;entryPassword?:boolean;entryAccessKey?:string;memberSelfRecovery?:boolean;recoveryCode?:string;members?:string[];memberPasswordReset?:boolean;clan?:ClanInfo;adminToken?:string;multiClan?:boolean;diagnosticPhotos?:boolean;diagnosticReports?:boolean;preserveExisting?:boolean;details?:Inventory;serverSelection?:boolean;servers?:string[];ok:boolean;error?:string;records?:any[];photos?:Partial<Record<PhotoKind,string>>;base64?:string;type?:string};
 let bridgePromise:Promise<{source:Window;origin:string;channel:string}>|undefined;
 let bridgeCleanup:(()=>void)|undefined;
 const pending=new Map<string,{resolve:(r:Reply)=>void;reject:(e:Error)=>void;timer:ReturnType<typeof setTimeout>}>();
@@ -69,9 +69,10 @@ export async function sendScanReport(report:ScanReport){
  if(!googleEnabled||!savedAccessKey())throw Error('클랜에 입장한 뒤 오류를 전송할 수 있습니다.');
  const capability=await rpc('list',{operation:'capabilities'});
  if(!capability.diagnosticReports)throw Error('오류 자동 전송은 구글 스크립트 업데이트 후 사용할 수 있습니다.');
- // Only diagnostic metadata is sent. Never include photo bytes, filenames,
- // nickname, passwords, browser URLs or invitation codes in the report.
- return rpc('report',{report:{version:report.version,kind:report.kind,mode:report.mode,image:report.image,issues:report.issues.map(({code,field})=>({code,field})),attempts:report.attempts.map(({field,source,text})=>({field,source,text:text.replace(/[^0-9.,/kKmMbB\s]/g,'').slice(0,80)}))}});
+ const evidence=report.issues.some(i=>i.code.startsWith('IMG-'))?undefined:report.photo;
+ if(evidence&&!capability.diagnosticPhotos)throw Error('오류 사진 자동 저장은 구글 스크립트 업데이트 후 사용할 수 있습니다.');
+ const photo=evidence?await encodedPhoto(evidence,report.kind):undefined;
+ return rpc('report',{id:report.id,photo,report:{version:report.version,kind:report.kind,mode:report.mode,image:report.image,issues:report.issues.map(({code,field})=>({code,field})),attempts:report.attempts.map(({field,source,text})=>({field,source,text:text.replace(/[^0-9.,/kKmMbB\s]/g,'').slice(0,80)}))}});
 }
 
 export async function memberLogin(nickname:string,password:string){

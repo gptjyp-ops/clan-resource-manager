@@ -1,9 +1,9 @@
 import {photoKinds,type Item,type PhotoKind} from './inventory';
-export const scanVersion='2026-10-09.3';
+export const scanVersion='2026-10-13.1';
 export type ScanField='amount'|'level'|'ratio'|'selected';
 export type ScanAttempt={field:ScanField;source:'adaptive'|'fallback';text:string};
 export type ScanIssue={code:string;field?:ScanField;message:string};
-export type ScanReport={version:string;kind:PhotoKind;mode:string;image:{width?:number;height?:number;bytes:number;type:string};attempts:ScanAttempt[];issues:ScanIssue[]};
+export type ScanReport={id?:string;photo?:File;version:string;kind:PhotoKind;mode:string;image:{width?:number;height?:number;bytes:number;type:string};attempts:ScanAttempt[];issues:ScanIssue[]};
 export type ScanReports=Partial<Record<PhotoKind,ScanReport>>;
 export function updateScanReports(previous:ScanReports,report:ScanReport):ScanReports{return {...previous,[report.kind]:report};}
 export function visibleScanReports(reports:ScanReports,latest?:PhotoKind):ScanReport[]{
@@ -19,5 +19,5 @@ export class ScanFailure extends Error{
  report:ScanReport;
  constructor(report:ScanReport){super(report.issues.map(i=>`${i.code} · ${i.message}`).join('\n'));this.name='ScanFailure';this.report=report;}
 }
-export function newScanReport(file:File,kind:PhotoKind,fresh:boolean):ScanReport{return {version:scanVersion,kind,mode:fresh?'호환':'일반',image:{bytes:file.size,type:file.type},attempts:[],issues:[]};}
-export function reportText(report:ScanReport){return JSON.stringify(report,null,2);}
+export function newScanReport(file:File,kind:PhotoKind,fresh:boolean):ScanReport{return {id:crypto.randomUUID(),photo:file,version:scanVersion,kind,mode:fresh?'호환':'일반',image:{bytes:file.size,type:file.type},attempts:[],issues:[]};}
+export function reportText(report:ScanReport){return JSON.stringify({...report,photo:undefined},null,2);}
