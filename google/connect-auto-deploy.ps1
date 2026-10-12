@@ -6,7 +6,9 @@ $DeploymentId = 'AKfycbxa-JOZ_ShSprjSM1e8fQ9LfoDiztwASomBjUfpkXAso_lbo3H7F4VUgMW
 if ($ScriptId -notmatch '^[a-zA-Z0-9_-]{20,200}$') { throw 'Script ID is invalid. Copy it from Apps Script Project Settings.' }
 if (!(Get-Command node -ErrorAction SilentlyContinue) -or !(Get-Command npx -ErrorAction SilentlyContinue)) { throw 'Install Node.js 22 or later first: https://nodejs.org/' }
 if (!(Get-Command gh -ErrorAction SilentlyContinue)) { throw 'Install GitHub CLI first: https://cli.github.com/' }
-& gh auth status *> $null
+# PowerShell 5.1 treats redirected native stderr as an exception with Stop.
+# cmd handles the status probe so a missing login can reach the login step.
+& cmd.exe /d /c 'gh auth status >nul 2>&1'
 if ($LASTEXITCODE -ne 0) { & gh auth login --hostname github.com --web; if ($LASTEXITCODE -ne 0) { throw 'GitHub login failed.' } }
 $AuthFile = Join-Path ([System.IO.Path]::GetTempPath()) ('.clan-clasprc-' + [guid]::NewGuid().ToString() + '.json')
 try {
