@@ -14,6 +14,8 @@ jobs:
           node-version: '22'
           cache: npm
       - run: npm ci --ignore-scripts
+      - run: node scripts/test-google-deploy.mjs
+      - run: node scripts/test-error-outbox.mjs
       - run: node scripts/test-google.mjs
       - run: node scripts/test-clans.mjs
       - run: node scripts/test-clan-api.mjs

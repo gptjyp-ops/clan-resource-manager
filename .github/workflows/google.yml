@@ -1,0 +1,53 @@
+name: Update Google Apps Script
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'google/Code.gs'
+      - 'google/Bridge.html'
+      - 'scripts/deploy-google.mjs'
+      - 'scripts/test-google-deploy.mjs'
+      - '.github/workflows/google.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: google-production
+  cancel-in-progress: false
+jobs:
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Test Google backend and deployment
+        run: |
+          node scripts/test-google.mjs
+          node scripts/test-clans.mjs
+          node scripts/test-google-deploy.mjs
+      - name: Check initial account connection
+        id: connection
+        env:
+          GAS_SCRIPT_ID: ${{ secrets.GAS_SCRIPT_ID }}
+          GAS_DEPLOYMENT_ID: ${{ secrets.GAS_DEPLOYMENT_ID }}
+          GAS_OAUTH_JSON: ${{ secrets.GAS_OAUTH_JSON }}
+        run: |
+          node --input-type=module <<'JS'
+          import fs from 'node:fs';
+          const ready=['GAS_SCRIPT_ID','GAS_DEPLOYMENT_ID','GAS_OAUTH_JSON'].every(key=>!!process.env[key]);
+          fs.appendFileSync(process.env.GITHUB_OUTPUT,`ready=${ready}\n`);
+          if(!ready)fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY,'최초 구글 계정 연결 대기 중입니다. 아직 구글에 배포하지 않았습니다. google/AUTO-DEPLOY.md를 확인해주세요.\n');
+          JS
+      - name: Update existing Google web app
+        if: steps.connection.outputs.ready == 'true'
+        env:
+          GAS_SCRIPT_ID: ${{ secrets.GAS_SCRIPT_ID }}
+          GAS_DEPLOYMENT_ID: ${{ secrets.GAS_DEPLOYMENT_ID }}
+          GAS_OAUTH_JSON: ${{ secrets.GAS_OAUTH_JSON }}
+        run: node scripts/deploy-google.mjs

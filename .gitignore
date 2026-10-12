@@ -8,3 +8,8 @@ public/ocr/
 *.tsbuildinfo
 
 node_modules
+
+# Local Google account credentials
+.clasprc*.json
+**/.clasprc*.json
+credentials.json
