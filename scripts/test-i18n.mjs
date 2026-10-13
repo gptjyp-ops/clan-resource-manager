@@ -56,6 +56,14 @@ api.googleEnabled=false;api.savedAccessKey=()=> '';
 const en=renderToStaticMarkup(React.createElement(App));
 for(const s of ['Your clan&#x27;s resources, together','My resources','Clan overview','In-game nickname','Save all four resources','Summon level','Current stage','Green potions'])assert.ok(en.includes(s),s);
 assert.ok(!/[가-힣]/.test(en),'English member form must not contain Korean UI text');
+assert.ok(!en.includes('class="panel member-login"'),'First-time visitors start with registration, not member login');
+assert.ok(en.indexOf('id="registration"')<en.indexOf('class="war-schedule"'),'Registration appears before the schedule for first-time visitors');
+assert.ok(en.includes('Existing member login'));
+values.set('clanMemberRegistered:'+api.activeClanId,'1');
+const returning=renderToStaticMarkup(React.createElement(App));
+assert.ok(returning.indexOf('class="panel member-login"')<returning.indexOf('id="registration"'),'Known members retain login-first access');
+values.delete('clanMemberRegistered:'+api.activeClanId);
+
 const inventory=load('src/lib/inventory.ts');assert.equal(inventory.quantity('3.3k'),3300);assert.equal(inventory.quantity('0'),0);
 i18n.setLanguage('ko');assert.equal(document.documentElement.lang,'ko');assert.equal(i18n.guidePath(),'guide.html');const ko=renderToStaticMarkup(React.createElement(App));assert.ok(ko.includes('내 재화 등록'));assert.ok(ko.includes('현재 단계'));
 assert.equal(i18n.translate('Saved all resources for Member123.','ko'),'Member123님의 all resources를 저장했습니다.');
