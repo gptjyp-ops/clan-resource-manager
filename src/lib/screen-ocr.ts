@@ -1,7 +1,7 @@
 import {newScanReport,missingIssues,ScanFailure} from './scan-diagnostics';
 import {parseNumber} from './ocr';
 import type {PhotoKind,Group,Item} from './inventory';
-import {locateRegions,ratioCandidates,digitBands,amountDecimal,cleanAmountPixels} from './screen-layout';
+import {locateRegions,ratioCandidates,digitBands,amountDecimal,cleanAmountPixels,isSummonPhotoInMergeSlot} from './screen-layout';
 import {maximumStatus} from './summon-status';
 export type Region={field:'amount'|'level'|'ratio'|'selected';rect:[number,number,number,number];mode:'white'|'black'|'yellow'|'mixed'|'raw'};
 export const regions:Record<PhotoKind,Region[]>={
@@ -19,9 +19,16 @@ export function parseRead(field:Region['field'],text:string):Partial<Item>{let t
 export const groupFor=(kind:PhotoKind):Group=>kind.startsWith('egg')?'egg':kind.startsWith('mount')?'mount':kind as Group;
 export async function scanScreen(file:File,kind:PhotoKind,onProgress:(n:number)=>void,fresh=false){
  const diagnostics=newScanReport(file,kind,fresh);let bitmap:ImageBitmap;try{bitmap=await createImageBitmap(file);}catch{diagnostics.issues=[{code:'IMG-01',message:'사진 파일을 열지 못했습니다.'}];throw new ScanFailure(diagnostics);}diagnostics.image.width=bitmap.width;diagnostics.image.height=bitmap.height;let phase:'load'|'read'='load';let worker:any,koreanWorker:any;const item:Partial<Item>={};const original:string[]=[];
- try{const {createWorker,PSM}=await import('tesseract.js');const options={workerPath:import.meta.env.BASE_URL+'ocr/worker.min.js',corePath:import.meta.env.BASE_URL+(fresh?'ocr/tesseract-core-lstm.wasm.js':'ocr'),cacheMethod:fresh?'none' as const:undefined,errorHandler:()=>{},langPath:import.meta.env.BASE_URL+'ocr/lang',workerBlobURL:false};worker=await createWorker('eng',1,options);
- phase='read';const overview=document.createElement('canvas');overview.width=400;overview.height=Math.round(bitmap.height*400/bitmap.width);const overviewContext=overview.getContext('2d')!;overviewContext.drawImage(bitmap,0,0,overview.width,overview.height);
- const adaptive:Partial<Record<Region['field'],Region>>={};for(const r of locateRegions(overviewContext.getImageData(0,0,overview.width,overview.height),kind))adaptive[r.field]=r;
+ try{
+ const overview=document.createElement('canvas');overview.width=400;overview.height=Math.round(bitmap.height*400/bitmap.width);const overviewContext=overview.getContext('2d')!;overviewContext.drawImage(bitmap,0,0,overview.width,overview.height);
+ const overviewPixels=overviewContext.getImageData(0,0,overview.width,overview.height);
+ if(isSummonPhotoInMergeSlot(overviewPixels,kind)){
+  diagnostics.issues=[{code:'OCR-06',field:'selected',message:'합성 칸에 일반 소환 화면을 올렸습니다. ‘선택됨’ 숫자가 보이는 합성 화면을 올려주세요.'}];
+  onProgress(100);return {item,original,diagnostics};
+ }
+ const {createWorker,PSM}=await import('tesseract.js');const options={workerPath:import.meta.env.BASE_URL+'ocr/worker.min.js',corePath:import.meta.env.BASE_URL+(fresh?'ocr/tesseract-core-lstm.wasm.js':'ocr'),cacheMethod:fresh?'none' as const:undefined,errorHandler:()=>{},langPath:import.meta.env.BASE_URL+'ocr/lang',workerBlobURL:false};worker=await createWorker('eng',1,options);
+ phase='read';
+ const adaptive:Partial<Record<Region['field'],Region>>={};for(const r of locateRegions(overviewPixels,kind))adaptive[r.field]=r;
  for(let k=0;k<regions[kind].length;k++){
  const fallback=regions[kind][k],candidates=fallback.field==='selected'?(adaptive.selected?[adaptive.selected]:[]):adaptive[fallback.field]?(fallback.field==='amount'?[adaptive.amount!]:[...ratioCandidates(adaptive[fallback.field]!),fallback]):[fallback];
  for(const r of candidates){const canvas=document.createElement('canvas');const [x,y,w,h]=r.rect;const scale=Math.min(750/(bitmap.width*w),160/(bitmap.height*h));const cw=Math.round(bitmap.width*w*scale),ch=Math.round(bitmap.height*h*scale);canvas.width=cw;canvas.height=ch;const ctx=canvas.getContext('2d')!;ctx.drawImage(bitmap,bitmap.width*x,bitmap.height*y,bitmap.width*w,bitmap.height*h,0,0,cw,ch);

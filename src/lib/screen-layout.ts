@@ -15,7 +15,11 @@ export function cleanAmountPixels(p:Pixels):Pixels{
   let nextInk=p.width;
   if(minX===0&&maxX<p.width*.15){for(let x=maxX+1;x<p.width&&nextInk===p.width;x++)for(let y=minY;y<=maxY;y++)if(data[(y*p.width+x)*4]<100){nextInk=x;break;}}
   const distantLeftIcon=nextInk<p.width&&nextInk-maxX>p.height*.5;
-  if(distantLeftIcon||maxX-minX+1>p.width*.6||(maxY-minY+1>p.height*.9&&maxX-minX+1>p.width*.15))for(let n=0;n<write;n++){const i=queue[n]*4;data[i]=data[i+1]=data[i+2]=255;}
+  // A thin rounded-bar edge may span the entire crop height. Its top
+  // and bottom contact distinguish it from a clipped k or a clipped digit.
+  const fullHeightFrame=minY===0&&maxY===p.height-1&&(minX===0||maxX===p.width-1);
+  const edgeCorner=(minY===0||maxY===p.height-1)&&(minX===0||maxX===p.width-1)&&maxY-minY+1<p.height*.35;
+  if(edgeCorner||fullHeightFrame||distantLeftIcon||maxX-minX+1>p.width*.6||(maxY-minY+1>p.height*.9&&maxX-minX+1>p.width*.15))for(let n=0;n<write;n++){const i=queue[n]*4;data[i]=data[i+1]=data[i+2]=255;}
  };
  for(let x=0;x<p.width;x++){clear(x);clear((p.height-1)*p.width+x);}for(let y=0;y<p.height;y++){clear(y*p.width);clear(y*p.width+p.width-1);}
  // Tiny antialiasing speckles between a clipped icon and the digits can
@@ -77,7 +81,7 @@ export function findLandmarks(p:Pixels,kind:PhotoKind):{amount?:Box;info?:Box;pr
   bars.sort((a,b)=>a.y-b.y);result.amount=bars[0];
   // Small captures lose dark edge pixels when scaled down. Keep the filled
   // information icon, while excluding the much sparser notification rings.
-  const circles=components(p,{x:.70*w,y:.43*h,width:.17*w,height:.44*h},(r,g,b)=>Math.max(r,g,b)<90,.50)
+  const circles=components(p,{x:.62*w,y:.43*h,width:.30*w,height:.44*h},(r,g,b)=>Math.max(r,g,b)<90,.50)
    .filter(b=>b.width>.025*w&&b.width<.075*w&&b.height/b.width>.8&&b.height/b.width<1.25);
   circles.sort((a,b)=>b.y-a.y);result.info=circles[0];
   if(result.info){const info=result.info,cx=info.x+info.width/2,bottom=info.y+info.height;
@@ -113,15 +117,24 @@ export function findLandmarks(p:Pixels,kind:PhotoKind):{amount?:Box;info?:Box;pr
  }
  return result;
 }
+// Detect a normal summon screen supplied to a merge slot. Require both
+// the resource header and the information icon; missing text alone is not proof.
+export function isSummonPhotoInMergeSlot(p:Pixels,kind:PhotoKind):boolean{
+ if(kind!=='eggMerge'&&kind!=='mountMerge')return false;
+ if(findLandmarks(p,kind).selected)return false;
+ const normal=findLandmarks(p,kind==='eggMerge'?'egg':'mount');
+ return !!normal.amount&&!!normal.info;
+}
 export type LocatedRegion={field:'amount'|'level'|'ratio'|'selected';rect:[number,number,number,number];mode:'white'|'black'|'yellow'|'mixed'|'raw';alternativeRect?:[number,number,number,number]};
 export function locateRegions(p:Pixels,kind:PhotoKind):LocatedRegion[]{
  const landmarks=findLandmarks(p,kind),out:LocatedRegion[]=[],w=p.width;
  const rect=(x:number,y:number,width:number,height:number):LocatedRegion['rect']=>[x/w,y/p.height,width/w,height/p.height];
  if(landmarks.amount){const b=landmarks.amount,pad=kind==='potion'?2:.005*w;out.push({field:'amount',rect:rect(b.x-pad,b.y-pad,b.width+2*pad,b.height+2*pad),mode:kind==='potion'?(landmarks.amountMode||'yellow'):'white'});}
  if(landmarks.info){const b=landmarks.info,cx=b.x+b.width/2,bottom=b.y+b.height;
-  out.push({field:'level',rect:rect(cx-.055*w,bottom+.003*w,.11*w,.035*w),mode:'black'});
-  const bar=landmarks.progressBar;
-  out.push({field:'ratio',rect:rect(cx-.058*w,bottom+.044*w,.116*w,.023*w),mode:'mixed',alternativeRect:bar?rect(bar.x-2,bar.y-1,bar.width+4,Math.min(bar.height,.034*w)+2):undefined});
+  const bar=landmarks.progressBar,levelY=bottom+.003*w;
+  const levelHeight=bar?Math.max(.014*w,Math.min(.035*w,bar.y-.002*w-levelY)):.035*w;
+  out.push({field:'level',rect:rect(cx-.055*w,levelY,.11*w,levelHeight),mode:'black'});
+  out.push({field:'ratio',rect:bar?rect(cx-.058*w,bar.y+1,.116*w,Math.min(bar.height-2,.026*w)):rect(cx-.058*w,bottom+.044*w,.116*w,.023*w),mode:'mixed',alternativeRect:bar?rect(bar.x-2,bar.y-1,bar.width+4,Math.min(bar.height,.034*w)+2):undefined});
  }
  if(landmarks.selected){const b=landmarks.selected,pad=.005*w;out.push({field:'selected',rect:rect(b.x-pad,b.y-pad,b.width+2*pad,b.height+2*pad),mode:'black'});}
  return out;

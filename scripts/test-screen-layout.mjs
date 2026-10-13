@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import ts from 'typescript';
 const source=ts.transpileModule(fs.readFileSync('src/lib/screen-layout.ts','utf8'),{compilerOptions:{module:ts.ModuleKind.ESNext,target:ts.ScriptTarget.ES2022}}).outputText;
-const {findLandmarks,locateRegions,ratioCandidates,digitBands,amountDecimal,cleanAmountPixels}=await import('data:text/javascript;base64,'+Buffer.from(source).toString('base64'));
+const {findLandmarks,locateRegions,ratioCandidates,digitBands,amountDecimal,cleanAmountPixels,isSummonPhotoInMergeSlot}=await import('data:text/javascript;base64,'+Buffer.from(source).toString('base64'));
 // Three narrow neighbouring 1s must remain three glyphs even when the OCR
 // engine returns a syntactically valid single 1. Ignore isolated speckles.
 const numeric={width:90,height:50,data:new Uint8ClampedArray(90*50*4).fill(255)};
@@ -160,3 +160,19 @@ const noisyIcon={width:500,height:160,data:new Uint8ClampedArray(500*160*4).fill
 function ink(x,y,w,h){for(let row=y;row<y+h;row++)for(let col=x;col<x+w;col++)noisyIcon.data.set([0,0,0,255],(row*500+col)*4);}
 ink(0,0,30,51);ink(38,36,2,2);for(const x of [304,364,415])ink(x,35,30,66);
 assert.equal(amountDecimal(cleanAmountPixels(noisyIcon),'651'),'651');
+
+// Separate rounded-bar corners must not combine into a spurious tall glyph.
+const corners={...numeric,data:new Uint8ClampedArray(numeric.data)};
+for(let y=0;y<8;y++)for(let x=84;x<90;x++)corners.data.set([0,0,0,255],(y*90+x)*4);
+for(let y=43;y<50;y++)for(let x=84;x<90;x++)corners.data.set([0,0,0,255],(y*90+x)*4);
+assert.equal(amountDecimal(cleanAmountPixels(corners),'114'),'114');
+assert.equal(amountDecimal(cleanAmountPixels(corners),'14'),null);
+const wider=image(62,660);
+for(let y=650;y<=670;y++)for(let x=302;x<=322;x++)wider.data.set([255,255,255,255],(y*400+x)*4);
+for(let y=650;y<=670;y++)for(let x=272;x<=292;x++)if((x-282)**2+(y-660)**2<=100)wider.data.set([0,0,0,255],(y*400+x)*4);
+assert.equal(findLandmarks(wider,'skill').info.x,272);
+assert.ok(locateRegions(wider,'skill').some(r=>r.field==='level'));
+assert.equal(isSummonPhotoInMergeSlot(a,'eggMerge'),true);
+assert.equal(isSummonPhotoInMergeSlot(mergeImage(0),'eggMerge'),false);
+assert.equal(isSummonPhotoInMergeSlot(a,'skill'),false);
+console.log('Rounded corners, wide-screen information anchors and wrong merge-screen detection passed.');

@@ -1,5 +1,5 @@
 import {photoKinds,type Item,type PhotoKind} from './inventory';
-export const scanVersion='2026-10-13.2';
+export const scanVersion='2026-10-13.3';
 export type ScanField='amount'|'level'|'ratio'|'selected';
 export type ScanAttempt={field:ScanField;source:'adaptive'|'fallback';text:string};
 export type ScanIssue={code:string;field?:ScanField;message:string};

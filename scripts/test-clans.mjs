@@ -139,3 +139,8 @@ for(const i of [0,1,2,5,6,7,10])assert.equal(sheets.get('clans').rows[2][i],regi
 for(const sheet of sheets.values())assert.equal(JSON.stringify(sheet.rows).includes('replacement-admin-password'),false);
 assert.equal(JSON.stringify(recovered).includes('replacement-admin-password'),false);
 console.log('Operator admin recovery preserves clan identity, invite, resources and photos; clears locks and sessions without exposing passwords.');
+
+const wrongScreenReport={version:'2026-10-13.3',kind:'eggMerge',mode:'일반',image:{bytes:123,type:'image/jpeg',width:1080,height:2340},issues:[{code:'OCR-06',field:'selected'}],attempts:[]};
+assert.equal(call('report',{...access(b),id:crypto.randomUUID(),report:wrongScreenReport}).ok,true);
+assert.equal(call('report',{...access(b),id:crypto.randomUUID(),report:{...wrongScreenReport,issues:[{code:'OCR-07',field:'selected'}]}}).ok,false);
+console.log('Wrong-screen diagnostics can be saved automatically; unknown error codes remain rejected.');

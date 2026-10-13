@@ -184,7 +184,7 @@ function reportScan_(p,clan){
  var r=p.report,fields=['amount','level','ratio','selected'];
  if(!r||KINDS_.indexOf(r.kind)<0||typeof r.version!=='string'||!/^\d{4}-\d{2}-\d{2}\.\d+$/.test(r.version)||['일반','호환'].indexOf(r.mode)<0)throw Error('오류 진단 형식을 확인해주세요.');
  if(!Array.isArray(r.issues)||!r.issues.length||r.issues.length>8||!Array.isArray(r.attempts)||r.attempts.length>30)throw Error('오류 진단 형식을 확인해주세요.');
- var issues=r.issues.map(function(i){if(!i||! /^(OCR-0[1-5]|IMG-0[12])$/.test(i.code)||i.field!==undefined&&fields.indexOf(i.field)<0)throw Error('오류 진단 형식을 확인해주세요.');return {code:i.code,field:i.field||''};});
+ var issues=r.issues.map(function(i){if(!i||! /^(OCR-0[1-6]|IMG-0[12])$/.test(i.code)||i.field!==undefined&&fields.indexOf(i.field)<0)throw Error('오류 진단 형식을 확인해주세요.');return {code:i.code,field:i.field||''};});
  var attempts=r.attempts.map(function(a){if(!a||fields.indexOf(a.field)<0||['adaptive','fallback'].indexOf(a.source)<0||typeof a.text!=='string')throw Error('오류 진단 형식을 확인해주세요.');return {field:a.field,source:a.source,text:a.text.replace(/[^0-9.,/kKmMbB\s]/g,'').slice(0,80)};});
  var image={};['bytes','width','height'].forEach(function(k){var n=r.image&&r.image[k];if(n!==undefined){if(!Number.isSafeInteger(n)||n<0||n>100000000)throw Error('오류 진단 형식을 확인해주세요.');image[k]=n;}});image.type=r.image&&/^image\/(png|jpeg|webp)$/.test(r.image.type)?r.image.type:'unknown';
  var lock=LockService.getScriptLock();if(!lock.tryLock(15000))throw Error('다른 요청을 처리 중입니다. 잠시 후 다시 시도해주세요.');
