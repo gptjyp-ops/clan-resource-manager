@@ -418,5 +418,17 @@
   "사진은 JPG, PNG, WEBP로 10MB 이하로 올려주세요.": "Upload a JPG, PNG or WEBP photo no larger than 10MB.",
   "사진 인식 처리 중 오류가 발생했습니다.": "An error occurred while recognizing the photo.",
   "오류 사진과 인식 기록을 자동 저장합니다. 전송 실패 시 이 기기에 보관하고 다시 시도합니다.": "Error photos and recognition logs are saved automatically. Failed transfers stay on this device and retry.",
-  "오류를 이 기기에 보관했습니다. 연결되면 자동으로 다시 전송합니다.": "The error is saved on this device and will retry when connected."
+  "오류를 이 기기에 보관했습니다. 연결되면 자동으로 다시 전송합니다.": "The error is saved on this device and will retry when connected.",
+  "클랜전 일차별 일정": "Clan war daily schedule",
+  "1~6일차 항목과 승점 확인": "View objectives and victory points for Days 1–6",
+  "일차별 항목과 승점": "Daily objectives and victory points",
+  "승점": "Victory points",
+  "안내 이미지 다운로드": "Download schedule image",
+  "장비 제작": "Craft equipment",
+  "대장간": "Forge",
+  "던전": "Dungeons",
+  "기술 트리": "Tech tree",
+  "라이벌전": "Rival battle",
+  "전면전": "All-out war",
+  "펫": "Pets"
 }

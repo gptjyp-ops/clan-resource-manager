@@ -200,3 +200,22 @@ html[lang="en"] .panel-heading{flex-wrap:wrap;gap:8px}
 .reset-confirm{display:block;margin:16px 0;font-size:13px;line-height:1.6}.reset-confirm input{width:auto;margin-right:8px}
 
 .recovery-receipt{padding:16px;border:1px solid var(--border);border-radius:12px;margin-bottom:16px}.recovery-code{display:block;overflow-wrap:anywhere;white-space:normal;user-select:all;font-size:16px;padding:12px;background:rgba(255,255,255,.05);border-radius:8px;margin:12px 0}.self-recovery summary{cursor:pointer;margin:12px 0}.self-recovery .save-mode{margin:16px 0}
+
+/* Shared, collapsible day-by-day clan war guide. */
+.war-schedule{margin:0 0 24px;border:1px solid #2c394f;border-radius:14px;background:#142033;overflow:hidden}
+.war-schedule>summary{display:flex;align-items:center;gap:13px;padding:16px 20px;cursor:pointer;list-style:none;color:#ffca7e;min-height:64px}
+.war-schedule>summary::-webkit-details-marker{display:none}
+.war-schedule>summary span{display:grid;gap:2px;flex:1;min-width:0}
+.war-schedule>summary strong{font-size:16px;color:#eaf1fa}
+.war-schedule>summary small{font-size:12px;color:#9fb1c8}
+.schedule-chevron{transition:transform .15s}
+.war-schedule[open] .schedule-chevron{transform:rotate(180deg)}
+.war-schedule-body{border-top:1px solid #2c394f;padding:20px}
+.war-schedule-body .photo-preview{max-width:720px;margin:0 auto;background:#0b1422}
+.war-schedule-body .photo-preview img{width:100%;height:auto;max-height:none}
+.schedule-download{display:flex;align-items:center;justify-content:center;gap:8px;margin:18px auto 0;width:fit-content;min-height:44px;border:1px solid #43536c;border-radius:9px;padding:8px 16px;font-size:14px;color:#c6d6ea}
+.schedule-text{list-style:none;margin:20px auto;padding:0;max-width:720px}
+.schedule-text li{display:flex;flex-wrap:wrap;gap:8px 18px;padding:12px 0;border-bottom:1px solid #2c394f}
+.schedule-text strong{color:#ffca7e;min-width:140px}
+@media(max-width:600px){.war-schedule>summary{padding:13px 15px}.war-schedule-body{padding:10px}.war-schedule{margin-bottom:20px}}
+@media(prefers-reduced-motion:reduce){.schedule-chevron{transition:none}}
