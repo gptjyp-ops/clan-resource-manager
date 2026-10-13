@@ -53,7 +53,8 @@ const statusSource=ts.transpileModule(fs.readFileSync('src/lib/summon-status.ts'
 const {maximumStatus}=await import('data:text/javascript;base64,'+Buffer.from(statusSource).toString('base64'));
 assert.deepEqual(maximumStatus('최대'),{level:'100',progress:'',target:''});
 assert.deepEqual(maximumStatus('Lv. 100\n최 대'),{level:'100',progress:'',target:''});
-for(const text of ['41/110','100','최대 5MB','최대치'])assert.deepEqual(maximumStatus(text),{});
+for(const label of ['Maxed','MAXED','Max','M a x e d'])assert.deepEqual(maximumStatus(label),{level:'100',progress:'',target:''});
+for(const text of ['41/110','100','최대 5MB','최대치','Maxed 5MB','Maximum damage'])assert.deepEqual(maximumStatus(text),{});
 console.log('Screen landmarks and maximum summon level checks passed');
 
 const narrow={field:'ratio',mode:'mixed',rect:[.69,.81,.116,.013]};
@@ -144,3 +145,18 @@ const distant={width:200,height:50,data:new Uint8ClampedArray(200*50*4).fill(255
 for(const left of [0,100,130,160])for(let y=10;y<40;y++)for(let x=left;x<left+8;x++)distant.data.set([0,0,0,255],(y*200+x)*4);
 assert.equal(amountDecimal(cleanAmountPixels(distant),'822'),'822');
 console.log('Resource bar frame and missing unit regression checks passed');
+
+// A 543px PC screenshot downscales its vial body to exactly 12px high.
+const pcPotion={width:400,height:723,data:new Uint8ClampedArray(400*723*4).fill(255)};
+function pcPaint(x,y,w,h,color){for(let row=y;row<y+h;row++)for(let col=x;col<x+w;col++)pcPotion.data.set([...color,255],(row*400+col)*4);}
+pcPaint(18,14,59,16,[100,100,100]);pcPaint(9,20,12,12,[20,220,20]);
+assert.equal(findLandmarks(pcPotion,'potion').amount.y,14);assert.equal(locateRegions(pcPotion,'potion')[0].mode,'mixed');
+// A small green plus near a first-row red potion is not a vial.
+pcPaint(9,20,12,12,[255,255,255]);pcPaint(13,23,7,7,[20,220,20]);
+assert.equal(findLandmarks(pcPotion,'potion').amount,undefined);
+console.log('Small PC vial and English Maxed regressions passed');
+// A tiny speckle must not protect a clipped vial fragment far left of 651.
+const noisyIcon={width:500,height:160,data:new Uint8ClampedArray(500*160*4).fill(255)};
+function ink(x,y,w,h){for(let row=y;row<y+h;row++)for(let col=x;col<x+w;col++)noisyIcon.data.set([0,0,0,255],(row*500+col)*4);}
+ink(0,0,30,51);ink(38,36,2,2);for(const x of [304,364,415])ink(x,35,30,66);
+assert.equal(amountDecimal(cleanAmountPixels(noisyIcon),'651'),'651');

@@ -5,5 +5,5 @@ export function ascensionStatus(level:string):string{
 }
 export function maximumStatus(text:string):Partial<Item>{
  // Only a complete label in the summon-info crop counts as maximum.
- return text.split(/\r?\n/).some(line=>line.replace(/\s/g,'')==='최대')?{level:'100',progress:'',target:''}:{};
+ return text.split(/\r?\n/).some(line=>/^(최대|maxed|max)$/i.test(line.replace(/\s/g,'')))?{level:'100',progress:'',target:''}:{};
 }

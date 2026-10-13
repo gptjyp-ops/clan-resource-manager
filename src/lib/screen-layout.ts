@@ -18,6 +18,12 @@ export function cleanAmountPixels(p:Pixels):Pixels{
   if(distantLeftIcon||maxX-minX+1>p.width*.6||(maxY-minY+1>p.height*.9&&maxX-minX+1>p.width*.15))for(let n=0;n<write;n++){const i=queue[n]*4;data[i]=data[i+1]=data[i+2]=255;}
  };
  for(let x=0;x<p.width;x++){clear(x);clear((p.height-1)*p.width+x);}for(let y=0;y<p.height;y++){clear(y*p.width);clear(y*p.width+p.width-1);}
+ // Tiny antialiasing speckles between a clipped icon and the digits can
+ // defeat the component gap check. Compare only full-height glyph bands.
+ const glyphs=digitBands({...p,data}),first=glyphs[0],next=glyphs[1];
+ if(first&&next&&first.x===0&&first.width<p.width*.15&&next.x-(first.x+first.width)>p.height*.5){
+  for(let y=0;y<p.height;y++)for(let x=0;x<first.width;x++){const i=(y*p.width+x)*4;data[i]=data[i+1]=data[i+2]=255;}
+ }
  return {...p,data};
 }
 
@@ -92,7 +98,7 @@ export function findLandmarks(p:Pixels,kind:PhotoKind):{amount?:Box;info?:Box;pr
    const green=components(p,{x:left,y:top,width:right-left,height:bottom-top},(r,g,b)=>g>110&&g>r*1.5&&g>b*1.4&&r<150&&b<160,.15);
    // The diagonal vial body sits LEFT of the gray bar; '+' buttons sit
    // on its edge and are smaller. A diagonal body need not look vertical.
-   return green.some(b=>b.height>.03*w&&b.x+b.width/2<bar.x);
+   return green.some(b=>b.height>=.025*w&&b.width>=.01*w&&b.x+b.width/2<bar.x);
   });
   if(vialBar){result.amount=vialBar;result.amountMode='mixed';return result;}
   const digits=components(p,{x:.08*w,y:0,width:.32*w,height:.24*h},(r,g,b)=>r>150&&g>150&&b<140)
