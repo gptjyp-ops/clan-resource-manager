@@ -470,5 +470,9 @@
   "개인 티켓이 유효하지 않습니다.": "The personal ticket is invalid.",
   "개인 티켓이 만료되었거나 유효하지 않습니다. 다시 로그인하거나 클랜장에게 복구를 요청해주세요.": "The ticket is invalid or has been replaced. Sign in again or ask your clan leader for recovery.",
   "개인 티켓 기능을 업데이트 중입니다. 잠시 후 다시 시도해주세요.": "Personal tickets are being updated. Please try again shortly.",
-  "먼저 티켓에 해당하는 클랜에 입장해주세요.": "Please enter the clan for this ticket first."
+  "먼저 티켓에 해당하는 클랜에 입장해주세요.": "Please enter the clan for this ticket first.",
+  "개인 티켓이 발급되었습니다. 티켓 이미지를 저장해주세요.": "Your personal ticket is ready. Please save the ticket image.",
+  "다음 로그인에 필요합니다. 아래 버튼으로 이미지를 저장하고 사진 앱이나 다운로드 폴더에서 확인해주세요.": "You will need it to sign in again. Save the image below and check your Photos app or Downloads folder.",
+  "저장이 시작되었습니다. 휴대폰에서는 열린 이미지를 길게 눌러 저장해야 할 수 있습니다.": "The download has started. On a phone, you may need to press and hold the opened image to save it.",
+  "이미지를 보관했어요": "I have kept the image"
 }
