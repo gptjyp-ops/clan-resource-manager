@@ -1,3 +1,4 @@
+import {rememberTicket,type MemberTicket} from './member-ticket';
 import type {ScanReport} from './scan-diagnostics';
 import type {Inventory,PhotoKind,ChangedFields} from './inventory';
 import {googleScriptUrl} from './google-config';
@@ -93,4 +94,16 @@ export async function issueOperatorRecoveryCode(password:string){
  const capability=await rpc('list',{operation:'capabilities'});
  if(!capability.operatorRecovery)throw Error('운영자 복구 코드는 구글 스크립트 업데이트 후 사용할 수 있습니다.');
  return rpc('list',{operation:'issueOperatorRecoveryCode',password});
+}
+
+export type MemberRecord={nickname:string;details:Inventory;photos:Partial<Record<PhotoKind,string>>;updated_at:string};
+export async function enterMemberTicket(ticket:MemberTicket):Promise<MemberRecord>{
+ const r=await rpc('list',{operation:'ticketEnter',clanId:ticket.clanId,nickname:ticket.nickname,token:ticket.token}) as Reply & {record:MemberRecord};
+ if(ticket.clanId===activeClanId){accessKey=r.entryAccessKey||'';sessionStorage.setItem(keySlot,accessKey);}
+ rememberTicket(ticket);return r.record;
+}
+export async function issueMemberTicket(nickname:string,password:string){
+ const capability=await rpc('list',{operation:'capabilities'}) as Reply & {memberTickets?:boolean};
+ if(!capability.memberTickets)throw Error('개인 티켓 기능을 업데이트 중입니다. 잠시 후 다시 시도해주세요.');
+ return rpc('list',{operation:'issueMemberTicket',nickname,password}) as Promise<Reply & {token:string;record:MemberRecord}>;
 }

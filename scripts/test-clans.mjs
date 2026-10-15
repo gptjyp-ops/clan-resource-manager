@@ -144,3 +144,30 @@ const wrongScreenReport={version:'2026-10-13.3',kind:'eggMerge',mode:'일반',im
 assert.equal(call('report',{...access(b),id:crypto.randomUUID(),report:wrongScreenReport}).ok,true);
 assert.equal(call('report',{...access(b),id:crypto.randomUUID(),report:{...wrongScreenReport,issues:[{code:'OCR-07',field:'selected'}]}}).ok,false);
 console.log('Wrong-screen diagnostics can be saved automatically; unknown error codes remain rejected.');
+
+// Ticket credentials are isolated by clan and member; no private record or raw
+// bearer is exposed by public roster reads. Reissuing and recovery revoke them.
+const ticketClan=action('createClan',{name:'Ticket clan',server:'27',password:'ticket-admin-password'});
+const ticketUser={...access(ticketClan),nickname:'TicketUser',password:'first-password',inventory,photos:[]};
+assert.equal(call('save',ticketUser).ok,true);
+const beforeTicket=call('list',access(ticketClan)).records;
+assert.equal(action('issueMemberTicket',{...access(ticketClan),nickname:'TicketUser',password:'incorrect'}).ok,false);
+const issued=action('issueMemberTicket',{...access(ticketClan),nickname:'TicketUser',password:'first-password'});
+assert.equal(issued.ok,true);assert.match(issued.token,/^[a-f0-9]{64}$/);
+assert.deepEqual(call('list',access(ticketClan)).records,beforeTicket,'Conversion must not change resources, photos or update time');
+const entry={clanId:ticketClan.clan.id,nickname:'TicketUser',token:issued.token};
+assert.equal(action('ticketEnter',entry).ok,true);
+assert.equal(action('ticketEnter',{...entry,clanId:a.clan.id}).ok,false);
+assert.equal(action('ticketEnter',{...entry,nickname:'AnotherUser'}).ok,false);
+assert.equal(action('ticketEnter',{...entry,token:'0'.repeat(64)}).ok,false);
+assert.equal(call('save',{...ticketUser,password:issued.token}).ok,true);
+assert.equal(call('save',ticketUser).ok,false,'Old password stops working after explicit ticket conversion');
+const rotatedTicket=action('issueMemberTicket',{...access(ticketClan),nickname:'TicketUser',password:issued.token});
+assert.equal(rotatedTicket.ok,true);assert.equal(action('ticketEnter',entry).ok,false);
+assert.equal(action('ticketEnter',{...entry,token:rotatedTicket.token}).ok,true);
+assert.equal(JSON.stringify(call('list',access(ticketClan))).includes(rotatedTicket.token),false);
+assert.equal([...sheets.values()].some(sheet=>JSON.stringify(sheet.rows).includes(rotatedTicket.token)),false);
+assert.equal(action('resetMemberPassword',{clanId:ticketClan.clan.id,adminToken:ticketClan.adminToken,nickname:'TicketUser',newPassword:'restored-password'}).ok,true);
+assert.equal(action('ticketEnter',{...entry,token:rotatedTicket.token}).ok,false);
+assert.equal(action('memberLogin',{...access(ticketClan),nickname:'TicketUser',password:'restored-password'}).ok,true);
+console.log('Ticket conversion, revocation, recovery and member/clan authorization passed.');

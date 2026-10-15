@@ -18,6 +18,7 @@ jobs:
       - run: node scripts/test-error-outbox.mjs
       - run: node scripts/test-google.mjs
       - run: node scripts/test-clans.mjs
+      - run: node scripts/test-member-ticket.mjs
       - run: node scripts/test-clan-api.mjs
       - run: node scripts/test-screen-layout.mjs
       - run: node scripts/test-photo-input.mjs
