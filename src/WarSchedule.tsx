@@ -13,12 +13,14 @@ const days=[
 export default function WarSchedule(){
  useLanguage();
  const src=import.meta.env.BASE_URL+'images/clan-war-schedule.png';
- return <details className="war-schedule">
+ return <details className="war-schedule" open>
   <summary><CalendarDays size={21} aria-hidden="true"/><span><strong>{t('클랜전 일차별 일정')}</strong><small>{t('1~6일차 항목과 승점 확인')}</small></span><ChevronDown className="schedule-chevron" size={20} aria-hidden="true"/></summary>
   <div className="war-schedule-body">
-   <PhotoPreview src={src} alt={t('클랜전 일차별 일정')}/>
-   <ol className={getLanguage()==='en'?'schedule-text':'sr-only'} aria-label={t('일차별 항목과 승점')}>{days.map(({day,points,tasks})=><li key={day}><strong>DAY {day} · {t('승점')} {points}</strong><span>{tasks.map(task=>t(task)).join(' · ')}</span></li>)}</ol>
-   <a className="schedule-download" href={src} download="POTATO-clan-war-schedule.png"><Download size={16} aria-hidden="true"/>{t('안내 이미지 다운로드')}</a>
+   <ol className="schedule-text" aria-label={t('일차별 항목과 승점')}>{days.map(({day,points,tasks})=><li key={day}>
+    <div className="schedule-day-heading"><strong>{getLanguage()==='en'?'DAY '+day:day+t('일차')}</strong><span className="schedule-points">{t('승점')} {points}</span></div>
+    <ul className="schedule-tasks">{tasks.map(task=><li key={task}>{t(task)}</li>)}</ul>
+   </li>)}</ol>
+   <details className="schedule-poster"><summary>{t('전체 안내 이미지 보기 · 확대')}</summary><PhotoPreview src={src} alt={t('클랜전 일차별 일정')}/><a className="schedule-download" href={src} download="POTATO-clan-war-schedule.png"><Download size={16} aria-hidden="true"/>{t('안내 이미지 다운로드')}</a></details>
   </div>
  </details>;
 }
