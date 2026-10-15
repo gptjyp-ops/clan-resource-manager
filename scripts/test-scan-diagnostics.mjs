@@ -36,3 +36,14 @@ reports=updateScanReports(reports,failure('egg'));
 assert.deepEqual(visibleScanReports(reports,'egg').map(r=>r.kind),['egg','eggMerge']);
 assert.deepEqual(visibleScanReports({},undefined),[]);
 console.log('Independent summon/merge failures survive successful scans and clear only on matching success.');
+
+// Wrong or unsupported screens explain exactly which screenshot is required.
+const wrongMount=missingIssues('mount',{}, {amount:{}});
+assert.equal(wrongMount.length,1);assert.equal(wrongMount[0].code,'OCR-06');
+assert.match(wrongMount[0].message,/탈것 소환 화면/);assert.match(wrongMount[0].message,/기부/);
+const wrongSkill=missingIssues('skill',{},{});assert.equal(wrongSkill[0].code,'OCR-06');assert.match(wrongSkill[0].message,/클랜전 점수표/);
+assert.match(missingIssues('egg',{}, {})[0].message,/알 \/ 펫 소환 화면/);
+assert.equal(missingIssues('mount',{}, {level:{},ratio:{}})[0].code,'OCR-02','Located but unreadable status remains a number-reading error');
+assert.equal(missingIssues('mount',{amount:'10k',level:'100'},{}).length,0);
+assert.equal(missingIssues('mount',{amount:'10k',level:'93',progress:'0',target:'20'},{}).length,0);
+console.log('Wrong screen guidance, ordinary OCR failures, zero progress and maximum level passed.');

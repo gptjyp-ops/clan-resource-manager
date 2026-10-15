@@ -1,5 +1,5 @@
 import {photoKinds,type Item,type PhotoKind} from './inventory';
-export const scanVersion='2026-10-13.3';
+export const scanVersion='2026-10-15.1';
 export type ScanField='amount'|'level'|'ratio'|'selected';
 export type ScanAttempt={field:ScanField;source:'adaptive'|'fallback';text:string};
 export type ScanIssue={code:string;field?:ScanField;message:string};
@@ -12,6 +12,18 @@ export function visibleScanReports(reports:ScanReports,latest?:PhotoKind):ScanRe
 }
 const labels:Record<ScanField,string>={amount:'보유 수량',level:'소환 레벨',ratio:'현재 단계',selected:'합성 수량'};
 export function missingIssues(kind:PhotoKind,item:Partial<Item>,located:Partial<Record<ScanField,unknown>>):ScanIssue[]{
+ // If neither the summon status nor its landmark was found, explain the
+ // expected screenshot instead of presenting three unexplained number errors.
+ // A located-but-unreadable status remains an ordinary OCR error.
+ const noStatus=!item.level&&(item.progress===undefined||item.progress==='')&&!located.level&&!located.ratio;
+ if((kind==='skill'||kind==='egg'||kind==='mount')&&noStatus){
+  const guides={
+   skill:'이 칸에는 스킬 소환 화면이 필요합니다. 보유 재화와 소환 버튼 옆 레벨·단계가 함께 보이도록 올려주세요. 클랜전 점수표는 인식하지 않습니다.',
+   egg:'이 칸에는 알 / 펫 소환 화면이 필요합니다. 보유 재화와 소환 버튼 옆 레벨·단계가 함께 보이도록 올려주세요.',
+   mount:'이 칸에는 탈것 소환 화면이 필요합니다. 보유 재화와 소환 버튼 옆 레벨·단계가 함께 보이도록 올려주세요. 기술 트리·기부 화면은 이 칸에서 인식하지 않습니다.',
+  };
+  return [{code:'OCR-06',message:guides[kind]}];
+ }
  const fields:ScanField[]=kind.endsWith('Merge')?['selected']:kind==='potion'?['amount']:item.level==='100'?['amount','level']:['amount','level','ratio'];
  return fields.filter(field=>field==='ratio'?item.progress===undefined||item.progress===''||!item.target:item[field]===undefined||item[field]==='').map(field=>({code:located[field]?'OCR-03':'OCR-02',field,message:located[field]?`${labels[field]} 영역에서 유효한 숫자를 읽지 못했습니다.`:`${labels[field]}의 자동 위치를 찾지 못했고 기본 영역에서도 숫자를 읽지 못했습니다.`}));
 }
