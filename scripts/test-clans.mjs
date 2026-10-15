@@ -155,8 +155,11 @@ assert.equal(action('issueMemberTicket',{...access(ticketClan),nickname:'TicketU
 const issued=action('issueMemberTicket',{...access(ticketClan),nickname:'TicketUser',password:'first-password'});
 assert.equal(issued.ok,true);assert.match(issued.token,/^[a-f0-9]{64}$/);
 assert.deepEqual(call('list',access(ticketClan)).records,beforeTicket,'Conversion must not change resources, photos or update time');
-const entry={clanId:ticketClan.clan.id,nickname:'TicketUser',token:issued.token};
+const entry={...access(ticketClan),nickname:'TicketUser',token:issued.token};
 assert.equal(action('ticketEnter',entry).ok,true);
+assert.equal(action('ticketEnter',{...entry,accessKey:''}).ok,false,'QR must not bypass manual clan entry');
+assert.equal(action('ticketEnter',{...entry,accessKey:'wrong-clan-code'}).ok,false);
+assert.equal('entryAccessKey' in action('ticketEnter',entry),false,'Personal tickets must not disclose clan entry credentials');
 assert.equal(action('ticketEnter',{...entry,clanId:a.clan.id}).ok,false);
 assert.equal(action('ticketEnter',{...entry,nickname:'AnotherUser'}).ok,false);
 assert.equal(action('ticketEnter',{...entry,token:'0'.repeat(64)}).ok,false);

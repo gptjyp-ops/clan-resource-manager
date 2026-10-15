@@ -118,7 +118,7 @@ function clanServer_(server){if(server===undefined||server==='')return '';if(typ
 function clanName_(name){if(typeof name!=='string'||!name.trim()||name.trim().length>40)throw Error('클랜 이름은 1~40자로 입력해주세요.');return name.trim().normalize('NFKC');}
 function clanPassword_(password){if(typeof password!=='string'||password.length<10||password.length>100)throw Error('클랜장 비밀번호는 10~100자로 정해주세요.');return password;}
 function clanOperation_(p){
- var op=p.operation;if(op==='ticketEnter')return ticketEnter_(p);if(op==='issueMemberTicket')return issueMemberTicket_(p,authorizeClan_(p));if(op==='issueMemberRecovery'||op==='recoverMemberPassword')return memberRecovery_(p,op);if(op==='memberLogin')return memberLogin_(p,authorizeClan_(p));if(op==='capabilities')return {ok:true,multiClan:true,memberTickets:true,memberLogin:true,memberPasswordReset:true,memberSelfRecovery:true,operatorRecovery:true,entryPassword:true,preserveExisting:true,diagnosticReports:true,diagnosticPhotos:true,serverSelection:true,servers:Array.from(new Set(clanRows_(registry_()).map(function(r){return String(r[10]||'');}).filter(function(s){return /^\d{1,6}$/.test(s);}))).sort(function(a,b){return Number(a)-Number(b);})};
+ var op=p.operation;if(op==='ticketEnter')return ticketEnter_(p,authorizeClan_(p));if(op==='issueMemberTicket')return issueMemberTicket_(p,authorizeClan_(p));if(op==='issueMemberRecovery'||op==='recoverMemberPassword')return memberRecovery_(p,op);if(op==='memberLogin')return memberLogin_(p,authorizeClan_(p));if(op==='capabilities')return {ok:true,multiClan:true,memberTickets:true,memberLogin:true,memberPasswordReset:true,memberSelfRecovery:true,operatorRecovery:true,entryPassword:true,preserveExisting:true,diagnosticReports:true,diagnosticPhotos:true,serverSelection:true,servers:Array.from(new Set(clanRows_(registry_()).map(function(r){return String(r[10]||'');}).filter(function(s){return /^\d{1,6}$/.test(s);}))).sort(function(a,b){return Number(a)-Number(b);})};
  var lock=LockService.getScriptLock();if(!lock.tryLock(15000))throw Error('다른 요청을 처리 중입니다. 잠시 후 다시 시도해주세요.');
  try{
   if(op==='createClan'||op==='claimLegacy'){
@@ -302,18 +302,12 @@ function operatorRecoveryCode_(p){
 
 // Personal tickets use the existing salted credential hash. No raw ticket is
 // persisted server-side. Rotation/password recovery revokes older tickets.
-function ticketClan_(id){
- if(!/^(legacy|[a-f0-9]{24})$/.test(String(id||'')))throw Error('개인 티켓이 유효하지 않습니다.');
- if(id!=='legacy')return clanFrom_(findClan_(id).row);
- var rows=clanRows_(registry_()),r=rows.find(function(r){return r[0]==='legacy';});
- return r?clanFrom_(r):{id:'legacy',name:'우리 클랜',key:PropertiesService.getScriptProperties().getProperty('CLAN_KEY'),sheetName:'members',folderId:PropertiesService.getScriptProperties().getProperty('FOLDER_ID')};
-}
-function ticketEnter_(p){
+function ticketEnter_(p,clan){
  if(typeof p.nickname!=='string'||!p.nickname.trim()||p.nickname.length>24||typeof p.token!=='string'||! /^[a-f0-9]{64}$/.test(p.token))throw Error('개인 티켓이 유효하지 않습니다.');
- var clan=ticketClan_(p.clanId),name=p.nickname.trim().normalize('NFKC'),r=rows_(sheet_(clan)).find(function(r){return JSON.parse(r[0])===name;});
+ var name=p.nickname.trim().normalize('NFKC'),r=rows_(sheet_(clan)).find(function(r){return JSON.parse(r[0])===name;});
  // Random-token failures never lock another member out.
  if(!r||hash_(p.token,r[2])!==r[1])throw Error('개인 티켓이 만료되었거나 유효하지 않습니다. 다시 로그인하거나 클랜장에게 복구를 요청해주세요.');
- return {ok:true,record:publicRow_(r),entryAccessKey:clan.key,clan:{id:clan.id,name:clan.name,server:clan.server||''}};
+ return {ok:true,record:publicRow_(r),clan:{id:clan.id,name:clan.name,server:clan.server||''}};
 }
 function issueMemberTicket_(p,clan){
  if(typeof p.nickname!=='string'||!p.nickname.trim()||p.nickname.length>24||typeof p.password!=='string'||p.password.length<6||p.password.length>100)throw Error('닉네임과 비밀번호를 입력해주세요.');

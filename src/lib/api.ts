@@ -98,8 +98,8 @@ export async function issueOperatorRecoveryCode(password:string){
 
 export type MemberRecord={nickname:string;details:Inventory;photos:Partial<Record<PhotoKind,string>>;updated_at:string};
 export async function enterMemberTicket(ticket:MemberTicket):Promise<MemberRecord>{
- const r=await rpc('list',{operation:'ticketEnter',clanId:ticket.clanId,nickname:ticket.nickname,token:ticket.token}) as Reply & {record:MemberRecord};
- if(ticket.clanId===activeClanId){accessKey=r.entryAccessKey||'';sessionStorage.setItem(keySlot,accessKey);}
+ if(ticket.clanId!==activeClanId)throw Error('먼저 티켓에 해당하는 클랜에 입장해주세요.');
+ const r=await rpc('list',{operation:'ticketEnter',nickname:ticket.nickname,token:ticket.token}) as Reply & {record:MemberRecord};
  rememberTicket(ticket);return r.record;
 }
 export async function issueMemberTicket(nickname:string,password:string){

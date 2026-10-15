@@ -469,5 +469,6 @@
   "등록하면 비밀번호 대신 개인 QR 티켓이 발급됩니다. 티켓 이미지를 꼭 저장해주세요.": "Registration issues a personal QR ticket instead of a password. Be sure to save the ticket image.",
   "개인 티켓이 유효하지 않습니다.": "The personal ticket is invalid.",
   "개인 티켓이 만료되었거나 유효하지 않습니다. 다시 로그인하거나 클랜장에게 복구를 요청해주세요.": "The ticket is invalid or has been replaced. Sign in again or ask your clan leader for recovery.",
-  "개인 티켓 기능을 업데이트 중입니다. 잠시 후 다시 시도해주세요.": "Personal tickets are being updated. Please try again shortly."
+  "개인 티켓 기능을 업데이트 중입니다. 잠시 후 다시 시도해주세요.": "Personal tickets are being updated. Please try again shortly.",
+  "먼저 티켓에 해당하는 클랜에 입장해주세요.": "Please enter the clan for this ticket first."
 }
