@@ -1,7 +1,7 @@
 import {newScanReport,missingIssues,ScanFailure} from './scan-diagnostics';
 import {parseNumber} from './ocr';
 import type {PhotoKind,Group,Item} from './inventory';
-import {locateRegions,ratioCandidates,digitBands,amountDecimal,cleanAmountPixels,isSummonPhotoInMergeSlot} from './screen-layout';
+import {locateRegions,ratioCandidates,digitBands,amountDecimal,cleanAmountPixels,isSummonPhotoInMergeSlot,isForeignPhotoInSkillSlot} from './screen-layout';
 import {maximumStatus} from './summon-status';
 export type Region={field:'amount'|'level'|'ratio'|'selected';rect:[number,number,number,number];mode:'white'|'black'|'yellow'|'mixed'|'raw'};
 export const regions:Record<PhotoKind,Region[]>={
@@ -22,6 +22,7 @@ export async function scanScreen(file:File,kind:PhotoKind,onProgress:(n:number)=
  try{
  const overview=document.createElement('canvas');overview.width=400;overview.height=Math.round(bitmap.height*400/bitmap.width);const overviewContext=overview.getContext('2d')!;overviewContext.drawImage(bitmap,0,0,overview.width,overview.height);
  const overviewPixels=overviewContext.getImageData(0,0,overview.width,overview.height);
+ if(isForeignPhotoInSkillSlot(overviewPixels,kind)){diagnostics.issues=[{code:'OCR-06',message:'스킬 칸에 다른 종류의 사진이 감지되었습니다. 초록색 스킬 소환 재화와 소환 레벨이 함께 보이는 스킬 화면을 올려주세요.'}];onProgress(100);return {item,original,diagnostics};}
  if(isSummonPhotoInMergeSlot(overviewPixels,kind)){
   diagnostics.issues=[{code:'OCR-06',field:'selected',message:'합성 칸에 일반 소환 화면을 올렸습니다. ‘선택됨’ 숫자가 보이는 합성 화면을 올려주세요.'}];
   onProgress(100);return {item,original,diagnostics};
@@ -72,6 +73,7 @@ export async function scanScreen(file:File,kind:PhotoKind,onProgress:(n:number)=
   phase='load';koreanWorker=await createWorker('kor',1,options);phase='read';await koreanWorker.setParameters({tessedit_pageseg_mode:PSM.SPARSE_TEXT});const status=await koreanWorker.recognize(canvas);original.push(status.data.text.trim());diagnostics.attempts.push({field:'ratio',source:adaptive.ratio?'adaptive':'fallback',text:status.data.text.trim()});Object.assign(item,maximumStatus(status.data.text));}
 
  }
+ if(kind==='skill'&&(item.target==='20'||item.target==='23')){diagnostics.issues=[{code:'OCR-06',message:'스킬 칸에 다른 종류의 사진이 감지되었습니다. 초록색 스킬 소환 재화와 소환 레벨이 함께 보이는 스킬 화면을 올려주세요.'}];onProgress(100);return {item:{},original,diagnostics};}
  diagnostics.issues.push(...missingIssues(kind,item,adaptive).filter(issue=>!diagnostics.issues.some(existing=>existing.field===issue.field)));onProgress(100);return {item,original,diagnostics};
  }catch{diagnostics.issues.push({code:phase==='load'?'OCR-01':'OCR-05',message:phase==='load'?'사진 인식 기능을 불러오지 못했습니다.':'사진 인식 처리 중 실행 오류가 발생했습니다.'});throw new ScanFailure(diagnostics);}finally{bitmap.close();await worker?.terminate().catch(()=>{});await koreanWorker?.terminate().catch(()=>{});}
 }

@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import ts from 'typescript';
 const source=ts.transpileModule(fs.readFileSync('src/lib/screen-layout.ts','utf8'),{compilerOptions:{module:ts.ModuleKind.ESNext,target:ts.ScriptTarget.ES2022}}).outputText;
-const {findLandmarks,locateRegions,ratioCandidates,digitBands,amountDecimal,cleanAmountPixels,isSummonPhotoInMergeSlot}=await import('data:text/javascript;base64,'+Buffer.from(source).toString('base64'));
+const {findLandmarks,locateRegions,ratioCandidates,digitBands,amountDecimal,cleanAmountPixels,isSummonPhotoInMergeSlot,isForeignPhotoInSkillSlot}=await import('data:text/javascript;base64,'+Buffer.from(source).toString('base64'));
 // Three narrow neighbouring 1s must remain three glyphs even when the OCR
 // engine returns a syntactically valid single 1. Ignore isolated speckles.
 const numeric={width:90,height:50,data:new Uint8ClampedArray(90*50*4).fill(255)};
@@ -176,3 +176,11 @@ assert.equal(isSummonPhotoInMergeSlot(a,'eggMerge'),true);
 assert.equal(isSummonPhotoInMergeSlot(mergeImage(0),'eggMerge'),false);
 assert.equal(isSummonPhotoInMergeSlot(a,'skill'),false);
 console.log('Rounded corners, wide-screen information anchors and wrong merge-screen detection passed.');
+
+assert.equal(isForeignPhotoInSkillSlot(a,'skill'),false);
+assert.equal(isForeignPhotoInSkillSlot(mergeImage(0),'skill'),true);
+assert.equal(isForeignPhotoInSkillSlot(mergeImage(0),'eggMerge'),false);
+const foreignMount=image(200,660);
+for(let y=200;y<217;y++)for(let x=30;x<94;x++)foreignMount.data.set([255,255,255,255],(y*400+x)*4);
+for(let y=220;y<237;y++)for(let x=165;x<225;x++)foreignMount.data.set([100,100,100,255],(y*400+x)*4);
+assert.equal(isForeignPhotoInSkillSlot(foreignMount,'skill'),true);

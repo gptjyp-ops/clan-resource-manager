@@ -478,5 +478,6 @@
   "일차": "Day",
   "전체 안내 이미지 보기 · 확대": "View full guide image · enlarge",
   "QR 티켓으로 내 재화를 불러왔습니다. 변경 후 저장해주세요.": "Your resources were loaded with your QR ticket. Save after making changes.",
-  "안내 닫기": "Dismiss notice"
+  "안내 닫기": "Dismiss notice",
+  "스킬 칸에 다른 종류의 사진이 감지되었습니다. 초록색 스킬 소환 재화와 소환 레벨이 함께 보이는 스킬 화면을 올려주세요.": "A different screenshot type was detected in the Skills slot. Upload the Skills screen showing green summon tickets and the summon level."
 }

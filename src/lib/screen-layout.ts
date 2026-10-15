@@ -125,6 +125,15 @@ export function isSummonPhotoInMergeSlot(p:Pixels,kind:PhotoKind):boolean{
  const normal=findLandmarks(p,kind==='eggMerge'?'egg':'mount');
  return !!normal.amount&&!!normal.info;
 }
+// Reject only positively identified foreign layouts; uncertain crops still
+// use ordinary OCR and diagnostics instead of being silently reclassified.
+export function isForeignPhotoInSkillSlot(p:Pixels,kind:PhotoKind):boolean{
+ if(kind!=='skill')return false;
+ const normal=findLandmarks(p,'skill');
+ if(!normal.info&&findLandmarks(p,'eggMerge').selected)return true;
+ const mount=findLandmarks(p,'mount');
+ return !normal.amount&&!!mount.amount&&!!mount.info;
+}
 export type LocatedRegion={field:'amount'|'level'|'ratio'|'selected';rect:[number,number,number,number];mode:'white'|'black'|'yellow'|'mixed'|'raw';alternativeRect?:[number,number,number,number]};
 export function locateRegions(p:Pixels,kind:PhotoKind):LocatedRegion[]{
  const landmarks=findLandmarks(p,kind),out:LocatedRegion[]=[],w=p.width;
