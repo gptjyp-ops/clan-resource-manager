@@ -27,6 +27,7 @@ jobs:
       - run: node scripts/test-drafts.mjs
       - run: node scripts/test-scan-diagnostics.mjs
       - run: node scripts/test-i18n.mjs
+      - run: node scripts/test-resource-calculators.mjs
       - run: node scripts/test-mount-merge-score.mjs
       - run: npm run check
       - run: npm run build

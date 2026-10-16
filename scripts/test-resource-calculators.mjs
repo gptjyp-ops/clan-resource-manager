@@ -1,0 +1,17 @@
+import fs from 'node:fs';
+import ts from 'typescript';
+import vm from 'node:vm';
+import assert from 'node:assert/strict';
+const source=fs.readFileSync('src/ResourceCalculators.tsx','utf8');
+const fn=source.slice(source.indexOf('export function calculateResource'),source.indexOf('const names:'));
+const js=ts.transpileModule(fn,{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;
+const exports={};vm.runInNewContext(js,{exports});const calc=exports.calculateResource;
+assert.equal(calc('skill',90000,200,1,225).total,506250);
+assert.equal(calc('mount',15000,45,1.2,1080).total,431568);
+assert.equal(calc('mountMerge',7000,0,0,648).total,4536000);
+assert.equal(calc('eggMerge',800,0,0,1250).total,1000000);
+assert.equal(calc('mount',44,45,1.4,1080).total,0);
+for(const cost of [0,-1,NaN,1.5])assert.equal(calc('skill',100,cost,1,225),null);
+assert.equal(calc('mount',100,45,10,1080),null);
+assert.equal(calc('eggMerge',800,0,0,NaN),null);
+console.log('Four resource calculators: formulas, whole draws, custom points and invalid input passed.');
