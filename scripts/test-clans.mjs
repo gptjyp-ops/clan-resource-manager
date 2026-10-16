@@ -186,3 +186,15 @@ assert.equal(action('memberLogin',{...access(ticketClan),nickname:'TicketUser',p
 assert.equal(action('ticketEnter',{...entry,token:ticketAgain.token}).ok,false);
 assert.deepEqual(call('list',access(ticketClan)).records[0].details,beforePasswordSwitch[0].details);
 console.log('Authenticated ticket-to-password conversion preserves resources and revokes old QR access.');
+
+const photoDeleteUser={...access(ticketClan),nickname:'DeletePhotoUser',password:'delete-photo-password',inventory,photos:[{kind:'skill',base64:jpeg},{kind:'egg',base64:jpeg}]};
+const photoDeleteSaved=call('save',photoDeleteUser);assert.equal(photoDeleteSaved.ok,true);
+const removedPhotoId=photoDeleteSaved.photos.skill,keptPhotoId=photoDeleteSaved.photos.egg;
+assert.equal(call('save',{...photoDeleteUser,password:'incorrect',photos:[],removedPhotos:['skill']}).ok,false);
+assert.equal(files.get(removedPhotoId).trashed,undefined);
+assert.equal(call('save',{...photoDeleteUser,photos:[],removedPhotos:['unknown']}).ok,false);
+const deletedPhoto=call('save',{...photoDeleteUser,photos:[],removedPhotos:['skill']});
+assert.equal(deletedPhoto.ok,true);assert.equal(deletedPhoto.photos.skill,undefined);
+assert.equal(deletedPhoto.photos.egg,keptPhotoId);assert.equal(files.get(removedPhotoId).trashed,true);
+assert.deepEqual(deletedPhoto.details,photoDeleteSaved.details);
+console.log('Photo removal requires authentication, preserves quantities and unrelated photos, and trashes only the removed file.');

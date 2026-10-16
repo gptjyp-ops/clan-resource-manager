@@ -52,6 +52,7 @@ function save_(p,clan){
  var nickname=p.nickname.trim().normalize('NFKC'),password=p.password;
  if(!nickname||nickname.length>24||password.length<6||password.length>100)throw Error('닉네임(24자 이하)과 수정 비밀번호(6자 이상)를 입력해주세요.');
  if(p.newPassword!==undefined&&(typeof p.newPassword!=='string'||p.newPassword.length<6||p.newPassword.length>100))throw Error('수정 비밀번호는 6자 이상 100자 이하로 입력해주세요.');
+ var removed=p.removedPhotos||[];if(!Array.isArray(removed)||removed.length>6||removed.some(function(k){return KINDS_.indexOf(k)<0;}))throw Error('삭제할 사진 종류를 확인해주세요.');
  var incoming=validate_(p.inventory),uploads=p.photos||[];
  if(!Array.isArray(uploads)||uploads.length>6)throw Error('사진 수를 확인해주세요.');
  var seen={},decoded=uploads.map(function(u){if(!u||KINDS_.indexOf(u.kind)<0||seen[u.kind]||typeof u.base64!=='string'||u.base64.length>1400000)throw Error('사진 크기와 종류를 확인해주세요.');seen[u.kind]=true;var bytes=Utilities.base64Decode(u.base64);if(bytes.length>1024*1024||bytes.length<12)throw Error('사진은 저장용 압축 후 1MB 이하로 올려주세요.');var b=bytes.map(function(x){return (x+256)%256;});var jpg=b[0]===255&&b[1]===216,png=b[0]===137&&b[1]===80&&b[2]===78&&b[3]===71,webp=b[0]===82&&b[1]===73&&b[2]===70&&b[3]===70&&b[8]===87&&b[9]===69&&b[10]===66&&b[11]===80;if(!jpg&&!png&&!webp)throw Error('유효한 사진이 아닙니다.');return {kind:u.kind,bytes:bytes,type:jpg?'image/jpeg':png?'image/png':'image/webp'};});
@@ -65,6 +66,7 @@ function save_(p,clan){
   if(p.newPassword!==undefined){salt=Utilities.getUuid();hash=hash_(p.newPassword,salt);}
   var details=mergeInventory_(old?JSON.parse(old[3]):null,incoming,p.changedFields);
   var photos=old?JSON.parse(old[4]):{},obsolete=[],folder=DriveApp.getFolderById(clan?clan.folderId:PropertiesService.getScriptProperties().getProperty('FOLDER_ID'));
+  removed.forEach(function(kind){if(photos[kind]){obsolete.push(photos[kind]);delete photos[kind];}});
   decoded.forEach(function(u){var file=folder.createFile(Utilities.newBlob(u.bytes,u.type,Utilities.getUuid()+'.'+(u.type==='image/jpeg'?'jpg':u.type==='image/png'?'png':'webp')));fresh.push(file.getId());if(photos[u.kind])obsolete.push(photos[u.kind]);photos[u.kind]=file.getId();});
   var row=[JSON.stringify(nickname),hash,salt,JSON.stringify(details),JSON.stringify(photos),new Date().toISOString(),0,0];
   if(old)s.getRange(index+2,1,1,8).setValues([row]);else s.appendRow(row);SpreadsheetApp.flush();committed=true;
@@ -120,7 +122,7 @@ function clanServer_(server){if(server===undefined||server==='')return '';if(typ
 function clanName_(name){if(typeof name!=='string'||!name.trim()||name.trim().length>40)throw Error('클랜 이름은 1~40자로 입력해주세요.');return name.trim().normalize('NFKC');}
 function clanPassword_(password){if(typeof password!=='string'||password.length<10||password.length>100)throw Error('클랜장 비밀번호는 10~100자로 정해주세요.');return password;}
 function clanOperation_(p){
- var op=p.operation;if(op==='ticketEnter')return ticketEnter_(p,authorizeClan_(p));if(op==='issueMemberTicket')return issueMemberTicket_(p,authorizeClan_(p));if(op==='issueMemberRecovery'||op==='recoverMemberPassword')return memberRecovery_(p,op);if(op==='memberLogin')return memberLogin_(p,authorizeClan_(p));if(op==='capabilities')return {ok:true,multiClan:true,ticketPasswordSave:true,memberTickets:true,memberLogin:true,memberPasswordReset:true,memberSelfRecovery:true,operatorRecovery:true,entryPassword:true,preserveExisting:true,diagnosticReports:true,diagnosticPhotos:true,serverSelection:true,servers:Array.from(new Set(clanRows_(registry_()).map(function(r){return String(r[10]||'');}).filter(function(s){return /^\d{1,6}$/.test(s);}))).sort(function(a,b){return Number(a)-Number(b);})};
+ var op=p.operation;if(op==='ticketEnter')return ticketEnter_(p,authorizeClan_(p));if(op==='issueMemberTicket')return issueMemberTicket_(p,authorizeClan_(p));if(op==='issueMemberRecovery'||op==='recoverMemberPassword')return memberRecovery_(p,op);if(op==='memberLogin')return memberLogin_(p,authorizeClan_(p));if(op==='capabilities')return {ok:true,multiClan:true,ticketPasswordSave:true,photoRemoval:true,memberTickets:true,memberLogin:true,memberPasswordReset:true,memberSelfRecovery:true,operatorRecovery:true,entryPassword:true,preserveExisting:true,diagnosticReports:true,diagnosticPhotos:true,serverSelection:true,servers:Array.from(new Set(clanRows_(registry_()).map(function(r){return String(r[10]||'');}).filter(function(s){return /^\d{1,6}$/.test(s);}))).sort(function(a,b){return Number(a)-Number(b);})};
  var lock=LockService.getScriptLock();if(!lock.tryLock(15000))throw Error('다른 요청을 처리 중입니다. 잠시 후 다시 시도해주세요.');
  try{
   if(op==='createClan'||op==='claimLegacy'){
