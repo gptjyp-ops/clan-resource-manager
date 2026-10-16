@@ -174,3 +174,15 @@ assert.equal(action('resetMemberPassword',{clanId:ticketClan.clan.id,adminToken:
 assert.equal(action('ticketEnter',{...entry,token:rotatedTicket.token}).ok,false);
 assert.equal(action('memberLogin',{...access(ticketClan),nickname:'TicketUser',password:'restored-password'}).ok,true);
 console.log('Ticket conversion, revocation, recovery and member/clan authorization passed.');
+
+const ticketAgain=action('issueMemberTicket',{...access(ticketClan),nickname:'TicketUser',password:'restored-password'});
+assert.equal(ticketAgain.ok,true);
+const beforePasswordSwitch=call('list',access(ticketClan)).records;
+assert.equal(call('save',{...ticketUser,password:'wrong-token',newPassword:'chosen-password'}).ok,false);
+assert.equal(call('save',{...ticketUser,password:ticketAgain.token,newPassword:'short'}).ok,false);
+const passwordSwitch=call('save',{...ticketUser,password:ticketAgain.token,newPassword:'chosen-password'});
+assert.equal(passwordSwitch.ok,true);assert.equal(passwordSwitch.passwordUpdated,true);
+assert.equal(action('memberLogin',{...access(ticketClan),nickname:'TicketUser',password:'chosen-password'}).ok,true);
+assert.equal(action('ticketEnter',{...entry,token:ticketAgain.token}).ok,false);
+assert.deepEqual(call('list',access(ticketClan)).records[0].details,beforePasswordSwitch[0].details);
+console.log('Authenticated ticket-to-password conversion preserves resources and revokes old QR access.');
