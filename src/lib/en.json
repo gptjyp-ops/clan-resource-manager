@@ -496,5 +496,17 @@
   "사진만 교체했습니다. 수량을 직접 확인하고 비밀번호를 입력해 저장해주세요.": "Photo replaced without recognition. Check quantities and enter your password to save.",
   "QR 로그인 중 · 비밀번호 없이 저장할 수 있습니다.": "Signed in with QR · You can save without a password.",
   "비밀번호 방식으로 전환 (선택)": "Switch to password access (optional)",
-  "비워두면 QR 로그인을 유지합니다. 비밀번호를 입력하고 저장하면 비밀번호 방식으로 전환되며 기존 QR은 무효화됩니다.": "Leave blank to keep QR access. Enter a password and save to switch to password access and revoke the old QR ticket."
+  "비워두면 QR 로그인을 유지합니다. 비밀번호를 입력하고 저장하면 비밀번호 방식으로 전환되며 기존 QR은 무효화됩니다.": "Leave blank to keep QR access. Enter a password and save to switch to password access and revoke the old QR ticket.",
+  "클랜장 전용 회원 복구": "Clan-master member recovery",
+  "클랜별로 다른 복구 코드입니다. 자기 클랜 회원만 재설정할 수 있으며 클랜장만 보관하세요.": "Each clan has its own recovery code. It resets only that clan’s members. Keep it private to the clan master.",
+  "최초 발급 후 코드를 보관하면 다음에는 클랜장 로그인 없이 아래에서 회원을 복구할 수 있습니다. 재발급하면 이전 코드는 무효입니다.": "Keep the code after issuing it. You can then recover members below without signing in as clan master. Reissuing revokes the old code.",
+  "클랜 전용 복구 코드 발급·재발급": "Issue / reissue clan recovery code",
+  "발급된 클랜 전용 복구 코드": "Issued clan recovery code",
+  "클랜 전용 코드로 회원 비밀번호 재설정": "Reset a member password with a clan code",
+  "클랜 전용 복구 코드": "Clan recovery code",
+  "회원 비밀번호 재설정": "Reset member password",
+  "클랜 전용 복구 코드를 발급했습니다. 안전한 곳에 보관해주세요.": "Clan recovery code issued. Keep it somewhere safe.",
+  "회원 비밀번호를 재설정했습니다. 기존 재화와 사진은 유지됩니다.": "Member password reset. Existing resources and photos are preserved.",
+  "클랜 ID 또는 클랜 전용 복구 코드가 맞지 않습니다.": "The clan ID or clan recovery code is incorrect.",
+  "처리 실패": "Request failed"
 }
