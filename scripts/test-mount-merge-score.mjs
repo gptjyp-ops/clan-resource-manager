@@ -1,0 +1,12 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';import ts from 'typescript';
+const code=ts.transpileModule(fs.readFileSync('src/lib/mount-merge-score.ts','utf8'),{compilerOptions:{module:ts.ModuleKind.ESNext,target:ts.ScriptTarget.ES2022}}).outputText;
+const {mountMergeScore}=await import('data:text/javascript;base64,'+Buffer.from(code).toString('base64'));
+assert.equal(mountMergeScore('7000','648').total,4536000n);
+assert.equal(mountMergeScore('7,000','648').total,4536000n);
+assert.equal(mountMergeScore('7000','500').total,3500000n);
+assert.equal(mountMergeScore('0','648').total,0n);
+assert.equal(mountMergeScore('7000','0').total,0n);
+assert.equal(mountMergeScore('999999999999999','999999999').total,999999998999999000000001n);
+for(const [a,b] of [['','648'],['7000',''],['-1','648'],['1.5','648'],['7k','648'],['7000','1.5'],['1e3','648']])assert.equal(mountMergeScore(a,b),null);
+console.log('Mount merge scoring verifies 7,000 × 648, clan-specific rates, zero, invalid values and exact large products.');
