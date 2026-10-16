@@ -104,7 +104,9 @@ export function findLandmarks(p:Pixels,kind:PhotoKind):{amount?:Box;info?:Box;pr
    // on its edge and are smaller. A diagonal body need not look vertical.
    return green.some(b=>b.height>=.025*w&&b.width>=.01*w&&b.x+b.width/2<bar.x);
   });
-  if(vialBar){result.amount=vialBar;result.amountMode='mixed';return result;}
+  // The vial's pale rim overlaps the left edge of the gray bar and can
+  // otherwise become an extra 3 before a valid count (0 or 212).
+  if(vialBar){const inset=.035*w;result.amount={...vialBar,x:vialBar.x+inset,width:vialBar.width-inset};result.amountMode='mixed';return result;}
   const digits=components(p,{x:.08*w,y:0,width:.32*w,height:.24*h},(r,g,b)=>r>150&&g>150&&b<140)
    .filter(b=>b.height>.018*w&&b.height<.055*w&&b.width<.05*w).sort((a,b)=>a.x-b.x);
   const lines:Box[]=[];
