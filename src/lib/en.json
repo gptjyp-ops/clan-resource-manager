@@ -493,5 +493,8 @@
   "사진 삭제 기능을 업데이트 중입니다. 잠시 후 다시 저장해주세요.": "Photo deletion is being updated. Please try saving again shortly.",
   "사진 삭제는 구글 저장 연결에서 사용할 수 있습니다.": "Photo deletion is available with Google storage.",
   "인식 없이 사진 올리기": "Upload photo without recognition",
-  "사진만 교체했습니다. 수량을 직접 확인하고 비밀번호를 입력해 저장해주세요.": "Photo replaced without recognition. Check quantities and enter your password to save."
+  "사진만 교체했습니다. 수량을 직접 확인하고 비밀번호를 입력해 저장해주세요.": "Photo replaced without recognition. Check quantities and enter your password to save.",
+  "QR 로그인 중 · 비밀번호 없이 저장할 수 있습니다.": "Signed in with QR · You can save without a password.",
+  "비밀번호 방식으로 전환 (선택)": "Switch to password access (optional)",
+  "비워두면 QR 로그인을 유지합니다. 비밀번호를 입력하고 저장하면 비밀번호 방식으로 전환되며 기존 QR은 무효화됩니다.": "Leave blank to keep QR access. Enter a password and save to switch to password access and revoke the old QR ticket."
 }
