@@ -537,5 +537,11 @@
   "소환 횟수는 소수점을 버립니다. 추가 획득을 포함한 결과는 예상 점수입니다.": "Summon counts are rounded down. Results including additional acquisitions are estimates.",
   "합성 수량과 1개당 점수만 곱합니다.": "Multiplies merge quantity by points per merge.",
   "소모량은 사람마다 다르므로 개인별로 계산해주세요. 클랜 전체 보유량을 자동 합산하지 않습니다.": "Costs vary by member. Calculate individually; clan summon resources are not automatically combined.",
-  "점수와 소모량 설정은 이 브라우저에 클랜별로 보관됩니다.": "Point and cost settings are stored per clan in this browser."
+  "점수와 소모량 설정은 이 브라우저에 클랜별로 보관됩니다.": "Point and cost settings are stored per clan in this browser.",
+  "계산할 수량과 조건": "Quantity and settings",
+  "계산 결과": "Result",
+  "합성 점수": "Merge score",
+  "뽑기 횟수": "Draw count",
+  "남는 재화": "Resources remaining",
+  "계산 기준 및 설정 안내": "Calculation and settings notes"
 }
