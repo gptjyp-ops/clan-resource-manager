@@ -233,3 +233,17 @@ html[lang="en"] .panel-heading{flex-wrap:wrap;gap:8px}
 .notice-close{flex:0 0 44px;align-self:flex-start;min-width:44px;min-height:44px;padding:0;border:0;border-radius:6px;background:transparent;color:inherit;font-size:26px;line-height:1;cursor:pointer}
 .notice-close:hover{background:#ffffff12}
 .notice-close:focus-visible{outline:2px solid currentColor;outline-offset:2px}
+
+@media(max-width:800px){
+ .roster .resource-roster-table th:first-child,.roster .resource-roster-table td:first-child{position:sticky;left:0;z-index:2;background:#182131;box-shadow:2px 0 0 #344155;max-width:170px}
+ .roster .resource-roster-table th:first-child{background:#141e2d;z-index:3}
+ .roster .resource-roster-table .nickname{overflow-wrap:anywhere}
+ .roster .resource-roster-table[data-mobile-sort]{min-width:0;table-layout:fixed;width:100%}
+ .roster .resource-roster-table[data-mobile-sort] th:first-child,.roster .resource-roster-table[data-mobile-sort] td:first-child{width:54%;position:static;box-shadow:none}
+ .roster .resource-roster-table[data-mobile-sort] [data-resource]{display:none}
+ .roster .resource-roster-table[data-mobile-sort="skill"] [data-resource="skill"],
+ .roster .resource-roster-table[data-mobile-sort="egg"] [data-resource="egg"],
+ .roster .resource-roster-table[data-mobile-sort="mount"] [data-resource="mount"],
+ .roster .resource-roster-table[data-mobile-sort="potion"] [data-resource="potion"]{display:table-cell;width:46%;overflow-wrap:anywhere}
+ .roster .resource-roster-table[data-mobile-sort] .resource-amount{white-space:normal}
+}
