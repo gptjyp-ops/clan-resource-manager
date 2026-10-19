@@ -26,7 +26,7 @@ export default function MatrixBackground(){
    try{
     await loadEffect(name);if(disposed||current!==generation||document.hidden||reduced.matches)return;
     const common={el,THREE:(window as VantaWindow).THREE,backgroundColor:0x080f20,backgroundAlpha:1,minHeight:200,minWidth:200,gyroControls:false};
-    effect=name==='HALO'?(window as VantaWindow).VANTA?.HALO?.({...common,mouseControls:false,touchControls:true,scale:2,scaleMobile:2,baseColor:0x396fff,color2:0x39d9ff,amplitudeFactor:1,size:1.1,xOffset:0,yOffset:0}):(window as VantaWindow).VANTA?.BIRDS?.({...common,
+    effect=name==='HALO'?(window as VantaWindow).VANTA?.HALO?.({...common,mouseControls:false,touchControls:false,scale:2,scaleMobile:2,baseColor:0x396fff,color2:0x39d9ff,amplitudeFactor:1,size:1.1,xOffset:0,yOffset:0}):(window as VantaWindow).VANTA?.BIRDS?.({...common,
      mouseControls:true,touchControls:false,gyroControls:false,minHeight:200,minWidth:200,
      scale:mobile.matches?2:1.5,scaleMobile:2,backgroundColor:0x080f20,backgroundAlpha:1,
      color1:0x39d9ff,color2:0x9c78ff,colorMode:'lerp',birdSize:1.15,wingSpan:22,
