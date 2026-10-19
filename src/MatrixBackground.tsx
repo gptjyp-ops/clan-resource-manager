@@ -20,7 +20,7 @@ export default function MatrixBackground(){
    try{
     await loadBirds();if(disposed||current!==generation||document.hidden||reduced.matches)return;
     effect=(window as VantaWindow).VANTA?.BIRDS?.({el,THREE:(window as VantaWindow).THREE,
-     mouseControls:false,touchControls:false,gyroControls:false,minHeight:200,minWidth:200,
+     mouseControls:true,touchControls:false,gyroControls:false,minHeight:200,minWidth:200,
      scale:mobile.matches?2:1.5,scaleMobile:2,backgroundColor:0x0e1624,backgroundAlpha:1,
      color1:0xe9b661,color2:0x64b8c7,colorMode:'lerp',birdSize:1.15,wingSpan:22,
      speedLimit:3,separation:35,alignment:30,cohesion:25,quantity:mobile.matches?2:3});
