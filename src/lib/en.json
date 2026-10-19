@@ -563,5 +563,9 @@
   "지정된 기술은 I~V 각 단계를 끝까지 연구해주세요.": "Complete every stage of the listed technologies in tiers I–V.",
   "10월 19일 재화 초기화 안내": "October 19 resource reset",
   "한국 시간 10월 19일 등록·수정한 기록은 유지했습니다. 이전 기록의 보유 수량·합성 수량과 사진은 초기화했으니 이번 주 재화를 다시 등록해주세요.": "Records submitted or updated on October 19 (Korea time) were kept. Earlier resource quantities, merge counts and photos were cleared. Please register your resources again for this week.",
-  "닉네임·로그인 정보·소환 레벨·단계는 유지됩니다. 이번 초기화는 일회성 처리입니다.": "Nicknames, login details, summon levels and progress are preserved. This was a one-time reset."
+  "닉네임·로그인 정보·소환 레벨·단계는 유지됩니다. 이번 초기화는 일회성 처리입니다.": "Nicknames, login details, summon levels and progress are preserved. This was a one-time reset.",
+  "개인 보유 수량을 자동으로 불러왔습니다.": "Your held quantity was loaded automatically.",
+  "현재 클랜 합계 수량을 자동으로 불러왔습니다.": "The current clan total was loaded automatically.",
+  "수량을 직접 입력해 계산 중입니다.": "Calculating with a manually entered quantity.",
+  "클랜 합계에 입력한 소모량·배율을 동일하게 적용한 예상값입니다. 개인별 조건이 다르면 실제 합산 점수와 다릅니다.": "This estimate applies the entered cost and multiplier uniformly to the clan total. Different member settings will produce a different combined score."
 }
