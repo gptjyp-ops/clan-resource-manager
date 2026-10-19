@@ -21,13 +21,13 @@ export default function MatrixBackground(){
     await loadBirds();if(disposed||current!==generation||document.hidden||reduced.matches)return;
     effect=(window as VantaWindow).VANTA?.BIRDS?.({el,THREE:(window as VantaWindow).THREE,
      mouseControls:true,touchControls:false,gyroControls:false,minHeight:200,minWidth:200,
-     scale:mobile.matches?2:1.5,scaleMobile:2,backgroundColor:0x0e1624,backgroundAlpha:1,
-     color1:0xe9b661,color2:0x64b8c7,colorMode:'lerp',birdSize:1.15,wingSpan:22,
+     scale:mobile.matches?2:1.5,scaleMobile:2,backgroundColor:0x080f20,backgroundAlpha:1,
+     color1:0x39d9ff,color2:0x9c78ff,colorMode:'lerp',birdSize:1.15,wingSpan:22,
      speedLimit:3,separation:35,alignment:30,cohesion:25,quantity:mobile.matches?2:3});
    }catch{stop();} // Solid navy remains usable when WebGL or the CDN is unavailable.
   }
   void sync();document.addEventListener('visibilitychange',sync);reduced.addEventListener('change',sync);mobile.addEventListener('change',sync);
   return()=>{disposed=true;stop();document.removeEventListener('visibilitychange',sync);reduced.removeEventListener('change',sync);mobile.removeEventListener('change',sync);};
  },[]);
- return <div ref={ref} aria-hidden="true" style={{position:'fixed',inset:0,zIndex:-1,pointerEvents:'none',background:'#0e1624',opacity:.8,overflow:'hidden'}}/>;
+ return <div ref={ref} aria-hidden="true" style={{position:'fixed',inset:0,zIndex:-1,pointerEvents:'none',background:'#080f20',opacity:1,overflow:'hidden'}}/>;
 }
