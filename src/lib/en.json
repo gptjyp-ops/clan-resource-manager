@@ -543,5 +543,22 @@
   "합성 점수": "Merge score",
   "뽑기 횟수": "Draw count",
   "남는 재화": "Resources remaining",
-  "계산 기준 및 설정 안내": "Calculation and settings notes"
+  "계산 기준 및 설정 안내": "Calculation and settings notes",
+  "감자클랜 기술트리": "POTATO technology tree",
+  "우선 연구 안내": "Priority research guide",
+  "I~V 각 단계 모두 완료": "Complete every stage in tiers I–V",
+  "아래 숫자는 현재 기록이 아닌 완료 목표입니다.": "The numbers below are completion targets, not current progress.",
+  "힘": "Power",
+  "스킬·펫": "Skills & pets",
+  "자동 제련": "Automatic forging",
+  "무료 제련 기회": "Free forging chances",
+  "최대 오프라인 시간": "Maximum offline time",
+  "탈것 소환 비용": "Mount summon cost",
+  "추가 탈것 기회": "Additional mount chance",
+  "기술 연구 타이머": "Technology research timer",
+  "스킬 소환 비용": "Skill summon cost",
+  "궁극의 알 타이머": "Ultimate egg timer",
+  "추가 알 획득 기회": "Additional egg chance",
+  "연구 기술": "Research",
+  "지정된 기술은 I~V 각 단계를 끝까지 연구해주세요.": "Complete every stage of the listed technologies in tiers I–V."
 }
