@@ -1,3 +1,4 @@
+import {createOcrWorker} from './ocr-worker';
 import {newScanReport,missingIssues,ScanFailure} from './scan-diagnostics';
 import {parseNumber} from './ocr';
 import type {PhotoKind,Group,Item} from './inventory';
@@ -29,7 +30,7 @@ export async function scanScreen(file:File,kind:PhotoKind,onProgress:(n:number)=
   diagnostics.issues=[{code:'OCR-06',field:'selected',message:'합성 칸에 일반 소환 화면을 올렸습니다. ‘선택됨’ 숫자가 보이는 합성 화면을 올려주세요.'}];
   onProgress(100);return {item,original,diagnostics};
  }
- const {createWorker,PSM}=await import('tesseract.js');const options={workerPath:import.meta.env.BASE_URL+'ocr/worker.min.js',corePath:import.meta.env.BASE_URL+(fresh?'ocr/tesseract-core-lstm.wasm.js':'ocr'),cacheMethod:fresh?'none' as const:undefined,errorHandler:()=>{},langPath:import.meta.env.BASE_URL+'ocr/lang',workerBlobURL:false};worker=await createWorker('eng',1,options);signal?.throwIfAborted();
+ const {createWorker,PSM}=await import('tesseract.js');const options={workerPath:import.meta.env.BASE_URL+'ocr/worker.min.js',corePath:import.meta.env.BASE_URL+(fresh?'ocr/tesseract-core-lstm.wasm.js':'ocr'),fallbackCorePath:import.meta.env.BASE_URL+'ocr/tesseract-core-lstm.wasm.js',cacheMethod:fresh?'none' as const:undefined,langPath:import.meta.env.BASE_URL+'ocr/lang',workerBlobURL:false};worker=await createOcrWorker(createWorker,'eng',options,signal);signal?.throwIfAborted();
  phase='read';
  const adaptive:Partial<Record<Region['field'],Region>>={};for(const r of locateRegions(overviewPixels,kind))adaptive[r.field]=r;
  for(let k=0;k<regions[kind].length;k++){
@@ -54,9 +55,14 @@ export async function scanScreen(file:File,kind:PhotoKind,onProgress:(n:number)=
   const bands=digitBands(data);
   if(!bands.length||bands.length>8){parsed={};}
   else if(parsed.selected?.length!==bands.length){
+   for(const mode of [PSM.SINGLE_WORD,PSM.SPARSE_TEXT]){
+    await worker.setParameters({tessedit_pageseg_mode:mode});
+    const retry=(await worker.recognize(padded)).data.text.trim();original.push(retry);diagnostics.attempts.push({field:'selected',source:'adaptive',text:retry});
+    if(/^\d+$/.test(retry)&&retry.length===bands.length){parsed={selected:retry};break;}
+   }
    let digits='';await worker.setParameters({tessedit_pageseg_mode:PSM.SINGLE_CHAR});
-   for(const band of bands){const single=document.createElement('canvas');single.width=band.width+80;single.height=canvas.height;const singleContext=single.getContext('2d')!;singleContext.fillStyle='white';singleContext.fillRect(0,0,single.width,single.height);singleContext.drawImage(canvas,band.x,0,band.width,canvas.height,40,0,band.width,canvas.height);const read=await worker.recognize(single);const text=read.data.text.trim();original.push(text);diagnostics.attempts.push({field:r.field,source:'adaptive',text});if(!/^\d$/.test(text)){digits='';break;}digits+=text;}
-   parsed=digits.length===bands.length?{selected:digits}:{};
+   for(const band of parsed.selected?.length===bands.length?[]:bands){const single=document.createElement('canvas');single.width=band.width+80;single.height=canvas.height;const singleContext=single.getContext('2d')!;singleContext.fillStyle='white';singleContext.fillRect(0,0,single.width,single.height);singleContext.drawImage(canvas,band.x,0,band.width,canvas.height,40,0,band.width,canvas.height);const read=await worker.recognize(single);const text=read.data.text.trim();original.push(text);diagnostics.attempts.push({field:r.field,source:'adaptive',text});if(!/^\d$/.test(text)){digits='';break;}digits+=text;}
+   if(parsed.selected?.length!==bands.length)parsed=digits.length===bands.length?{selected:digits}:{};
    if(!parsed.selected)diagnostics.issues.push({code:'OCR-04',field:'selected',message:'합성 수량의 숫자 자리수와 인식 결과가 일치하지 않습니다. 사진을 확대해 확인하고 다시 인식해 주세요.'});
   }
  }
@@ -67,12 +73,12 @@ export async function scanScreen(file:File,kind:PhotoKind,onProgress:(n:number)=
   const level=adaptive.level||regions[kind].find(r=>r.field==='level')!,ratio=adaptive.ratio||regions[kind].find(r=>r.field==='ratio')!;
   // The Max label sits closer to the icon than an ordinary Lv. label.
   // Include its top edge in small screenshots instead of clipping the glyphs.
-  const x=Math.min(level.rect[0],ratio.rect[0]),y=Math.max(0,Math.min(level.rect[1],ratio.rect[1])-.013*bitmap.width/bitmap.height),right=Math.max(level.rect[0]+level.rect[2],ratio.rect[0]+ratio.rect[2]),bottom=Math.max(level.rect[1]+level.rect[3],ratio.rect[1]+ratio.rect[3]);
+  const x=Math.min(level.rect[0],ratio.rect[0]),y=Math.max(0,Math.min(level.rect[1],ratio.rect[1])-.013*bitmap.width/bitmap.height),right=Math.max(level.rect[0]+level.rect[2],ratio.rect[0]+ratio.rect[2]),bottom=adaptive.ratio&&!(adaptive.ratio as any).alternativeRect?level.rect[1]+level.rect[3]:Math.max(level.rect[1]+level.rect[3],ratio.rect[1]+ratio.rect[3]);
   const canvas=document.createElement('canvas'),scale=Math.min(750/(bitmap.width*(right-x)),240/(bitmap.height*(bottom-y)));canvas.width=Math.round(bitmap.width*(right-x)*scale);canvas.height=Math.round(bitmap.height*(bottom-y)*scale);
   canvas.getContext('2d')!.drawImage(bitmap,bitmap.width*x,bitmap.height*y,bitmap.width*(right-x),bitmap.height*(bottom-y),0,0,canvas.width,canvas.height);
   await worker.setParameters({tessedit_char_whitelist:'',tessedit_pageseg_mode:PSM.SPARSE_TEXT});const englishStatus=await worker.recognize(canvas);original.push(englishStatus.data.text.trim());diagnostics.attempts.push({field:'ratio',source:adaptive.ratio?'adaptive':'fallback',text:englishStatus.data.text.trim()});const maximum=maximumStatus(englishStatus.data.text);
   if(maximum.level){Object.assign(item,maximum);}else{
-  phase='load';koreanWorker=await createWorker('kor',1,options);signal?.throwIfAborted();phase='read';await koreanWorker.setParameters({tessedit_pageseg_mode:PSM.SPARSE_TEXT});const status=await koreanWorker.recognize(canvas);original.push(status.data.text.trim());diagnostics.attempts.push({field:'ratio',source:adaptive.ratio?'adaptive':'fallback',text:status.data.text.trim()});Object.assign(item,maximumStatus(status.data.text));}
+  await worker.terminate();worker=undefined;phase='load';koreanWorker=await createOcrWorker(createWorker,'kor',options,signal);signal?.throwIfAborted();phase='read';await koreanWorker.setParameters({tessedit_pageseg_mode:PSM.SINGLE_LINE});const status=await koreanWorker.recognize(canvas);original.push(status.data.text.trim());diagnostics.attempts.push({field:'ratio',source:adaptive.ratio?'adaptive':'fallback',text:status.data.text.trim()});Object.assign(item,maximumStatus(status.data.text));}
 
  }
  if(kind==='skill'&&(item.target==='20'||item.target==='23')){diagnostics.issues=[{code:'OCR-06',message:'스킬 칸에 다른 종류의 사진이 감지되었습니다. 초록색 스킬 소환 재화와 소환 레벨이 함께 보이는 스킬 화면을 올려주세요.'}];onProgress(100);return {item:{},original,diagnostics};}

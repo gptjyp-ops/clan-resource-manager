@@ -22,6 +22,7 @@ jobs:
       - run: node scripts/test-clan-api.mjs
       - run: node scripts/test-screen-layout.mjs
       - run: node scripts/test-scan-cancel.mjs
+      - run: node scripts/test-ocr-worker.mjs
       - run: node scripts/test-photo-input.mjs
       - run: node scripts/test-full-save.mjs
       - run: node scripts/test-drafts.mjs
