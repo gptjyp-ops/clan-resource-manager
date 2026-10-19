@@ -567,5 +567,12 @@
   "개인 보유 수량을 자동으로 불러왔습니다.": "Your held quantity was loaded automatically.",
   "현재 클랜 합계 수량을 자동으로 불러왔습니다.": "The current clan total was loaded automatically.",
   "수량을 직접 입력해 계산 중입니다.": "Calculating with a manually entered quantity.",
-  "클랜 합계에 입력한 소모량·배율을 동일하게 적용한 예상값입니다. 개인별 조건이 다르면 실제 합산 점수와 다릅니다.": "This estimate applies the entered cost and multiplier uniformly to the clan total. Different member settings will produce a different combined score."
+  "클랜 합계에 입력한 소모량·배율을 동일하게 적용한 예상값입니다. 개인별 조건이 다르면 실제 합산 점수와 다릅니다.": "This estimate applies the entered cost and multiplier uniformly to the clan total. Different member settings will produce a different combined score.",
+  "닉네임과 수정 비밀번호를 먼저 입력해주세요.": "Enter your nickname and edit password first.",
+  "QR 티켓을 발급했습니다. 티켓 이미지를 꼭 저장해주세요.": "Your QR ticket has been issued. Save the ticket image.",
+  "티켓 발급 실패": "Ticket issuance failed.",
+  "수정 비밀번호로 로그인하거나, 같은 닉네임·비밀번호로 QR 티켓을 발급할 수 있습니다.": "Log in with your edit password, or use the same nickname and password to issue a QR ticket.",
+  "QR 발급 후에는 기존 비밀번호 대신 QR 티켓으로 로그인합니다. 티켓 이미지를 꼭 저장해주세요.": "After issuance, use your QR ticket instead of the old password to log in. Save the ticket image.",
+  "QR 티켓 새로 발급": "Issue a new QR ticket",
+  "기존 회원 로그인 · QR 티켓 발급": "Existing member login / QR ticket issuance"
 }
