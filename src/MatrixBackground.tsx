@@ -1,6 +1,6 @@
 import {useEffect,useRef} from 'react';
 
-type Effect={destroy:()=>void};
+type Effect={destroy:()=>void;resize?:()=>void};
 type VantaWindow=Window&{VANTA?:Partial<Record<'BIRDS'|'HALO',(options:Record<string,unknown>)=>Effect>>;THREE?:unknown};
 type EffectName='BIRDS'|'HALO';
 let three:Promise<void>|undefined;
@@ -18,8 +18,8 @@ export default function MatrixBackground(){
  useEffect(()=>{
   const el=ref.current;if(!el)return;
   const reduced=window.matchMedia('(prefers-reduced-motion: reduce)'),mobile=window.matchMedia('(max-width: 800px), (pointer: coarse) and (max-width: 1024px)');
-  let disposed=false,effect:Effect|undefined,generation=0;
-  function stop(){generation++;try{effect?.destroy();}catch{}effect=undefined;el!.replaceChildren();}
+  let disposed=false,effect:Effect|undefined,generation=0,resizeCleanup:(()=>void)|undefined;
+  function stop(){generation++;resizeCleanup?.();resizeCleanup=undefined;try{effect?.destroy();}catch{}effect=undefined;el!.replaceChildren();}
   async function sync(){
    stop();if(disposed||document.hidden||reduced.matches)return;
    const current=generation,name:EffectName=mobile.matches?'HALO':'BIRDS';
@@ -31,10 +31,19 @@ export default function MatrixBackground(){
      scale:mobile.matches?2:1.5,scaleMobile:2,backgroundColor:0x080f20,backgroundAlpha:1,
      color1:0x39d9ff,color2:0x9c78ff,colorMode:'lerp',birdSize:1.15,wingSpan:22,
      speedLimit:3,separation:35,alignment:30,cohesion:25,quantity:mobile.matches?2:3});
+    if(name==='HALO'&&effect?.resize){
+     // Ignore mobile toolbar height changes while scrolling.
+     const instance=effect,originalResize=effect.resize;
+     window.removeEventListener('resize',originalResize);
+     let width=window.innerWidth;
+     const stableResize=()=>{if(window.innerWidth===width)return;width=window.innerWidth;instance.resize?.();};
+     window.addEventListener('resize',stableResize);
+     resizeCleanup=()=>window.removeEventListener('resize',stableResize);
+    }
    }catch{stop();} // Solid navy remains usable when WebGL or the CDN is unavailable.
   }
   void sync();document.addEventListener('visibilitychange',sync);reduced.addEventListener('change',sync);mobile.addEventListener('change',sync);
   return()=>{disposed=true;stop();document.removeEventListener('visibilitychange',sync);reduced.removeEventListener('change',sync);mobile.removeEventListener('change',sync);};
  },[]);
- return <div ref={ref} aria-hidden="true" style={{position:'fixed',inset:0,zIndex:-1,pointerEvents:'none',background:'#080f20',opacity:1,overflow:'hidden'}}/>;
+ return <div ref={ref} aria-hidden="true" style={{position:'fixed',inset:'0 0 auto',height:'100lvh',width:'100%',zIndex:-1,pointerEvents:'none',background:'#080f20',opacity:1,overflow:'hidden'}}/>;
 }
