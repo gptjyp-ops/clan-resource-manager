@@ -589,5 +589,7 @@
   "전체 입력 완료": "All quantities entered",
   "합성·재화 일부 미입력": "Some merge/resource quantities missing",
   "합성 미등록": "Missing merges",
-  "버튼을 다시 누르면 정렬 방향이 바뀝니다. 미등록·합성 미등록은 내림차순에서 미입력이 많은 순, 오름차순에서 적은 순입니다. 재화 수량 미입력은 마지막에 표시합니다.": "Tap again to reverse the order. For registration and merges, descending puts more missing entries first; ascending puts fewer first. Missing resource amounts stay last."
+  "버튼을 다시 누르면 정렬 방향이 바뀝니다. 미등록·합성 미등록은 내림차순에서 미입력이 많은 순, 오름차순에서 적은 순입니다. 재화 수량 미입력은 마지막에 표시합니다.": "Tap again to reverse the order. For registration and merges, descending puts more missing entries first; ascending puts fewer first. Missing resource amounts stay last.",
+  "재화 미입력": "Missing resources",
+  "이번 주 미등록과 재화 일부 미입력 포함": "Includes members not registered this week and partially missing resources"
 }
