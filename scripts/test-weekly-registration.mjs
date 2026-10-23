@@ -1,6 +1,6 @@
 import fs from 'node:fs';import ts from 'typescript';import assert from 'node:assert/strict';
 const js=ts.transpileModule(fs.readFileSync('src/lib/weekly-registration.ts','utf8'),{compilerOptions:{module:ts.ModuleKind.ESNext,target:ts.ScriptTarget.ES2022}}).outputText;
-const {registrationWeekStart,registeredThisWeek}=await import('data:text/javascript;base64,'+Buffer.from(js).toString('base64'));
+const {registrationWeekStart,registeredThisWeek,registrationDisplay}=await import('data:text/javascript;base64,'+Buffer.from(js).toString('base64'));
 const now=Date.parse('2026-10-23T21:00:00+09:00');
 assert.equal(new Date(registrationWeekStart(now)).toISOString(),'2026-10-18T00:00:00.000Z');
 const record=(at,amount='0')=>({updated_at:at,details:{skill:{amount},egg:{amount:'',selected:'',extra:'0'}}});
@@ -14,3 +14,13 @@ assert.equal(registeredThisWeek(record('2026-10-24T23:00:00+09:00'),Date.parse('
 assert.equal(registeredThisWeek({updated_at:'2026-10-19T12:00:00+09:00',details:{mount:{selected:'0'}}},now),true);
 assert.equal(registeredThisWeek({updated_at:'2026-10-19T12:00:00+09:00',details:{mount:{extra:'4'}}},now),true);
 console.log('Weekly registration: Korea Sunday 09:00 cutoff, rollover, zero, partial merges, empty reset and invalid/future dates passed.');
+
+const complete={updated_at:'2026-10-19T12:00:00+09:00',details:Object.fromEntries(['skill','egg','mount','potion'].map(g=>[g,{amount:'0',selected:(g==='egg'||g==='mount')?'0':'',extra:'0'}]))};
+assert.equal(registrationDisplay(complete,now).status,'complete');
+assert.equal(registrationDisplay({...complete,updated_at:'2026-10-17T12:00:00+09:00'},now).status,'none');
+const missingMerge=structuredClone(complete);missingMerge.details.egg.selected='';
+assert.equal(registrationDisplay(missingMerge,now).label,'합성 미입력');
+const missingAmount=structuredClone(complete);missingAmount.details.potion.amount='';
+assert.equal(registrationDisplay(missingAmount,now).label,'재화 일부 미입력');
+assert.equal(registrationDisplay(record('2026-10-19T12:00:00+09:00',''),now).status,'none');
+console.log('Nickname colors distinguish unregistered, missing merges/resources and complete entries, including explicit zero.');
