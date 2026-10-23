@@ -10,8 +10,16 @@ const days=[
  {day:5,points:2,tasks:['장비 제작','펫','기술 트리']},
  {day:6,points:4,tasks:['라이벌전','전면전']},
 ];
-export default function WarSchedule(){
+export default function WarSchedule({clanId}:{clanId?:string}){
  useLanguage();
+ if(clanId==='02df2b6670884e209ab6bc4d'){
+  const guide=import.meta.env.BASE_URL+'images/seapearl-clan-guide.webp';
+  return <details className="war-schedule" open>
+   <summary><CalendarDays size={21} aria-hidden="true"/><span><strong>SeaPearl[TLQKF] · {t('클랜 운영 안내')}</strong><small>{t('클랜전 운영 기준 · 이미지를 누르면 확대됩니다.')}</small></span><ChevronDown className="schedule-chevron" size={20} aria-hidden="true"/></summary>
+   <div className="war-schedule-body"><PhotoPreview src={guide} alt={'SeaPearl[TLQKF] · '+t('클랜 운영 안내')}/><a className="schedule-download" href={guide} download="SeaPearl-TLQKF-clan-guide.webp"><Download size={16} aria-hidden="true"/>{t('안내 이미지 다운로드')}</a></div>
+  </details>;
+ }
+
  const src=import.meta.env.BASE_URL+'images/clan-war-schedule.png';
  return <details className="war-schedule" open>
   <summary><CalendarDays size={21} aria-hidden="true"/><span><strong>{t('클랜전 일차별 일정')}</strong><small>{t('1~6일차 항목과 승점 확인')}</small></span><ChevronDown className="schedule-chevron" size={20} aria-hidden="true"/></summary>
