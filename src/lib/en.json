@@ -574,5 +574,14 @@
   "수정 비밀번호로 로그인하거나, 같은 닉네임·비밀번호로 QR 티켓을 발급할 수 있습니다.": "Log in with your edit password, or use the same nickname and password to issue a QR ticket.",
   "QR 발급 후에는 기존 비밀번호 대신 QR 티켓으로 로그인합니다. 티켓 이미지를 꼭 저장해주세요.": "After issuance, use your QR ticket instead of the old password to log in. Save the ticket image.",
   "QR 티켓 새로 발급": "Issue a new QR ticket",
-  "기존 회원 로그인 · QR 티켓 발급": "Existing member login / QR ticket issuance"
+  "기존 회원 로그인 · QR 티켓 발급": "Existing member login / QR ticket issuance",
+  "이번 주 등록": "Registered this week",
+  "이번 주 미등록": "Not registered this week",
+  "이번 주 등록 ": "Registered this week ",
+  "이번 주 미등록 ": "Not registered this week ",
+  "명 이번 주 등록": " registered this week",
+  "이번 주 ": "This week ",
+  "한국 시간 매주 일요일 오전 9시 기준 · 재화를 하나라도 저장한 회원을 집계합니다. 부분 등록·수정도 포함됩니다.": "Resets each Sunday at 09:00 Korea time. Members who saved any resource this week are counted, including partial submissions and edits.",
+  "이번 주": "This week",
+  "미등록 인원은 기존 등록 명단 기준입니다.": "The unregistered count refers to members already on the saved roster."
 }

@@ -1,0 +1,16 @@
+import fs from 'node:fs';import ts from 'typescript';import assert from 'node:assert/strict';
+const js=ts.transpileModule(fs.readFileSync('src/lib/weekly-registration.ts','utf8'),{compilerOptions:{module:ts.ModuleKind.ESNext,target:ts.ScriptTarget.ES2022}}).outputText;
+const {registrationWeekStart,registeredThisWeek}=await import('data:text/javascript;base64,'+Buffer.from(js).toString('base64'));
+const now=Date.parse('2026-10-23T21:00:00+09:00');
+assert.equal(new Date(registrationWeekStart(now)).toISOString(),'2026-10-18T00:00:00.000Z');
+const record=(at,amount='0')=>({updated_at:at,details:{skill:{amount},egg:{amount:'',selected:'',extra:'0'}}});
+assert.equal(registeredThisWeek(record('2026-10-18T08:59:59+09:00'),now),false);
+assert.equal(registeredThisWeek(record('2026-10-18T09:00:00+09:00'),now),true);
+assert.equal(registeredThisWeek(record('2026-10-19T12:00:00+09:00'),now),true);
+assert.equal(registeredThisWeek(record('2026-10-19T12:00:00+09:00',''),now),false);
+assert.equal(registeredThisWeek(record('bad'),now),false);
+assert.equal(registeredThisWeek(record('2026-10-25T10:00:00+09:00'),now),false);
+assert.equal(registeredThisWeek(record('2026-10-24T23:00:00+09:00'),Date.parse('2026-10-25T09:00:00+09:00')),false);
+assert.equal(registeredThisWeek({updated_at:'2026-10-19T12:00:00+09:00',details:{mount:{selected:'0'}}},now),true);
+assert.equal(registeredThisWeek({updated_at:'2026-10-19T12:00:00+09:00',details:{mount:{extra:'4'}}},now),true);
+console.log('Weekly registration: Korea Sunday 09:00 cutoff, rollover, zero, partial merges, empty reset and invalid/future dates passed.');
