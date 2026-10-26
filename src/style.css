@@ -294,3 +294,11 @@ html[lang="en"] .panel-heading{flex-wrap:wrap;gap:8px}
 .registration-counts .input-complete{color:#55dfc5}
 .registration-counts strong{font-size:13px;font-variant-numeric:tabular-nums}
 @media(max-width:600px){.roster-title-line{gap:8px}.registration-counts{gap:5px;font-size:11px}.registration-counts>span{padding:4px 7px}}
+
+/* Align every summary label/count pair on the same mobile columns. */
+@media(max-width:800px){
+ .merge-summary{grid-template-columns:minmax(0,1fr)}
+ .merge-summary>span{grid-column:1/-1;display:flex;justify-content:space-between;align-items:center;flex-wrap:nowrap;gap:12px;width:100%}
+ .merge-summary>span+span{border-top:1px solid #2d3a50;padding-top:8px}
+ .merge-summary strong{margin-left:auto;flex-shrink:0;text-align:right;font-variant-numeric:tabular-nums}
+}
