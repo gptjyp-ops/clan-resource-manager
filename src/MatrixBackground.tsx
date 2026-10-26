@@ -1,3 +1,4 @@
+import {createLightBackground} from './lib/light-background';
 import {useEffect,useRef} from 'react';
 
 type Effect={destroy:()=>void;resize?:()=>void};
@@ -12,7 +13,7 @@ function loadEffect(name:EffectName){return libraries[name]??=(async()=>{
  if(!w.VANTA?.[name])await loadScript('https://cdn.jsdelivr.net/npm/vanta@0.5.24/dist/vanta.'+name.toLowerCase()+'.min.js');
 })().catch(e=>{delete libraries[name];throw e;});}
 
-// Vanta HALO on phones and BIRDS on desktop are decorative. Its canvas cannot intercept form input or scrolling.
+// Ambient light on phones and Vanta BIRDS on desktop remain decorative.
 export default function MatrixBackground(){
  const ref=useRef<HTMLDivElement>(null);
  useEffect(()=>{
@@ -22,24 +23,16 @@ export default function MatrixBackground(){
   function stop(){generation++;resizeCleanup?.();resizeCleanup=undefined;try{effect?.destroy();}catch{}effect=undefined;el!.replaceChildren();}
   async function sync(){
    stop();if(disposed||document.hidden||reduced.matches)return;
-   const current=generation,name:EffectName=mobile.matches?'HALO':'BIRDS';
+   if(mobile.matches){effect=createLightBackground(el!);return;}
+   const current=generation,name:EffectName='BIRDS';
    try{
     await loadEffect(name);if(disposed||current!==generation||document.hidden||reduced.matches)return;
     const common={el,THREE:(window as VantaWindow).THREE,backgroundColor:0x080f20,backgroundAlpha:1,minHeight:200,minWidth:200,gyroControls:false};
-    effect=name==='HALO'?(window as VantaWindow).VANTA?.HALO?.({...common,mouseControls:false,touchControls:false,scale:2,scaleMobile:2,baseColor:0x396fff,color2:0x39d9ff,amplitudeFactor:1,size:1.1,xOffset:0,yOffset:0}):(window as VantaWindow).VANTA?.BIRDS?.({...common,
+    effect=(window as VantaWindow).VANTA?.BIRDS?.({...common,
      mouseControls:true,touchControls:false,gyroControls:false,minHeight:200,minWidth:200,
-     scale:mobile.matches?2:1.5,scaleMobile:2,backgroundColor:0x080f20,backgroundAlpha:1,
+     scale:1.5,backgroundColor:0x080f20,backgroundAlpha:1,
      color1:0x39d9ff,color2:0x9c78ff,colorMode:'lerp',birdSize:1.15,wingSpan:22,
-     speedLimit:3,separation:35,alignment:30,cohesion:25,quantity:mobile.matches?2:3});
-    if(name==='HALO'&&effect?.resize){
-     // Ignore mobile toolbar height changes while scrolling.
-     const instance=effect,originalResize=effect.resize;
-     window.removeEventListener('resize',originalResize);
-     let width=window.innerWidth;
-     const stableResize=()=>{if(window.innerWidth===width)return;width=window.innerWidth;instance.resize?.();};
-     window.addEventListener('resize',stableResize);
-     resizeCleanup=()=>window.removeEventListener('resize',stableResize);
-    }
+     speedLimit:3,separation:35,alignment:30,cohesion:25,quantity:3});
    }catch{stop();} // Solid navy remains usable when WebGL or the CDN is unavailable.
   }
   void sync();document.addEventListener('visibilitychange',sync);reduced.addEventListener('change',sync);mobile.addEventListener('change',sync);
