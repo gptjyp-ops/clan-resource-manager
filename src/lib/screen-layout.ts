@@ -61,6 +61,22 @@ function components(p:Pixels,area:Box,test:(r:number,g:number,b:number)=>boolean
  }
  return boxes;
 }
+// A merge dialog has a gray detail panel containing a blue experience bar.
+export function mergeDialog(p:Pixels):{panel:Box;empty:boolean}|undefined{
+ const w=p.width,h=p.height;
+ const panel=components(p,{x:.04*w,y:.05*h,width:.92*w,height:.60*h},(r,g,b)=>Math.min(r,g,b)>170&&Math.max(r,g,b)<240&&Math.max(r,g,b)-Math.min(r,g,b)<25)
+ .filter(b=>b.width>.55*w&&b.height>.16*w).sort((a,b)=>a.y-b.y)[0];
+ if(!panel)return;
+ const blue=components(p,panel,(r,g,b)=>b>70&&g>50&&r<110&&b>r*1.12,.2).some(b=>b.width>.4*w&&b.height>.015*w);
+ if(!blue&&!components(p,panel,(r,g,b)=>b>120&&g>70&&r<90,.2).some(b=>b.width>.12*w&&b.height>.015*w))return;
+ const body=components(p,{x:.02*w,y:panel.y,width:.96*w,height:h-panel.y},(r,g,b)=>Math.min(r,g,b)>240)
+ .filter(b=>b.width>.55*w&&b.height>.35*w).sort((a,b)=>b.height-a.height)[0];
+ if(!body)return {panel,empty:false};
+ const area={x:panel.x,y:panel.y+panel.height+.12*w,width:panel.width,height:body.y+body.height-.17*w-(panel.y+panel.height+.12*w)};
+ if(area.height<.20*w)return {panel,empty:false};
+ const objects=components(p,area,(r,g,b)=>Math.min(r,g,b)<215,.08).filter(b=>b.width>.025*w&&b.height>.035*w);
+ return {panel,empty:objects.length===0};
+}
 export function findLandmarks(p:Pixels,kind:PhotoKind):{amount?:Box;info?:Box;progressBar?:Box;selected?:Box;amountMode?:'white'|'yellow'|'mixed'}{
  const w=p.width,h=p.height,result:{amount?:Box;info?:Box;progressBar?:Box;selected?:Box;amountMode?:'white'|'yellow'|'mixed'}={};
  if(kind==='eggMerge'||kind==='mountMerge'){
@@ -75,10 +91,10 @@ export function findLandmarks(p:Pixels,kind:PhotoKind):{amount?:Box;info?:Box;pr
   }
  }
  if(kind==='skill'||kind==='egg'||kind==='mount'){
-  const area=kind==='mount'?{x:.34*w,y:.17*h,width:.32*w,height:.25*h}:{x:.04*w,y:.025*h,width:.23*w,height:.16*h};
+  const area=kind==='mount'?{x:.34*w,y:.17*h,width:.32*w,height:.38*h}:{x:.04*w,y:.025*h,width:.23*w,height:.16*h};
   const bars=components(p,area,(r,g,b)=>Math.min(r,g,b)>40&&Math.max(r,g,b)<185&&Math.max(r,g,b)-Math.min(r,g,b)<40)
    .filter(b=>b.width>.09*w&&b.height>.022*w&&b.height<.075*w&&b.width/b.height>2.3);
-  bars.sort((a,b)=>a.y-b.y);result.amount=bars[0];
+  bars.sort((a,b)=>a.y-b.y);result.amount=bars.find(bar=>components(p,bar,(r,g,b)=>Math.min(r,g,b)>205,.12).some(b=>b.height>.012*w&&b.width>.005*w))||bars[0];
   // Small captures lose dark edge pixels when scaled down. Keep the filled
   // information icon, while excluding the much sparser notification rings.
   const circles=components(p,{x:.62*w,y:.43*h,width:.30*w,height:.44*h},(r,g,b)=>Math.max(r,g,b)<90,.50)

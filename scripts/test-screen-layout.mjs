@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import ts from 'typescript';
 const source=ts.transpileModule(fs.readFileSync('src/lib/screen-layout.ts','utf8'),{compilerOptions:{module:ts.ModuleKind.ESNext,target:ts.ScriptTarget.ES2022}}).outputText;
-const {findLandmarks,locateRegions,ratioCandidates,digitBands,amountDecimal,cleanAmountPixels,isSummonPhotoInMergeSlot,isForeignPhotoInSkillSlot}=await import('data:text/javascript;base64,'+Buffer.from(source).toString('base64'));
+const {mergeDialog,findLandmarks,locateRegions,ratioCandidates,digitBands,amountDecimal,cleanAmountPixels,isSummonPhotoInMergeSlot,isForeignPhotoInSkillSlot}=await import('data:text/javascript;base64,'+Buffer.from(source).toString('base64'));
 // Three narrow neighbouring 1s must remain three glyphs even when the OCR
 // engine returns a syntactically valid single 1. Ignore isolated speckles.
 const numeric={width:90,height:50,data:new Uint8ClampedArray(90*50*4).fill(255)};
@@ -184,3 +184,17 @@ const foreignMount=image(200,660);
 for(let y=200;y<217;y++)for(let x=30;x<94;x++)foreignMount.data.set([255,255,255,255],(y*400+x)*4);
 for(let y=220;y<237;y++)for(let x=165;x<225;x++)foreignMount.data.set([100,100,100,255],(y*400+x)*4);
 assert.equal(isForeignPhotoInSkillSlot(foreignMount,'skill'),true);
+
+// Merge zero requires a positively identified dialog and an empty list.
+// Gray header + experience bar + white body, with/without an inventory tile.
+function mergeFixture(withTile){
+ const p={width:400,height:870,data:new Uint8ClampedArray(400*870*4).fill(0)};
+ const fill=(x,y,w,h,c)=>{for(let j=y;j<y+h;j++)for(let i=x;i<x+w;i++)p.data.set([...c,255],(j*400+i)*4);};
+ fill(25,80,350,700,[255,255,255]);fill(32,90,336,180,[215,215,215]);fill(50,185,300,20,[50,75,100]);
+ if(withTile)fill(50,350,42,50,[180,110,220]);
+ return p;
+}
+assert.equal(mergeDialog(mergeFixture(false)).empty,true);
+assert.equal(mergeDialog(mergeFixture(true)).empty,false);
+assert.equal(mergeDialog(image(78,620)),undefined);
+console.log('Merge dialog rejects ordinary screens and distinguishes zero from unselected materials.');

@@ -2,7 +2,7 @@ import {createOcrWorker} from './ocr-worker';
 import {newScanReport,missingIssues,ScanFailure} from './scan-diagnostics';
 import {parseNumber} from './ocr';
 import type {PhotoKind,Group,Item} from './inventory';
-import {locateRegions,ratioCandidates,digitBands,amountDecimal,cleanAmountPixels,isSummonPhotoInMergeSlot,isForeignPhotoInSkillSlot} from './screen-layout';
+import {mergeDialog,locateRegions,ratioCandidates,digitBands,amountDecimal,cleanAmountPixels,isSummonPhotoInMergeSlot,isForeignPhotoInSkillSlot} from './screen-layout';
 import {maximumStatus} from './summon-status';
 export type Region={field:'amount'|'level'|'ratio'|'selected';rect:[number,number,number,number];mode:'white'|'black'|'yellow'|'mixed'|'raw'};
 export const regions:Record<PhotoKind,Region[]>={
@@ -30,8 +30,28 @@ export async function scanScreen(file:File,kind:PhotoKind,onProgress:(n:number)=
   diagnostics.issues=[{code:'OCR-06',field:'selected',message:'합성 칸에 일반 소환 화면을 올렸습니다. ‘선택됨’ 숫자가 보이는 합성 화면을 올려주세요.'}];
   onProgress(100);return {item,original,diagnostics};
  }
+ const merge=mergeDialog(overviewPixels);
+ const merging=kind==='eggMerge'||kind==='mountMerge';
+ if(merge&&!merging){
+  diagnostics.issues=[{code:'OCR-06',message:'합성 사진입니다. 알 합성 또는 탈것 합성 칸에 올려주세요.'}];onProgress(100);return {item,original,diagnostics};
+ }
  const {createWorker,PSM}=await import('tesseract.js');const options={workerPath:import.meta.env.BASE_URL+'ocr/worker.min.js',corePath:import.meta.env.BASE_URL+(fresh?'ocr/tesseract-core-lstm.wasm.js':'ocr'),fallbackCorePath:import.meta.env.BASE_URL+'ocr/tesseract-core-lstm.wasm.js',cacheMethod:fresh?'none' as const:undefined,langPath:import.meta.env.BASE_URL+'ocr/lang',workerBlobURL:false};worker=await createOcrWorker(createWorker,'eng',options,signal);signal?.throwIfAborted();
  phase='read';
+ if(merge&&merging){
+  // Read the prompt as Korean before considering an empty inventory to be zero.
+  const b=merge.panel,w=overview.width;
+  const prompt=document.createElement('canvas');prompt.width=600;prompt.height=100;
+  prompt.getContext('2d')!.drawImage(bitmap,(b.x+.02*w)/overview.width*bitmap.width,(b.y+b.height-.11*w)/overview.height*bitmap.height,.48*w/overview.width*bitmap.width,.085*w/overview.height*bitmap.height,0,0,600,100);
+  koreanWorker=await createOcrWorker(createWorker,'kor',options,signal);
+  await koreanWorker.setParameters({tessedit_pageseg_mode:PSM.SINGLE_LINE});
+  const text=(await koreanWorker.recognize(prompt)).data.text.trim();original.push(text);diagnostics.attempts.push({field:'selected',source:'adaptive',text});
+  await koreanWorker.terminate();koreanWorker=undefined;
+  if(/합칠/.test(text)&&/선택/.test(text)){
+   if(merge.empty){item.selected='0';onProgress(100);return {item,original,diagnostics};}
+   diagnostics.issues=[{code:'OCR-07',field:'selected',message:'합성 재료가 있지만 선택되지 않았습니다. 재료를 선택해 ‘선택됨’ 수량이 나온 사진을 올려주세요.'}];onProgress(100);return {item,original,diagnostics};
+  }
+ }
+
  const adaptive:Partial<Record<Region['field'],Region>>={};for(const r of locateRegions(overviewPixels,kind))adaptive[r.field]=r;
  for(let k=0;k<regions[kind].length;k++){
  const fallback=regions[kind][k],candidates=fallback.field==='selected'?(adaptive.selected?[adaptive.selected]:[]):adaptive[fallback.field]?(fallback.field==='amount'?[adaptive.amount!]:[...ratioCandidates(adaptive[fallback.field]!),fallback]):[fallback];
@@ -76,9 +96,12 @@ export async function scanScreen(file:File,kind:PhotoKind,onProgress:(n:number)=
   const x=Math.min(level.rect[0],ratio.rect[0]),y=Math.max(0,Math.min(level.rect[1],ratio.rect[1])-.013*bitmap.width/bitmap.height),right=Math.max(level.rect[0]+level.rect[2],ratio.rect[0]+ratio.rect[2]),bottom=adaptive.ratio&&!(adaptive.ratio as any).alternativeRect?level.rect[1]+level.rect[3]:Math.max(level.rect[1]+level.rect[3],ratio.rect[1]+ratio.rect[3]);
   const canvas=document.createElement('canvas'),scale=Math.min(750/(bitmap.width*(right-x)),240/(bitmap.height*(bottom-y)));canvas.width=Math.round(bitmap.width*(right-x)*scale);canvas.height=Math.round(bitmap.height*(bottom-y)*scale);
   canvas.getContext('2d')!.drawImage(bitmap,bitmap.width*x,bitmap.height*y,bitmap.width*(right-x),bitmap.height*(bottom-y),0,0,canvas.width,canvas.height);
-  await worker.setParameters({tessedit_char_whitelist:'',tessedit_pageseg_mode:PSM.SPARSE_TEXT});const englishStatus=await worker.recognize(canvas);original.push(englishStatus.data.text.trim());diagnostics.attempts.push({field:'ratio',source:adaptive.ratio?'adaptive':'fallback',text:englishStatus.data.text.trim()});const maximum=maximumStatus(englishStatus.data.text);
+  const statusPixels=canvas.getContext('2d')!.getImageData(0,0,canvas.width,canvas.height);
+  for(let i=0;i<statusPixels.data.length;i+=4){const ink=Math.max(statusPixels.data[i],statusPixels.data[i+1],statusPixels.data[i+2])<120;statusPixels.data[i]=statusPixels.data[i+1]=statusPixels.data[i+2]=ink?0:255;}canvas.getContext('2d')!.putImageData(statusPixels,0,0);
+  const statusPad=document.createElement('canvas');statusPad.width=canvas.width+80;statusPad.height=canvas.height+80;const sp=statusPad.getContext('2d')!;sp.fillStyle='white';sp.fillRect(0,0,statusPad.width,statusPad.height);sp.drawImage(canvas,40,40);
+  await worker.setParameters({tessedit_char_whitelist:'',tessedit_pageseg_mode:PSM.SPARSE_TEXT});const englishStatus=await worker.recognize(statusPad);original.push(englishStatus.data.text.trim());diagnostics.attempts.push({field:'ratio',source:adaptive.ratio?'adaptive':'fallback',text:englishStatus.data.text.trim()});const maximum=maximumStatus(englishStatus.data.text);
   if(maximum.level){Object.assign(item,maximum);}else{
-  await worker.terminate();worker=undefined;phase='load';koreanWorker=await createOcrWorker(createWorker,'kor',options,signal);signal?.throwIfAborted();phase='read';await koreanWorker.setParameters({tessedit_pageseg_mode:PSM.SINGLE_LINE});const status=await koreanWorker.recognize(canvas);original.push(status.data.text.trim());diagnostics.attempts.push({field:'ratio',source:adaptive.ratio?'adaptive':'fallback',text:status.data.text.trim()});Object.assign(item,maximumStatus(status.data.text));}
+  await worker.terminate();worker=undefined;phase='load';koreanWorker=await createOcrWorker(createWorker,'kor',options,signal);signal?.throwIfAborted();phase='read';await koreanWorker.setParameters({tessedit_pageseg_mode:PSM.SINGLE_LINE});const status=await koreanWorker.recognize(statusPad);original.push(status.data.text.trim());diagnostics.attempts.push({field:'ratio',source:adaptive.ratio?'adaptive':'fallback',text:status.data.text.trim()});Object.assign(item,maximumStatus(status.data.text));}
 
  }
  if(kind==='skill'&&(item.target==='20'||item.target==='23')){diagnostics.issues=[{code:'OCR-06',message:'스킬 칸에 다른 종류의 사진이 감지되었습니다. 초록색 스킬 소환 재화와 소환 레벨이 함께 보이는 스킬 화면을 올려주세요.'}];onProgress(100);return {item:{},original,diagnostics};}
