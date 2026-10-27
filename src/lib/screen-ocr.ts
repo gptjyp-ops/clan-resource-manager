@@ -19,7 +19,7 @@ export function parseRead(field:Region['field'],text:string):Partial<Item>{let t
 }
 export const groupFor=(kind:PhotoKind):Group=>kind.startsWith('egg')?'egg':kind.startsWith('mount')?'mount':kind as Group;
 export async function scanScreen(file:File,kind:PhotoKind,onProgress:(n:number)=>void,fresh=false,signal?:AbortSignal){
- const diagnostics=newScanReport(file,kind,fresh);let bitmap:ImageBitmap;try{bitmap=await createImageBitmap(file);}catch{diagnostics.issues=[{code:'IMG-01',message:'사진 파일을 열지 못했습니다.'}];throw new ScanFailure(diagnostics);}diagnostics.image.width=bitmap.width;diagnostics.image.height=bitmap.height;let phase:'load'|'read'='load';let worker:any,koreanWorker:any;const item:Partial<Item>={};const original:string[]=[];
+ const diagnostics=newScanReport(file,kind,fresh);let bitmap:ImageBitmap;try{bitmap=await createImageBitmap(file);}catch{diagnostics.issues=[{code:'IMG-01',message:'사진 파일을 열지 못했습니다.'}];throw new ScanFailure(diagnostics);}diagnostics.image.width=bitmap.width;diagnostics.image.height=bitmap.height;let phase:'load'|'read'='load';let worker:any,koreanWorker:any;const item:Partial<Item>={};const original:string[]=[];let mergeTextCount:string|undefined;
  const abort=()=>{void worker?.terminate().catch(()=>{});void koreanWorker?.terminate().catch(()=>{});};signal?.addEventListener('abort',abort,{once:true});
  try{
  signal?.throwIfAborted();
@@ -46,6 +46,7 @@ export async function scanScreen(file:File,kind:PhotoKind,onProgress:(n:number)=
   await koreanWorker.setParameters({tessedit_pageseg_mode:PSM.SINGLE_LINE});
   const text=(await koreanWorker.recognize(prompt)).data.text.trim();original.push(text);diagnostics.attempts.push({field:'selected',source:'adaptive',text});
   await koreanWorker.terminate();koreanWorker=undefined;
+  const labelled=text.replace(/\s/g,'').match(/^(\d+)선택됨/);if(labelled)mergeTextCount=labelled[1];
   if(/합칠/.test(text)&&/선택/.test(text)){
    if(merge.empty){item.selected='0';onProgress(100);return {item,original,diagnostics};}
    diagnostics.issues=[{code:'OCR-07',field:'selected',message:'합성 재료가 있지만 선택되지 않았습니다. 재료를 선택해 ‘선택됨’ 수량이 나온 사진을 올려주세요.'}];onProgress(100);return {item,original,diagnostics};
@@ -105,6 +106,7 @@ export async function scanScreen(file:File,kind:PhotoKind,onProgress:(n:number)=
 
  }
  if(kind==='skill'&&(item.target==='20'||item.target==='23')){diagnostics.issues=[{code:'OCR-06',message:'스킬 칸에 다른 종류의 사진이 감지되었습니다. 초록색 스킬 소환 재화와 소환 레벨이 함께 보이는 스킬 화면을 올려주세요.'}];onProgress(100);return {item:{},original,diagnostics};}
+ if(mergeTextCount!==undefined&&item.selected!==undefined&&Number(mergeTextCount)!==Number(item.selected)){delete item.selected;diagnostics.issues.push({code:'OCR-04',field:'selected',message:'합성 수량 인식 결과가 서로 다릅니다. 사진을 확대해 숫자를 확인한 뒤 다시 인식해 주세요.'});}
  diagnostics.issues.push(...missingIssues(kind,item,adaptive).filter(issue=>!diagnostics.issues.some(existing=>existing.field===issue.field)));onProgress(100);return {item,original,diagnostics};
  }catch{signal?.throwIfAborted();diagnostics.issues.push({code:phase==='load'?'OCR-01':'OCR-05',message:phase==='load'?'사진 인식 기능을 불러오지 못했습니다.':'사진 인식 처리 중 실행 오류가 발생했습니다.'});throw new ScanFailure(diagnostics);}finally{signal?.removeEventListener('abort',abort);bitmap.close();await worker?.terminate().catch(()=>{});await koreanWorker?.terminate().catch(()=>{});}
 }
