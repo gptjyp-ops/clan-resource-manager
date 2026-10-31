@@ -157,6 +157,12 @@ assert.equal(issued.ok,true);assert.match(issued.token,/^[a-f0-9]{64}$/);
 assert.deepEqual(call('list',access(ticketClan)).records,beforeTicket,'Conversion must not change resources, photos or update time');
 const entry={...access(ticketClan),nickname:'TicketUser',token:issued.token};
 assert.equal(action('ticketEnter',entry).ok,true);
+const directEntry=action('ticketClanEnter',{...entry,accessKey:''});
+assert.equal(directEntry.ok,true);
+assert.equal(directEntry.entryAccessKey,ticketClan.clan.inviteKey);
+assert.equal(action('ticketClanEnter',{...entry,accessKey:'',token:'0'.repeat(64)}).ok,false);
+assert.equal(action('ticketClanEnter',{...entry,clanId:a.clan.id,accessKey:''}).ok,false);
+
 assert.equal(action('ticketEnter',{...entry,accessKey:''}).ok,false,'QR must not bypass manual clan entry');
 assert.equal(action('ticketEnter',{...entry,accessKey:'wrong-clan-code'}).ok,false);
 assert.equal('entryAccessKey' in action('ticketEnter',entry),false,'Personal tickets must not disclose clan entry credentials');
@@ -166,6 +172,7 @@ assert.equal(action('ticketEnter',{...entry,token:'0'.repeat(64)}).ok,false);
 assert.equal(call('save',{...ticketUser,password:issued.token}).ok,true);
 assert.equal(call('save',ticketUser).ok,false,'Old password stops working after explicit ticket conversion');
 const rotatedTicket=action('issueMemberTicket',{...access(ticketClan),nickname:'TicketUser',password:issued.token});
+assert.equal(action('ticketClanEnter',{...entry,accessKey:''}).ok,false);
 assert.equal(rotatedTicket.ok,true);assert.equal(action('ticketEnter',entry).ok,false);
 assert.equal(action('ticketEnter',{...entry,token:rotatedTicket.token}).ok,true);
 assert.equal(JSON.stringify(call('list',access(ticketClan))).includes(rotatedTicket.token),false);
@@ -225,3 +232,13 @@ let loginLocks=0;context.LockService.getScriptLock=()=>{loginLocks++;throw Error
 assert.equal(action('memberLogin',{...access(recoveryClan),nickname:'RecoverMe',password:'member-recovered-password'}).ok,true,'Valid ordinary login must work while another request holds the save lock');
 assert.equal(loginLocks,0);context.LockService.getScriptLock=originalLock;
 console.log('Clan-master recovery codes are scoped, reusable, revocable and private; healthy member login bypasses the shared save lock.');
+
+const directClan=action('createClan',{name:'Direct ticket',password:'direct-admin-password'});
+assert.equal(call('save',{...access(directClan),nickname:'Direct',password:'member-password',inventory,photos:[]}).ok,true);
+const directTicket=action('issueMemberTicket',{...access(directClan),nickname:'Direct',password:'member-password'});
+const rotatedEntry=action('rotateInvite',{clanId:directClan.clan.id,adminToken:directClan.adminToken});
+const directAfterRotation=action('ticketClanEnter',{clanId:directClan.clan.id,nickname:'Direct',token:directTicket.token});
+assert.equal(directAfterRotation.ok,true);
+assert.equal(directAfterRotation.entryAccessKey,rotatedEntry.clan.inviteKey);
+assert.equal(call('list',{clanId:directClan.clan.id,accessKey:directAfterRotation.entryAccessKey}).ok,true);
+console.log('Valid personal tickets enter after shared clan credentials rotate.');

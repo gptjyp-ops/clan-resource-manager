@@ -101,12 +101,16 @@ function clanFrom_(r){return {id:String(r[0]),name:JSON.parse(r[1]),key:String(r
 function entrySettings_(id){return JSON.parse(PropertiesService.getScriptProperties().getProperty('CLAN_ENTRY_'+id)||'null');}
 function publicClan_(r){var entry=entrySettings_(r[0]);return {id:r[0],name:JSON.parse(r[1]),inviteKey:entry?undefined:r[2],entryPasswordRequired:!!entry,server:String(r[10]||'')};}
 function findClan_(id){var s=registry_(),rows=clanRows_(s),index=rows.findIndex(function(r){return r[0]===id;});if(index<0)throw Error('클랜을 찾을 수 없습니다. 클랜 주소를 확인해주세요.');return {sheet:s,row:rows[index],index:index};}
-function authorizeClan_(p){
+function resolveClan_(p){
  var id=String(p.clanId||'legacy');if(!/^(legacy|[a-f0-9]{24})$/.test(id))throw Error('클랜 주소를 확인해주세요.');
  var clan;if(id==='legacy'){
   var book=SpreadsheetApp.openById(PropertiesService.getScriptProperties().getProperty('SHEET_ID')),registry=book.getSheetByName('clans'),r=registry&&clanRows_(registry).find(function(r){return r[0]==='legacy';});
   clan=r?clanFrom_(r):{id:'legacy',name:'우리 클랜',key:PropertiesService.getScriptProperties().getProperty('CLAN_KEY'),sheetName:'members',folderId:PropertiesService.getScriptProperties().getProperty('FOLDER_ID')};
  }else clan=clanFrom_(findClan_(id).row);
+ return clan;
+}
+function authorizeClan_(p){
+ var clan=resolveClan_(p);
  if(!clan.key||typeof p.accessKey!=='string'||hash_(p.accessKey,'clan-access')!==hash_(clan.key,'clan-access'))throw Error('클랜 입장 코드가 맞지 않습니다.');return clan;
 }
 function clanAdmin_(p){
@@ -122,7 +126,7 @@ function clanServer_(server){if(server===undefined||server==='')return '';if(typ
 function clanName_(name){if(typeof name!=='string'||!name.trim()||name.trim().length>40)throw Error('클랜 이름은 1~40자로 입력해주세요.');return name.trim().normalize('NFKC');}
 function clanPassword_(password){if(typeof password!=='string'||password.length<10||password.length>100)throw Error('클랜장 비밀번호는 10~100자로 정해주세요.');return password;}
 function clanOperation_(p){
- var op=p.operation;if(op==='clanCodeResetMember')return clanCodeResetMember_(p);if(op==='ticketEnter')return ticketEnter_(p,authorizeClan_(p));if(op==='issueMemberTicket')return issueMemberTicket_(p,authorizeClan_(p));if(op==='issueMemberRecovery'||op==='recoverMemberPassword')return memberRecovery_(p,op);if(op==='memberLogin')return memberLogin_(p,authorizeClan_(p));if(op==='capabilities')return {ok:true,multiClan:true,clanRecoveryCodes:true,ticketPasswordSave:true,photoRemoval:true,memberTickets:true,memberLogin:true,memberPasswordReset:true,memberSelfRecovery:true,operatorRecovery:true,entryPassword:true,preserveExisting:true,diagnosticReports:true,diagnosticPhotos:true,serverSelection:true,servers:Array.from(new Set(clanRows_(registry_()).map(function(r){return String(r[10]||'');}).filter(function(s){return /^\d{1,6}$/.test(s);}))).sort(function(a,b){return Number(a)-Number(b);})};
+ var op=p.operation;if(op==='ticketClanEnter'){var ticketClan=resolveClan_(p),ticketReply=ticketEnter_(p,ticketClan);ticketReply.entryAccessKey=ticketClan.key;return ticketReply;}if(op==='clanCodeResetMember')return clanCodeResetMember_(p);if(op==='ticketEnter')return ticketEnter_(p,authorizeClan_(p));if(op==='issueMemberTicket')return issueMemberTicket_(p,authorizeClan_(p));if(op==='issueMemberRecovery'||op==='recoverMemberPassword')return memberRecovery_(p,op);if(op==='memberLogin')return memberLogin_(p,authorizeClan_(p));if(op==='capabilities')return {ok:true,ticketClanEntry:true,multiClan:true,clanRecoveryCodes:true,ticketPasswordSave:true,photoRemoval:true,memberTickets:true,memberLogin:true,memberPasswordReset:true,memberSelfRecovery:true,operatorRecovery:true,entryPassword:true,preserveExisting:true,diagnosticReports:true,diagnosticPhotos:true,serverSelection:true,servers:Array.from(new Set(clanRows_(registry_()).map(function(r){return String(r[10]||'');}).filter(function(s){return /^\d{1,6}$/.test(s);}))).sort(function(a,b){return Number(a)-Number(b);})};
  var lock=LockService.getScriptLock();if(!lock.tryLock(15000))throw Error('다른 요청을 처리 중입니다. 잠시 후 다시 시도해주세요.');
  try{
   if(op==='createClan'||op==='claimLegacy'){

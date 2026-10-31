@@ -1,4 +1,4 @@
-import {rememberTicket,type MemberTicket} from './member-ticket';
+import {parseTicket,ticketText,rememberTicket,type MemberTicket} from './member-ticket';
 import type {ScanReport} from './scan-diagnostics';
 import type {Inventory,PhotoKind,ChangedFields} from './inventory';
 import {googleScriptUrl} from './google-config';
@@ -19,7 +19,7 @@ export let serverSelectionSupported=false;
 export let memberPasswordResetSupported=false;
 export let entryPasswordSupported=false;
 export let serverOptions:string[]=[];
-type Reply={passwordUpdated?:boolean;ticketPasswordSave?:boolean;photoRemoval?:boolean;operatorRecovery?:boolean;expiresAt?:number;entryPassword?:boolean;entryAccessKey?:string;memberSelfRecovery?:boolean;recoveryCode?:string;members?:string[];memberPasswordReset?:boolean;clan?:ClanInfo;adminToken?:string;multiClan?:boolean;diagnosticPhotos?:boolean;diagnosticReports?:boolean;preserveExisting?:boolean;details?:Inventory;serverSelection?:boolean;servers?:string[];ok:boolean;error?:string;records?:any[];photos?:Partial<Record<PhotoKind,string>>;base64?:string;type?:string};
+type Reply={ticketClanEntry?:boolean;passwordUpdated?:boolean;ticketPasswordSave?:boolean;photoRemoval?:boolean;operatorRecovery?:boolean;expiresAt?:number;entryPassword?:boolean;entryAccessKey?:string;memberSelfRecovery?:boolean;recoveryCode?:string;members?:string[];memberPasswordReset?:boolean;clan?:ClanInfo;adminToken?:string;multiClan?:boolean;diagnosticPhotos?:boolean;diagnosticReports?:boolean;preserveExisting?:boolean;details?:Inventory;serverSelection?:boolean;servers?:string[];ok:boolean;error?:string;records?:any[];photos?:Partial<Record<PhotoKind,string>>;base64?:string;type?:string};
 let bridgePromise:Promise<{source:Window;origin:string;channel:string}>|undefined;
 let bridgeCleanup:(()=>void)|undefined;
 const pending=new Map<string,{resolve:(r:Reply)=>void;reject:(e:Error)=>void;timer:ReturnType<typeof setTimeout>}>();
@@ -107,4 +107,17 @@ export async function issueMemberTicket(nickname:string,password:string){
  const capability=await rpc('list',{operation:'capabilities'}) as Reply & {memberTickets?:boolean};
  if(!capability.memberTickets)throw Error('개인 티켓 기능을 업데이트 중입니다. 잠시 후 다시 시도해주세요.');
  return rpc('list',{operation:'issueMemberTicket',nickname,password}) as Promise<Reply & {token:string;record:MemberRecord}>;
+}
+
+// Validate membership before granting entry; never put the credential in a URL.
+export async function enterClanTicket(input:MemberTicket):Promise<void>{
+ const ticket=parseTicket(ticketText(input));
+ const capability=await rpc('list',{operation:'capabilities'});
+ if(!capability.ticketClanEntry)throw Error('티켓 클랜 입장 기능을 업데이트 중입니다. 잠시 후 다시 시도해주세요.');
+ const result=await rpc('list',{operation:'ticketClanEnter',clanId:ticket.clanId,accessKey:'',nickname:ticket.nickname,token:ticket.token});
+ if(result.clan?.id!==ticket.clanId||!result.entryAccessKey)throw Error('티켓의 클랜 입장 정보를 확인하지 못했습니다.');
+ rememberTicket(ticket);
+ sessionStorage.setItem(ticket.clanId==='legacy'?'clanAccessKey':'clanAccessKey:'+ticket.clanId,result.entryAccessKey);
+ const target='#clan='+encodeURIComponent(ticket.clanId);
+ if(location.hash===target)location.reload();else location.hash=target;
 }
