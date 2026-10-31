@@ -593,5 +593,8 @@
   "재화 미입력": "Missing resources",
   "이번 주 미등록과 재화 일부 미입력 포함": "Includes members not registered this week and partially missing resources",
   "클랜 운영 안내": "Clan guidelines",
-  "클랜전 운영 기준 · 이미지를 누르면 확대됩니다.": "Clan war guidelines · Tap the image to zoom."
+  "클랜전 운영 기준 · 이미지를 누르면 확대됩니다.": "Clan war guidelines · Tap the image to zoom.",
+  "저장한 개인 티켓 사진으로 클랜 입장과 내 재화 로그인을 한 번에 할 수 있습니다.": "Use your saved personal ticket image to enter your clan and sign in to your resources.",
+  "티켓 클랜 입장 기능을 업데이트 중입니다. 잠시 후 다시 시도해주세요.": "Ticket clan entry is being updated. Please try again shortly.",
+  "티켓의 클랜 입장 정보를 확인하지 못했습니다.": "Could not verify the ticket's clan entry details."
 }
