@@ -69,3 +69,11 @@ Updated: 2026-11-01 01:05 KST. Scanner at last report: 2026-10-31.1.
 - Latest main fetched: d5709d7; metadata and A416:A1000 checked, no new reports; last 415.
 - Restored native Canvas dependency and reproduced current amount crop/threshold/cleanAmountPixels/padding from row 381 stored original with real Tesseract eng. PSM SINGLE_LINE => 17k, SINGLE_WORD => mk, SPARSE_TEXT => 17k; amountDecimal returns null for all three. Therefore simple alternate segmentation retries do NOT fix this original; do not deploy such a change as resolved.
 - No production code modified, no guessed correction, no new deployment. Row 381 remains unresolved. Next investigate crop pixels/glyph separation or independent character recognition with unit and decimal validation. Prior fixed rows stay resolved; next new-log read row 416.
+
+## 2026-11-01 06:00 KST scan and glyph evidence
+
+- Latest main fetched: 4799ba0. Metadata and A416:A1000 checked; no new records, last 415.
+- Recovered Canvas dependency under workspace ocr-tools rather than /tmp. Glyph replay of row381 stored JPEG shows four bands: (x216,w35,h71), (x264,w34,h71), (x311,w49,h71), (x372,w53,h77). Visually inspected thresholded crop: complete 117k, not a clipped leading digit.
+- Real Tesseract SINGLE_CHAR on each independently padded glyph returns 1,1,7,k. Whole-string modes remain 17k/mk/17k and all fail amountDecimal validation. This narrows this case to whole-string OCR dropping a repeated 1, not location failure.
+- Next candidate: bounded per-glyph fallback only after whole-amount validation fails, preserve decimal/unit checks, validate reconstructed amount with amountDecimal. No literal expected digits may be injected. Candidate not yet implemented or regression-tested, no production deployment.
+- Earlier deployed fixes stay resolved, member resources/settings untouched. Next new-log read starts at row416.
