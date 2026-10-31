@@ -77,3 +77,10 @@ Updated: 2026-11-01 01:05 KST. Scanner at last report: 2026-10-31.1.
 - Real Tesseract SINGLE_CHAR on each independently padded glyph returns 1,1,7,k. Whole-string modes remain 17k/mk/17k and all fail amountDecimal validation. This narrows this case to whole-string OCR dropping a repeated 1, not location failure.
 - Next candidate: bounded per-glyph fallback only after whole-amount validation fails, preserve decimal/unit checks, validate reconstructed amount with amountDecimal. No literal expected digits may be injected. Candidate not yet implemented or regression-tested, no production deployment.
 - Earlier deployed fixes stay resolved, member resources/settings untouched. Next new-log read starts at row416.
+
+## 2026-11-01 07:08 KST: row381 recovery deployed
+
+- Metadata and A416:A1000 checked; no new records, last415. Latest main inspected before fix: 6b9ed53.
+- Added bounded independent-glyph OCR fallback only after pixel validation rejects integer-with-unit whole-string OCR. Each numeric glyph and terminal k/m/b must be read independently; reconstructed text must pass amountDecimal. No expected label is injected. Decimal-bearing inputs do not take this integer fallback.
+- Original row381 stored JPEG crop replay with native Canvas + real Tesseract: whole string17k fails, glyphs1,1,7,k reconstruct117k and amountDecimal validates117k. This is crop-level native replay, not live-browser end-to-end proof.
+- Screen-layout, scan-diagnostics, OCR-worker tests, types/build passed locally. Fix commit0028572b454661e27003dcd23b2d4a1e7c4363c2: Code checks41246610819 and Pages41246610846 both success. Frontend only, no Google deployment needed. Row381 confirmed stored-original case resolved; row415 original browser-resolution follow-up still open. No member resources/settings changed.
