@@ -214,3 +214,11 @@ for(let y=270;y<300;y++)for(let x=40;x<90;x++)fadedMerge.data.set([215,215,215,2
 for(const [x,y,w,h,color] of [[44,279,5,7,130],[44,280,2,4,0],[47,282,2,4,0],[51,279,4,7,0],[57,279,5,7,0],[65,278,8,8,0]])
  for(let dy=y;dy<y+h;dy++)for(let dx=x;dx<x+w;dx++)fadedMerge.data.set([color,color,color,255],(dy*400+dx)*4);
 for(const kind of ['eggMerge','mountMerge'])assert.deepEqual(findLandmarks(fadedMerge,kind).selected,{x:44,y:279,width:18,height:7});
+// Adjacent dark digits can be joined by gray resize pixels. Split the wide
+// component without discarding faint narrow leading digits covered above.
+const joinedMerge=mergeImage(0);
+for(let y=270;y<300;y++)for(let x=40;x<95;x++)joinedMerge.data.set([215,215,215,255],(y*400+x)*4);
+for(const [x,w] of [[44,4],[50,8],[59,9],[69,8],[83,9]])for(let y=279;y<289;y++)for(let dx=x;dx<x+w;dx++)joinedMerge.data.set([0,0,0,255],(y*400+dx)*4);
+for(const x of [58,68])joinedMerge.data.set([130,130,130,255],(283*400+x)*4);
+for(const kind of ['eggMerge','mountMerge'])assert.deepEqual(findLandmarks(joinedMerge,kind).selected,{x:44,y:279,width:33,height:10});
+console.log('Joined numeric components split without losing faint leading digits.');

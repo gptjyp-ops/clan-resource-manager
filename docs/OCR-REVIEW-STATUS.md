@@ -34,3 +34,10 @@ Updated: 2026-10-31 23:02 KST. Scanner: 2026-10-31.1.
 - Rows 412–413: prior confirmed fix for compact desktop egg merge 672 versus 72; not reopened this scan.
 - Earlier unresolved candidates remain open: first-digit loss in ordinary egg amounts (e.g. row 381); maximum status on compact captures; green vial location/read failures; small merge dialogs without reliable landmarks. No guessed corrections.
 - Do not edit member inventory, credentials, tickets or clan settings. Verify actual Pages deployment after confirmed frontend fixes and Google deployment step after backend changes.
+
+## Confirmed fix: row 414
+
+- Fixed wide antialias-connected selected-number components by splitting only wide components at OCR's strict black threshold. Narrow faint components retain the original threshold, preserving compact leading digits.
+- Replayed original Drive JPEG with Canvas API (@napi-rs/canvas) and Tesseract: selected crop contains four digit bands and recognizes 1044. This is Canvas API replay, not a live browser session. Added joined-component regression; existing faint leading digit checks pass.
+- All commands from Code checks workflow passed locally, including TypeScript and production build. Frontend-only change; Google Apps Script deployment unnecessary. Pages deployment pending verification for this fix commit.
+- Earlier unresolved reports remain open; member resources, credentials, tickets and clan settings untouched.

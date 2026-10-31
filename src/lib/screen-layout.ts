@@ -85,6 +85,9 @@ export function findLandmarks(p:Pixels,kind:PhotoKind):{amount?:Box;info?:Box;pr
   const panel=panels[0];
   if(panel){
    const glyphs=components(p,{x:panel.x+.02*w,y:panel.y+panel.height-.11*w,width:.24*w,height:.075*w},(r,g,b)=>Math.max(r,g,b)<160,.12)
+    // Split only wide joined components at the same threshold used by OCR.
+    // Keep narrow gray components intact so faint leading digits survive.
+    .flatMap(b=>b.width>=.04*w?components(p,b,(r,g,b)=>Math.max(r,g,b)<100,.12):[b])
     // Compact PC captures can leave a leading curved digit one pixel shorter
     // than its neighbours after downscaling; keep it in the numeric run.
     .filter(b=>b.height>.0125*w&&b.height<.045*w&&b.width<.04*w).sort((a,b)=>a.x-b.x);
