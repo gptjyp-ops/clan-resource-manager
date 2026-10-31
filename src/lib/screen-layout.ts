@@ -81,9 +81,10 @@ export function findLandmarks(p:Pixels,kind:PhotoKind):{amount?:Box;info?:Box;pr
  const w=p.width,h=p.height,result:{amount?:Box;info?:Box;progressBar?:Box;selected?:Box;amountMode?:'white'|'yellow'|'mixed'}={};
  if(kind==='eggMerge'||kind==='mountMerge'){
   const panels=components(p,{x:.05*w,y:.08*h,width:.90*w,height:.38*h},(r,g,b)=>Math.min(r,g,b)>170&&Math.max(r,g,b)<240&&Math.max(r,g,b)-Math.min(r,g,b)<25)
-   .filter(b=>b.width>.60*w&&b.height>.20*w).sort((a,b)=>a.y-b.y);
+   .filter(b=>b.width>.45*w&&b.height>.20*b.width).sort((a,b)=>a.y-b.y);
   const panel=panels[0];
   if(panel){
+   const w=panel.width/.85;
    const glyphs=components(p,{x:panel.x+.02*w,y:panel.y+panel.height-.11*w,width:.24*w,height:.075*w},(r,g,b)=>Math.max(r,g,b)<160,.12)
     // Split only wide joined components at the same threshold used by OCR.
     // Keep narrow gray components intact so faint leading digits survive.
