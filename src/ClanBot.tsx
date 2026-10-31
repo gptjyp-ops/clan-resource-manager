@@ -7,7 +7,7 @@ type Message={role:'user'|'bot';text:string};
 export default function ClanBot(){
  const language=useLanguage();
  const [open,setOpen]=useState(false),[input,setInput]=useState(''),[busy,setBusy]=useState(false),[consent,setConsent]=useState(false);
- const [messages,setMessages]=useState<Message[]>([{role:'bot',text:'클랜 도우미입니다. 등록 현황과 등록 안내문은 바로 확인할 수 있어요. 자유 질문은 AI 연결과 전송 동의가 필요합니다.'}]);
+ const [messages,setMessages]=useState<Message[]>([{role:'bot' as const,text:'클랜 도우미입니다. 등록 현황과 등록 안내문은 바로 확인할 수 있어요. 자유 질문은 AI 연결과 전송 동의가 필요합니다.'}]);
  const end=useRef<HTMLDivElement>(null),field=useRef<HTMLInputElement>(null);
  useEffect(()=>{if(open)field.current?.focus();},[open]);
  useEffect(()=>{end.current?.scrollIntoView({block:'nearest'});},[messages]);
@@ -27,15 +27,15 @@ export default function ClanBot(){
     const result=await clanAction('assistant',{question}) as {ok:boolean;answer?:string};
     if(!result.answer)throw Error('AI 답변을 받지 못했습니다.');answer='[AI 답변 · 확인 후 사용]\n'+result.answer;
    }
-   setMessages(m=>[...m,{role:'bot',text:answer}].slice(-30));
-  }catch(e){setMessages(m=>[...m,{role:'bot',text:e instanceof Error?e.message:'요청하지 못했습니다. 다시 시도해주세요.'}].slice(-30));}
+   setMessages(m=>[...m,{role:'bot' as const,text:answer}].slice(-30));
+  }catch(e){setMessages(m=>[...m,{role:'bot' as const,text:e instanceof Error?e.message:'요청하지 못했습니다. 다시 시도해주세요.'}].slice(-30));}
   finally{setBusy(false);}
  }
  return <div className="clan-bot">
   <button type="button" className="bot-launch" aria-expanded={open} aria-controls="clan-bot-panel" onClick={()=>setOpen(!open)}>{language==='en'?(open?'Close assistant':'Clan assistant'):(open?'도우미 닫기':'클랜 도우미')}</button>
   {open&&<section id="clan-bot-panel" className="bot-panel" aria-label="클랜 도우미">
    <header><strong>클랜 도우미 · 시험 운영</strong><button type="button" aria-label="도우미 닫기" onClick={()=>setOpen(false)}>×</button></header>
-   <div className="bot-log" role="log" aria-live="polite">{messages.map((m,i)=><div className={'bot-message '+m.role} key={i}><small>{m.role==='user'?'나':'도우미'}</small><p>{m.text}</p>{m.role==='bot'&&i>0&&<button type="button" onClick={async()=>{try{await navigator.clipboard.writeText(m.text);}catch{setMessages(x=>[...x,{role:'bot',text:'복사하지 못했습니다. 답변을 길게 눌러 복사해주세요.'}]);}}}>복사</button>}</div>)}{busy&&<p role="status">확인 중…</p>}<div ref={end}/></div>
+   <div className="bot-log" role="log" aria-live="polite">{messages.map((m,i)=><div className={'bot-message '+m.role} key={i}><small>{m.role==='user'?'나':'도우미'}</small><p>{m.text}</p>{m.role==='bot'&&i>0&&<button type="button" onClick={async()=>{try{await navigator.clipboard.writeText(m.text);}catch{setMessages(x=>[...x,{role:'bot' as const,text:'복사하지 못했습니다. 답변을 길게 눌러 복사해주세요.'}]);}}}>복사</button>}</div>)}{busy&&<p role="status">확인 중…</p>}<div ref={end}/></div>
    <div className="bot-actions">{['등록 현황','등록 안내문','사용법'].map(q=><button type="button" disabled={busy} key={q} onClick={()=>void send(q)}>{q}</button>)}</div>
    <label className="bot-consent"><input type="checkbox" checked={consent} onChange={e=>setConsent(e.target.checked)}/>자유 질문을 Google AI에 전송하는 데 동의합니다. 비밀번호·개인정보는 입력하지 마세요.</label>
    <form onSubmit={e=>{e.preventDefault();void send();}}><input ref={field} aria-label="도우미에게 질문" placeholder="사용법이나 공지 문구를 물어보세요" maxLength={1200} value={input} onChange={e=>setInput(e.target.value)}/><button type="submit" disabled={busy||!input.trim()}>보내기</button></form>
