@@ -69,6 +69,17 @@ export async function scanScreen(file:File,kind:PhotoKind,onProgress:(n:number)=
    await worker.setParameters({tessedit_char_whitelist:'0123456789kKmMbB',tessedit_pageseg_mode:PSM.SINGLE_CHAR});const unit=(await worker.recognize(single)).data.text.trim();original.push(unit);diagnostics.attempts.push({field:'amount',source:r===fallback?'fallback':'adaptive',text:unit});
    if(/^[kKmMbB]$/.test(unit))checked=amountDecimal(data,parsed.amount+unit);
   }
+  // Whole-string OCR can collapse repeated digits. Recover only from independently
+  // recognized glyphs, and retain the pixel-based decimal/unit validation.
+  if(checked===null&&/^\d+[kKmMbB]$/.test(parsed.amount)&&bands.length>=3&&bands.length<=10){
+   let rebuilt='';await worker.setParameters({tessedit_char_whitelist:'0123456789kKmMbB',tessedit_pageseg_mode:PSM.SINGLE_CHAR});
+   for(let n=0;n<bands.length;n++){
+    const band=bands[n],single=document.createElement('canvas');single.width=band.width+80;single.height=band.height+80;const sc=single.getContext('2d')!;sc.fillStyle='white';sc.fillRect(0,0,single.width,single.height);sc.drawImage(canvas,band.x,band.y,band.width,band.height,40,40,band.width,band.height);
+    const glyph=(await worker.recognize(single)).data.text.trim();diagnostics.attempts.push({field:'amount',source:'adaptive',text:glyph});
+    if(!(n===bands.length-1?/^[kKmMbB]$/:/^\d$/).test(glyph)){rebuilt='';break;}rebuilt+=glyph;
+   }
+   if(rebuilt)checked=amountDecimal(data,rebuilt);
+  }
   if(checked===null){parsed={};diagnostics.issues.push({code:'OCR-04',field:'amount',message:'수량의 숫자 자리수·소수점·단위(k 등)가 사진과 일치하지 않습니다. 사진을 확대해 확인하고 다시 인식해 주세요.'});}
   else {if(checked!==parsed.amount)diagnostics.attempts.push({field:'amount',source:r===fallback?'fallback':'adaptive',text:checked});parsed={amount:checked};}
  }
