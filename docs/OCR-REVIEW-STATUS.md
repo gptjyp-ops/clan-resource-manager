@@ -1,10 +1,10 @@
 # OCR review checkpoint
 
-Updated: 2026-10-31 22:02 KST. Scanner: 2026-10-31.1.
+Updated: 2026-10-31 23:02 KST. Scanner: 2026-10-31.1.
 
 ## Reviewed range
 
-- Latest main fetched: 8a0c5a4. Spreadsheet metadata and ocr_errors A412:J425 plus A426:A1000 checked; no newer timestamped reports. Last record remains row 414.
+- Latest main fetched: 55b20b1. Spreadsheet metadata and ocr_errors A415:A1000 checked; no newer timestamped reports. Last record remains row 414.
 - Row 414 (2026-10-31T05:48:22.445Z): eggMerge normal mode, selected OCR-04. Prior original-photo inspection confirmed selected amount 1044, egg-selection upgrade dialog, no decimal or k unit, no leading digit missing from logged full-region OCR.
 - Whole-region adaptive readings repeatedly report 1044; isolated readings include 1, 0, 4, 4 followed by an empty read. Selected validation retries when digitBands count disagrees. Reviewed crop scaling and black-pixel threshold path; extra band source is still unconfirmed. Original-image end-to-end replay remains pending. Do not bypass validation based solely on repeated OCR agreement.
 - Prior run completed npm ci --ignore-scripts successfully and screen-layout regression checks passed (verified tool output); this corrects the previous checkpoint written before command completion. No application/backend changes or deployment. Original-image replay remains pending; prior photo evidence is retained above.
@@ -21,6 +21,12 @@ Updated: 2026-10-31 22:02 KST. Scanner: 2026-10-31.1.
 - Temporarily changed selected landmark threshold 160 to 100 and ran scripts/test-screen-layout.mjs. Regression failed at line 216: compact leading curved digit disappeared (actual x51,width11 versus expected x44,width18). This disproves a global threshold-only fix.
 - Restored source exactly; git status clean. No production code committed or deployed. Row 414 remains unresolved.
 - Next approach must preserve faint compact leading digits while splitting antialias-connected multi-digit components (e.g. separate threshold passes with conservative crop boundary validation). Do not apply the failed strict threshold globally.
+
+## Latest source review
+
+- Main now includes the separate clan bot change (55b20b1). Compared its changed paths and inspected main screen-layout.ts: selected landmark logic is unchanged. Do not overwrite or deploy older local sources over the bot update.
+- Re-read compact leading-digit regression at test-screen-layout.mjs lines 205–216: gray 130-level bridges are intentionally required to reconnect a faint leading digit. A replacement must preserve these components; no further production candidate has been validated this run. Original browser-canvas replay remains pending.
+- No application changes, tests, or deployment in this scan; no inventory, credentials, tickets, or clan settings touched.
 
 ## Follow-up
 
