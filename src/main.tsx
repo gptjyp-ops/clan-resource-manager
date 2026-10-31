@@ -6,3 +6,5 @@ import HelpSupport from './HelpSupport';
 import LanguageSwitch from './LanguageSwitch';
 createRoot(document.getElementById('root')!).render(<React.StrictMode><EliteTheme/><MatrixBackground/><LanguageSwitch/><App/><HelpSupport/></React.StrictMode>);
 
+
+import './clan-bot.css';

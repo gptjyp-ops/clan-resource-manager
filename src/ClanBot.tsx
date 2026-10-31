@@ -1,10 +1,11 @@
 import {useEffect,useRef,useState} from 'react';
 import {getRecords,clanAction,activeClanName} from './lib/api';
 import {registrationDisplay} from './lib/weekly-registration';
-import './clan-bot.css';
+import {useLanguage} from './lib/i18n';
 
 type Message={role:'user'|'bot';text:string};
 export default function ClanBot(){
+ const language=useLanguage();
  const [open,setOpen]=useState(false),[input,setInput]=useState(''),[busy,setBusy]=useState(false),[consent,setConsent]=useState(false);
  const [messages,setMessages]=useState<Message[]>([{role:'bot',text:'클랜 도우미입니다. 등록 현황과 등록 안내문은 바로 확인할 수 있어요. 자유 질문은 AI 연결과 전송 동의가 필요합니다.'}]);
  const end=useRef<HTMLDivElement>(null),field=useRef<HTMLInputElement>(null);
@@ -31,7 +32,7 @@ export default function ClanBot(){
   finally{setBusy(false);}
  }
  return <div className="clan-bot">
-  <button type="button" className="bot-launch" aria-expanded={open} aria-controls="clan-bot-panel" onClick={()=>setOpen(!open)}>{open?'도우미 닫기':'클랜 도우미'}</button>
+  <button type="button" className="bot-launch" aria-expanded={open} aria-controls="clan-bot-panel" onClick={()=>setOpen(!open)}>{language==='en'?(open?'Close assistant':'Clan assistant'):(open?'도우미 닫기':'클랜 도우미')}</button>
   {open&&<section id="clan-bot-panel" className="bot-panel" aria-label="클랜 도우미">
    <header><strong>클랜 도우미 · 시험 운영</strong><button type="button" aria-label="도우미 닫기" onClick={()=>setOpen(false)}>×</button></header>
    <div className="bot-log" role="log" aria-live="polite">{messages.map((m,i)=><div className={'bot-message '+m.role} key={i}><small>{m.role==='user'?'나':'도우미'}</small><p>{m.text}</p>{m.role==='bot'&&i>0&&<button type="button" onClick={async()=>{try{await navigator.clipboard.writeText(m.text);}catch{setMessages(x=>[...x,{role:'bot',text:'복사하지 못했습니다. 답변을 길게 눌러 복사해주세요.'}]);}}}>복사</button>}</div>)}{busy&&<p role="status">확인 중…</p>}<div ref={end}/></div>
