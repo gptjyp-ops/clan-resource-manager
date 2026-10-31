@@ -36,3 +36,9 @@ Updated: 2026-11-01 01:05 KST. Scanner at last report: 2026-10-31.1.
 - Report 2026-10-31T15:47:38.338Z, eggMerge, OCR-04 selected; original logged whole reads 397 / 3974, isolated 3,9,7 and empty. Original Drive JPEG visually confirms 397 selected, no decimal/k unit, correct merge screen.
 - Replayed through current scanScreen using native Canvas API shim plus real Tesseract eng/kor: selected 397, original reads `397 선택됨` and `397`, no issues. Cannot reproduce on stored compressed JPEG with this runtime; uploaded original browser file differs in dimensions/bytes. Do not infer original-browser success from this replay.
 - No new code correction warranted from this evidence; retain as browser/original-resolution follow-up, avoid guessed correction. Next new row starts at 416. Existing user-confirmed labels stored in docs/ocr-user-labels.json; rows 380,381,387 remain unresolved as documented.
+
+## Adaptive dialog width fix
+
+- User-confirmed row 387 expected selected 210 now replays successfully through scanScreen (Canvas API shim + real Tesseract), no issues. Detect gray dialog down to 45% of screenshot width and scale selected-number geometry to detected panel width instead of whole screenshot width.
+- Existing screen-layout regressions, scan diagnostics, OCR worker tests, types and build passed locally. GitHub Code checks run 41218334190 and Pages run 41218334202 both successful for commit b610679250fab716bf3b81a613fb4f4d744b156e. Frontend only; Google deployment not required.
+- Row 381 117k first-digit OCR loss and row 380 maximum-label recognition remain unresolved. No resource values or clan settings modified. This does not claim support for every device or live-browser replay.
