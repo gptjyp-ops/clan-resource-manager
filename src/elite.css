@@ -84,10 +84,10 @@ body[data-clan-theme="elite"] button:disabled{opacity:.7;cursor:not-allowed}
 body[data-clan-theme="elite"] :is(button,a,input,select,summary):focus-visible{outline:3px solid #266d91;outline-offset:3px}
 @media(max-width:600px){body[data-clan-theme="elite"] .registration>p,body[data-clan-theme="elite"] .registration>form,body[data-clan-theme="elite"] .registration>.ticket-import{margin-left:16px;margin-right:16px}}
 
-/* Decorative snow stays behind the interface and never intercepts input. */
+/* Visible ice crystals float above surfaces without intercepting input. */
 body[data-clan-theme="elite"] #root{isolation:isolate;min-height:100dvh}
-.elite-snow{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:-1}
-.elite-snow span{position:absolute;top:-12px;left:var(--x);width:var(--size);height:var(--size);background:#fff;border-radius:50%;box-shadow:0 0 3px #7caac4;opacity:.85;animation:elite-snowfall var(--duration) var(--delay) linear infinite}
-@keyframes elite-snowfall{from{transform:translate3d(0,-20px,0)}to{transform:translate3d(var(--drift),calc(100dvh + 30px),0)}}
+.elite-snow{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:20}
+.elite-snow span{position:absolute;top:-40px;left:var(--x);width:var(--size);height:var(--size);background:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2032%2032%22%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%232589ce%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20fill%3D%22%23e8faff%22%20d%3D%22m16%203%205%209%208%204-8%204-5%209-5-9-8-4%208-4Z%22%2F%3E%3Cpath%20d%3D%22M16%203v26M3%2016h26M7%207l18%2018M25%207%207%2025M12%207l4%204%204-4M12%2025l4-4%204%204M7%2012l4%204-4%204M25%2012l-4%204%204%204%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E") center/contain no-repeat;filter:drop-shadow(0 1px 2px #fff);opacity:.72;animation:elite-snowfall var(--duration) var(--delay) linear infinite}
+@keyframes elite-snowfall{from{transform:translate3d(0,-40px,0) rotate(0deg)}to{transform:translate3d(var(--drift),calc(100dvh + 80px),0) rotate(150deg)}}
 @media(max-width:600px){.elite-snow span:nth-child(n+17){display:none}}
 @media(prefers-reduced-motion:reduce){.elite-snow{display:none}}
