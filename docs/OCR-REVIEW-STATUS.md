@@ -49,3 +49,10 @@ Updated: 2026-11-01 01:05 KST. Scanner at last report: 2026-10-31.1.
 - User-confirmed row 380 original replay: changing only Korean maximum-status OCR segmentation from SINGLE_LINE to SPARSE_TEXT yields amount 169k and level 100 (maximum), with empty progress/target. Original three-photo replay also retains egg maximum and merge selected 210; egg 117k amount remains rejected, unresolved.
 - Screen-layout and scan-diagnostics regressions, TypeScript and build passed locally. Commit 3ae4a92fb3a6c51c3a81bca859f6d04f92d778f8 Code checks run 41222112749 and Pages run 41222112669 both completed successfully. Frontend-only, no Apps Script deployment needed.
 - Row 380 maximum-label issue now resolved by stored-JPEG native Canvas/Tesseract replay (not live browser). Row 381 remains unresolved; row 415 original-browser mismatch remains follow-up. No member resources, credentials, tickets, or settings changed.
+
+## 2026-11-01 03:03 KST scan
+
+- Latest main fetched: 55c89c1. Spreadsheet metadata and ocr_errors A416:A1000 read; no new records, last remains row 415. Next new-log read starts at row 416.
+- Inspected latest screen-ocr.ts amount validation path. When `17k` is syntactically valid but amountDecimal rejects its glyph count, current code rejects immediately; its retry branch handles only a missing suffix on digit-only reads. There is no alternate full-amount segmentation retry for an already-present k suffix. This is a candidate improvement path, not a confirmed fix or permission to prepend a guessed 1.
+- Prior temporary original-replay workspace and JPEGs were removed by workspace maintenance. Fresh original evidence and replay harness must be restored before validating any amount-retry candidate. No code changes, test pass or deployment claimed in this run.
+- Row 381 remains unresolved; rows 380,387,414 retain their previously verified fixes. Member data/settings untouched.
