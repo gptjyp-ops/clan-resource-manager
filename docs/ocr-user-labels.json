@@ -1,0 +1,43 @@
+{
+  "version": 1,
+  "confirmedBy": "user",
+  "confirmedDate": "2026-11-01",
+  "purpose": "OCR regression ground truth only; never update member inventories",
+  "cases": [
+    {
+      "row": 381,
+      "kind": "egg",
+      "expected": {
+        "amount": "117k",
+        "level": "100",
+        "progress": "",
+        "target": ""
+      },
+      "display": {
+        "amount": "117k",
+        "summonLevel": "최대"
+      }
+    },
+    {
+      "row": 380,
+      "kind": "skill",
+      "expected": {
+        "amount": "169k",
+        "level": "100",
+        "progress": "",
+        "target": ""
+      },
+      "display": {
+        "amount": "169k",
+        "summonLevel": "최대"
+      }
+    },
+    {
+      "row": 387,
+      "kind": "eggMerge",
+      "expected": {
+        "selected": "210"
+      }
+    }
+  ]
+}
