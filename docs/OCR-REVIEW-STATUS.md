@@ -56,3 +56,10 @@ Updated: 2026-11-01 01:05 KST. Scanner at last report: 2026-10-31.1.
 - Inspected latest screen-ocr.ts amount validation path. When `17k` is syntactically valid but amountDecimal rejects its glyph count, current code rejects immediately; its retry branch handles only a missing suffix on digit-only reads. There is no alternate full-amount segmentation retry for an already-present k suffix. This is a candidate improvement path, not a confirmed fix or permission to prepend a guessed 1.
 - Prior temporary original-replay workspace and JPEGs were removed by workspace maintenance. Fresh original evidence and replay harness must be restored before validating any amount-retry candidate. No code changes, test pass or deployment claimed in this run.
 - Row 381 remains unresolved; rows 380,387,414 retain their previously verified fixes. Member data/settings untouched.
+
+## 2026-11-01 04:04 KST scan
+
+- Latest main fetched: b5ce658. Spreadsheet metadata and ocr_errors A416:A1000 checked; no new reports; last remains row 415.
+- Recovered row 381 stored original JPEG from Drive into scratch as ocr-381.jpg, and prepared isolated latest-main worktree ocr-review. These are temporary; refetch original after maintenance rather than assuming deletion by user.
+- Existing screen-layout and scan-diagnostics regression commands executed on isolated latest main; no amount retry candidate or original end-to-end replay validated in this run. Row 381 remains open. Next work should restore Canvas/Tesseract replay harness, then compare alternate PSM outputs with amountDecimal before any correction; never prepend a literal 1 based on expected label.
+- No application/backend modifications or deployment; member data and settings unchanged. Next new-log read starts at row 416. Prior deployed fixes remain resolved.
