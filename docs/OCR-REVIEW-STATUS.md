@@ -1,11 +1,11 @@
 # OCR review checkpoint
 
-Updated: 2026-10-31 12:57 KST. Scanner: 2026-10-31.1.
+Updated: 2026-10-31 13:56 KST. Scanner: 2026-10-31.1.
 
 ## Reviewed range
 
-- Spreadsheet metadata and ocr_errors rows 412–430 checked; last populated record remains row 413 (2026-10-31T01:56:06.989Z). No new reports in rows 414–430.
-- Rows 412–413 remain the previously reviewed compact desktop egg-merge screenshot (672 versus numeric-region 72), standard and compatibility modes. Previous review fixed the landmark detection and replayed the original successfully.
+- Spreadsheet metadata, ocr_errors A413:J430 and A431:A1000 checked. Last record remains row 413 (2026-10-31T01:56:06.989Z); rows 414–1000 have no new timestamped reports.
+- Rows 412–413 remain the previously reviewed compact desktop egg-merge screenshot (672 versus numeric-region 72), standard and compatibility modes. Previous review fixed landmark detection and replayed the original successfully.
 - No application/backend changes or tests in this scan; no new application deployment requested. Prior deployment success not independently reverified.
 
 ## Follow-up
