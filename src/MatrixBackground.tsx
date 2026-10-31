@@ -38,5 +38,5 @@ export default function MatrixBackground(){
   void sync();document.addEventListener('visibilitychange',sync);reduced.addEventListener('change',sync);mobile.addEventListener('change',sync);
   return()=>{disposed=true;stop();document.removeEventListener('visibilitychange',sync);reduced.removeEventListener('change',sync);mobile.removeEventListener('change',sync);};
  },[]);
- return <div ref={ref} aria-hidden="true" style={{position:'fixed',inset:'0 0 auto',height:'100lvh',width:'100%',zIndex:-1,pointerEvents:'none',background:'#080f20',opacity:1,overflow:'hidden'}}/>;
+ return <div ref={ref} data-clan-ambient="" aria-hidden="true" style={{position:'fixed',inset:'0 0 auto',height:'100lvh',width:'100%',zIndex:-1,pointerEvents:'none',background:'#080f20',opacity:1,overflow:'hidden'}}/>;
 }
