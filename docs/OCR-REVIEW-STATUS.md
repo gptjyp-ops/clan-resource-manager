@@ -22,3 +22,11 @@ Updated: 2026-10-31 23:59 KST. Scanner at last report: 2026-10-31.1.
 - Rows 412–413: prior confirmed compact desktop egg merge 672 versus 72 fix.
 - Earlier unresolved candidates: ordinary egg amount first-digit loss (e.g. row 381), compact maximum status, green vial location/read failures, and small merge dialogs without reliable landmarks. These original photos were not reopened this scan; no new resolution claimed and no guessed corrections.
 - Do not edit member inventory, credentials, tickets or clan settings. Verify Pages after frontend changes and Google deployment after backend changes.
+
+## Original-photo revalidation: 2026-11-01
+
+- Replayed stored Drive JPEGs for row 381 (egg), row 380 (skill), and row 387 (eggMerge) through scanScreen with Canvas API and real Tesseract eng/kor traineddata. Native Canvas shim replaces browser canvas/imagebitmap only; no live-browser claim. Stored JPEG dimensions differ from uploaded file metadata because error evidence is compressed.
+- Egg: visual 117k. OCR still returns 17k; validation rejects amount with OCR-04 (no wrong amount accepted). Maximum state now correctly returns level 100.
+- Skill: amount 169k correct; maximum label not recognized, level/ratio remain missing with OCR-03.
+- EggMerge: visual 210 selected; automatic selected region still missing, OCR-02, no selected value returned.
+- All three remain unresolved for their respective fields. No guessed inventory corrections and no application changes or deployment during this verification. Row 414 remains separately resolved.
