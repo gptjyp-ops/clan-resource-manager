@@ -39,5 +39,5 @@ Updated: 2026-10-31 23:02 KST. Scanner: 2026-10-31.1.
 
 - Fixed wide antialias-connected selected-number components by splitting only wide components at OCR's strict black threshold. Narrow faint components retain the original threshold, preserving compact leading digits.
 - Replayed original Drive JPEG with Canvas API (@napi-rs/canvas) and Tesseract: selected crop contains four digit bands and recognizes 1044. This is Canvas API replay, not a live browser session. Added joined-component regression; existing faint leading digit checks pass.
-- All commands from Code checks workflow passed locally, including TypeScript and production build. Frontend-only change; Google Apps Script deployment unnecessary. Pages deployment pending verification for this fix commit.
+- All commands from Code checks workflow passed locally, including TypeScript and production build. Frontend-only change; Google Apps Script deployment unnecessary. Fix commit 27db6040b44f1a9cc3ec5c6938709016c8213277: Code checks run 41211057101 and Publish GitHub Pages run 41211057045 both completed successfully. Row 414 confirmed fix deployed.
 - Earlier unresolved reports remain open; member resources, credentials, tickets and clan settings untouched.
