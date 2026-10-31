@@ -131,7 +131,7 @@ body[data-clan-theme="elite"] .registration-counts .missing-merge{background:#ff
 body[data-clan-theme="elite"] .registration-counts .missing-resource{background:#fff0f2;color:#a52637;border:1px solid #d18a95}
 body[data-clan-theme="elite"] .registration-counts .input-complete{background:#eaf8f0;color:#17634f;border:1px solid #70ad91}
 
-/* A gold medallion makes ascension waiting distinct from registration colors. */
-body[data-clan-theme="elite"] .ascension-crown{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;margin-left:6px;vertical-align:middle;color:#704000;background:linear-gradient(145deg,#fff7cc,#ffd55c);border:2px solid #ba800f;border-radius:10px;box-shadow:0 2px 5px #80500030,inset 0 1px 0 #fff;flex-shrink:0}
+/* A large gold crown marks ascension waiting without a background. */
+body[data-clan-theme="elite"] .ascension-crown{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;margin-left:6px;vertical-align:middle;color:#704000;background:none;border:0;border-radius:0;box-shadow:none;flex-shrink:0}
 body[data-clan-theme="elite"] .ascension-crown svg{width:23px;height:23px;fill:#ffbd25;stroke:#704000;stroke-width:2.2}
 @media(max-width:600px){body[data-clan-theme="elite"] .ascension-crown{width:29px;height:29px;margin-left:4px}body[data-clan-theme="elite"] .ascension-crown svg{width:21px;height:21px}}
