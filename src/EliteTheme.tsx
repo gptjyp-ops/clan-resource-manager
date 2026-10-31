@@ -1,6 +1,5 @@
 import {useEffect,useState} from 'react';
 import {activeClanId} from './lib/api';
-import './elite.css';
 export const ELITE_CLAN_ID='f768d7c5332948cbb1f7ec5f';
 const mark=import.meta.env.BASE_URL+'images/elite-clan-mark.webp';
 function selectedElite(){return (new URLSearchParams(location.hash.slice(1)).get('clan')||activeClanId)===ELITE_CLAN_ID;}
