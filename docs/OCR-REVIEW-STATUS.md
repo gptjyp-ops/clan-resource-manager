@@ -42,3 +42,10 @@ Updated: 2026-11-01 01:05 KST. Scanner at last report: 2026-10-31.1.
 - User-confirmed row 387 expected selected 210 now replays successfully through scanScreen (Canvas API shim + real Tesseract), no issues. Detect gray dialog down to 45% of screenshot width and scale selected-number geometry to detected panel width instead of whole screenshot width.
 - Existing screen-layout regressions, scan diagnostics, OCR worker tests, types and build passed locally. GitHub Code checks run 41218334190 and Pages run 41218334202 both successful for commit b610679250fab716bf3b81a613fb4f4d744b156e. Frontend only; Google deployment not required.
 - Row 381 117k first-digit OCR loss and row 380 maximum-label recognition remain unresolved. No resource values or clan settings modified. This does not claim support for every device or live-browser replay.
+
+## 2026-11-01 02:00 KST scan and maximum-label fix
+
+- Latest main inspected: 98824eb; metadata and A416:A1000 read, no new reports; last row 415. Next scan starts at row 416.
+- User-confirmed row 380 original replay: changing only Korean maximum-status OCR segmentation from SINGLE_LINE to SPARSE_TEXT yields amount 169k and level 100 (maximum), with empty progress/target. Original three-photo replay also retains egg maximum and merge selected 210; egg 117k amount remains rejected, unresolved.
+- Screen-layout and scan-diagnostics regressions, TypeScript and build passed locally. Commit 3ae4a92fb3a6c51c3a81bca859f6d04f92d778f8 Code checks run 41222112749 and Pages run 41222112669 both completed successfully. Frontend-only, no Apps Script deployment needed.
+- Row 380 maximum-label issue now resolved by stored-JPEG native Canvas/Tesseract replay (not live browser). Row 381 remains unresolved; row 415 original-browser mismatch remains follow-up. No member resources, credentials, tickets, or settings changed.
