@@ -6,10 +6,19 @@ import {useLanguage} from './lib/i18n';
 type Message={role:'user'|'bot';text:string};
 export default function ClanBot(){
  const language=useLanguage();
+ const [viewport,setViewport]=useState<{height:number;top:number}|null>(null);
  const [open,setOpen]=useState(false),[input,setInput]=useState(''),[busy,setBusy]=useState(false),[consent,setConsent]=useState(false);
  const [messages,setMessages]=useState<Message[]>([{role:'bot' as const,text:'클랜 도우미입니다. 등록 현황과 등록 안내문은 바로 확인할 수 있어요. 자유 질문은 AI 연결과 전송 동의가 필요합니다.'}]);
  const end=useRef<HTMLDivElement>(null),field=useRef<HTMLInputElement>(null);
- useEffect(()=>{if(open)field.current?.focus();},[open]);
+ useEffect(()=>{
+  if(!open)return;
+  if(window.matchMedia('(min-width:641px)').matches)field.current?.focus();
+  const visual=window.visualViewport;
+  if(!visual)return;
+  const update=()=>setViewport({height:visual.height,top:visual.offsetTop});
+  update();visual.addEventListener('resize',update);visual.addEventListener('scroll',update);
+  return()=>{visual.removeEventListener('resize',update);visual.removeEventListener('scroll',update);};
+ },[open]);
  useEffect(()=>{end.current?.scrollIntoView({block:'nearest'});},[messages]);
  async function send(value=input){
   const question=value.trim();if(!question||busy)return;setInput('');setBusy(true);setMessages(m=>[...m,{role:'user',text:question}]);
@@ -31,7 +40,7 @@ export default function ClanBot(){
   }catch(e){setMessages(m=>[...m,{role:'bot' as const,text:e instanceof Error?e.message:'요청하지 못했습니다. 다시 시도해주세요.'}].slice(-30));}
   finally{setBusy(false);}
  }
- return <div className="clan-bot">
+ return <div className="clan-bot" style={viewport?{'--bot-viewport-height':viewport.height+'px','--bot-viewport-top':viewport.top+'px'} as React.CSSProperties:undefined}>
   <button type="button" className="bot-launch" aria-expanded={open} aria-controls="clan-bot-panel" onClick={()=>setOpen(!open)}>{language==='en'?(open?'Close assistant':'Clan assistant'):(open?'도우미 닫기':'클랜 도우미')}</button>
   {open&&<section id="clan-bot-panel" className="bot-panel" aria-label="클랜 도우미">
    <header><strong>클랜 도우미 · 시험 운영</strong><button type="button" aria-label="도우미 닫기" onClick={()=>setOpen(false)}>×</button></header>
