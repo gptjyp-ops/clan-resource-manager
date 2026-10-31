@@ -4,7 +4,7 @@ body[data-clan-theme="elite"]{
  --popover:#f7fafd;--popover-foreground:#1f2f3c;--primary:#3c91d6;--primary-foreground:#1f2f3c;
  --secondary:#c9e0f3;--secondary-foreground:#1f2f3c;--muted:#cae1f4;--muted-foreground:#4c6376;
  --accent:#d8f1fb;--accent-foreground:#244c62;--border:#8ebfe7;--input:#6ea2cd;--ring:#2d88d2;
- background:radial-gradient(ellipse at 0 0,#bdeaff 0,transparent 45%),radial-gradient(ellipse at 100% 35%,#bedaf1 0,transparent 45%),#e0eef9;
+ background:radial-gradient(ellipse at 18% 0%,#23466380 0,transparent 48%),radial-gradient(ellipse at 88% 28%,#24456645 0,transparent 42%),linear-gradient(155deg,#050c18,#0b1b30 55%,#07101e);background-attachment:fixed;
  color:#1f2f3c;
 }
 body[data-clan-theme="elite"] .matrix-background{display:none}
@@ -99,3 +99,18 @@ body[data-clan-theme="elite"] #root{isolation:isolate;min-height:100dvh}
 @keyframes elite-snow-sway{from{transform:translateX(calc(-1 * var(--sway))) rotate(-15deg);opacity:.6}to{transform:translateX(var(--sway)) rotate(30deg);opacity:1}}
 @media(max-width:600px){.elite-snow span:nth-child(n+43){display:none}}
 @media(prefers-reduced-motion:reduce){.elite-snow{display:none}}
+
+/* Winter-night backdrop with restrained lens glow; data surfaces stay light. */
+body[data-clan-theme="elite"] .elite-snow::before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 14% 12%,#b7dfff12 0,transparent 24%),radial-gradient(circle at 85% 20%,#afdcff0d 0,transparent 18%);pointer-events:none}
+body[data-clan-theme="elite"] .elite-banner{background:linear-gradient(120deg,#16354b,#0b1c30 70%,#183e55);border-color:#70afd2;box-shadow:0 6px 24px #0005,inset 0 1px 0 #e1f5ff30}
+body[data-clan-theme="elite"] .elite-banner h2{color:#f0f9ff}
+body[data-clan-theme="elite"] .elite-banner p{color:#c2d9e9}
+body[data-clan-theme="elite"] .elite-kicker{color:#94cce9}
+body[data-clan-theme="elite"] .elite-leaf{color:#c4edff;opacity:.12}
+body[data-clan-theme="elite"] .elite-banner-tag{background:#c8eaff;color:#173d56;border-color:#7db8da}
+body[data-clan-theme="elite"] .topbar{background:#0b1b2dee;border-color:#3f7596;box-shadow:0 4px 18px #0004}
+body[data-clan-theme="elite"] .topbar :is(.brand,.brand small,.clan-badge){color:#e0f2ff}
+body[data-clan-theme="elite"] .page-heading :is(h1,h2,p,.eyebrow){color:#e3f4ff}
+body[data-clan-theme="elite"] .language-switch button{background:#122d43;color:#d9efff;border:1px solid #527996}
+body[data-clan-theme="elite"] .language-switch button[aria-pressed="true"]{background:#bfe5fa;color:#102d43}
+body[data-clan-theme="elite"] .help-support :is(a,button){background:#10283e;color:#ddf3ff;border:1px solid #527996}
