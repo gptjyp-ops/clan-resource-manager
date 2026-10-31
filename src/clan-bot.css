@@ -30,3 +30,5 @@
  .bot-note{display:none}
  .bot-actions{padding-top:4px;padding-bottom:4px}
 }
+
+.bot-feedback{flex:none;margin:0 12px 8px;padding:8px 10px;border:1px solid #75cabb;border-radius:8px;background:#123b35;color:#e8fff9;font-size:13px;line-height:1.45;max-height:90px;overflow:auto;overflow-wrap:anywhere}.bot-feedback.failed{border-color:#ef9a9a;background:#432931;color:#ffe3e3}
