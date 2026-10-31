@@ -75,10 +75,10 @@ body[data-clan-theme="elite"] .photo-viewer-help{color:#3f5a70}
 body[data-clan-theme="elite"] .photo-viewer-stage{background:#cddce9}
 body[data-clan-theme="elite"] .ascension-crown{color:#1a4e78}
 body[data-clan-theme="elite"] [data-registration-status="none"] :is(.nickname,.date){color:#a52637!important}
-body[data-clan-theme="elite"] [data-registration-status="partial"] :is(.nickname,.date){color:#184b74!important}
+body[data-clan-theme="elite"] [data-registration-status="partial"] :is(.nickname,.date){color:#8a5200!important}
 body[data-clan-theme="elite"] [data-registration-status="complete"] :is(.nickname,.date){color:#17634f!important}
 body[data-clan-theme="elite"] .registration-legend>span:nth-child(1){color:#a52637!important}
-body[data-clan-theme="elite"] .registration-legend>span:nth-child(2){color:#184b74!important}
+body[data-clan-theme="elite"] .registration-legend>span:nth-child(2){color:#8a5200!important}
 body[data-clan-theme="elite"] .registration-legend>span:nth-child(3){color:#17634f!important}
 body[data-clan-theme="elite"] button:disabled{opacity:.7;cursor:not-allowed}
 body[data-clan-theme="elite"] :is(button,a,input,select,summary):focus-visible{outline:3px solid #266d91;outline-offset:3px}
@@ -114,3 +114,19 @@ body[data-clan-theme="elite"] .page-heading :is(h1,h2,p,.eyebrow){color:#e3f4ff}
 body[data-clan-theme="elite"] .language-switch button{background:#122d43;color:#d9efff;border:1px solid #527996}
 body[data-clan-theme="elite"] .language-switch button[aria-pressed="true"]{background:#bfe5fa;color:#102d43}
 body[data-clan-theme="elite"] .help-support :is(a,button){background:#10283e;color:#ddf3ff;border:1px solid #527996}
+
+/* Registration states remain distinct on the light roster, including sticky cells. */
+body[data-clan-theme="elite"] .roster tr[data-registration-status="none"]{--status-ink:#a52637;--status-bg:#fff0f2;--status-hover:#ffe2e7}
+body[data-clan-theme="elite"] .roster tr[data-registration-status="partial"]{--status-ink:#8a5200;--status-bg:#fff7dc;--status-hover:#ffedb5}
+body[data-clan-theme="elite"] .roster tr[data-registration-status="complete"]{--status-ink:#17634f;--status-bg:#eaf8f0;--status-hover:#d9f2e4}
+body[data-clan-theme="elite"] .roster .resource-roster-table tr[data-registration-status] td{background:var(--status-bg)}
+body[data-clan-theme="elite"] .roster .resource-roster-table tr[data-registration-status]:hover td{background:var(--status-hover)}
+body[data-clan-theme="elite"] .roster .resource-roster-table tr[data-registration-status] td:first-child{border-left:4px solid var(--status-ink)}
+body[data-clan-theme="elite"] .roster tr[data-registration-status] td:first-child .date:first-of-type{display:table;width:auto;margin-top:5px;padding:3px 8px;border:1px solid currentColor;border-radius:6px;font-weight:750;font-size:12px}
+body[data-clan-theme="elite"] .registration-legend>span{padding:4px 10px;border:1px solid currentColor;border-radius:6px;font-weight:750}
+body[data-clan-theme="elite"] .registration-legend>span:nth-child(1){background:#fff0f2}
+body[data-clan-theme="elite"] .registration-legend>span:nth-child(2){background:#fff7dc}
+body[data-clan-theme="elite"] .registration-legend>span:nth-child(3){background:#eaf8f0}
+body[data-clan-theme="elite"] .registration-counts .missing-merge{background:#fff7dc;color:#8a5200;border:1px solid #c59541}
+body[data-clan-theme="elite"] .registration-counts .missing-resource{background:#fff0f2;color:#a52637;border:1px solid #d18a95}
+body[data-clan-theme="elite"] .registration-counts .input-complete{background:#eaf8f0;color:#17634f;border:1px solid #70ad91}
