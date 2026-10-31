@@ -17,6 +17,7 @@ jobs:
       - run: node scripts/test-google-deploy.mjs
       - run: node scripts/test-error-outbox.mjs
       - run: node scripts/test-google.mjs
+      - run: node scripts/test-clan-bot.mjs
       - run: node scripts/test-clans.mjs
       - run: node scripts/test-member-ticket.mjs
       - run: node scripts/test-clan-api.mjs
@@ -33,3 +34,4 @@ jobs:
       - run: node scripts/test-weekly-registration.mjs
       - run: npm run check
       - run: npm run build
+
