@@ -198,3 +198,19 @@ assert.equal(mergeDialog(mergeFixture(false)).empty,true);
 assert.equal(mergeDialog(mergeFixture(true)).empty,false);
 assert.equal(mergeDialog(image(78,620)),undefined);
 console.log('Merge dialog rejects ordinary screens and distinguishes zero from unselected materials.');
+
+// Small desktop captures: a six-pixel leading 6 must not disappear while
+// neighbouring 7 and 2 remain seven pixels tall.
+const compactMerge=mergeImage(0);
+for(let y=270;y<300;y++)for(let x=40;x<80;x++)compactMerge.data.set([215,215,215,255],(y*400+x)*4);
+for(const [x,y,w,h] of [[44,279,5,6],[51,278,5,7],[58,278,5,7],[70,278,10,7]])
+ for(let dy=y;dy<y+h;dy++)for(let dx=x;dx<x+w;dx++)compactMerge.data.set([0,0,0,255],(dy*400+dx)*4);
+for(const kind of ['eggMerge','mountMerge'])assert.deepEqual(findLandmarks(compactMerge,kind).selected,{x:44,y:278,width:19,height:7});
+
+// Gray anti-aliased bridges must preserve a broken leading digit, while
+// the following text label stays outside the numeric crop.
+const fadedMerge=mergeImage(0);
+for(let y=270;y<300;y++)for(let x=40;x<90;x++)fadedMerge.data.set([215,215,215,255],(y*400+x)*4);
+for(const [x,y,w,h,color] of [[44,279,5,7,130],[44,280,2,4,0],[47,282,2,4,0],[51,279,4,7,0],[57,279,5,7,0],[65,278,8,8,0]])
+ for(let dy=y;dy<y+h;dy++)for(let dx=x;dx<x+w;dx++)fadedMerge.data.set([color,color,color,255],(dy*400+dx)*4);
+for(const kind of ['eggMerge','mountMerge'])assert.deepEqual(findLandmarks(fadedMerge,kind).selected,{x:44,y:279,width:18,height:7});

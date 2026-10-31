@@ -84,10 +84,12 @@ export function findLandmarks(p:Pixels,kind:PhotoKind):{amount?:Box;info?:Box;pr
    .filter(b=>b.width>.60*w&&b.height>.20*w).sort((a,b)=>a.y-b.y);
   const panel=panels[0];
   if(panel){
-   const glyphs=components(p,{x:panel.x+.02*w,y:panel.y+panel.height-.11*w,width:.24*w,height:.075*w},(r,g,b)=>Math.max(r,g,b)<100,.12)
-    .filter(b=>b.height>.017*w&&b.height<.045*w&&b.width<.04*w).sort((a,b)=>a.x-b.x);
+   const glyphs=components(p,{x:panel.x+.02*w,y:panel.y+panel.height-.11*w,width:.24*w,height:.075*w},(r,g,b)=>Math.max(r,g,b)<160,.12)
+    // Compact PC captures can leave a leading curved digit one pixel shorter
+    // than its neighbours after downscaling; keep it in the numeric run.
+    .filter(b=>b.height>.0125*w&&b.height<.045*w&&b.width<.04*w).sort((a,b)=>a.x-b.x);
    const first=glyphs[0];
-   if(first){const number={...first};for(const b of glyphs.slice(1)){if(Math.abs(b.y-first.y)>.012*w)continue;if(b.x-(number.x+number.width)>.008*w)break;const bottom=Math.max(number.y+number.height,b.y+b.height);number.width=b.x+b.width-number.x;number.y=Math.min(number.y,b.y);number.height=bottom-number.y;}result.selected=number;}
+   if(first){const number={...first};for(const b of glyphs.slice(1)){if(Math.abs(b.y-first.y)>.012*w)continue;if(b.x-(number.x+number.width)>Math.min(.008*w,first.height*.4))break;const bottom=Math.max(number.y+number.height,b.y+b.height);number.width=b.x+b.width-number.x;number.y=Math.min(number.y,b.y);number.height=bottom-number.y;}result.selected=number;}
   }
  }
  if(kind==='skill'||kind==='egg'||kind==='mount'){
