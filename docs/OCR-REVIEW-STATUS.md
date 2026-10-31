@@ -63,3 +63,9 @@ Updated: 2026-11-01 01:05 KST. Scanner at last report: 2026-10-31.1.
 - Recovered row 381 stored original JPEG from Drive into scratch as ocr-381.jpg, and prepared isolated latest-main worktree ocr-review. These are temporary; refetch original after maintenance rather than assuming deletion by user.
 - Existing screen-layout and scan-diagnostics regression commands executed on isolated latest main; no amount retry candidate or original end-to-end replay validated in this run. Row 381 remains open. Next work should restore Canvas/Tesseract replay harness, then compare alternate PSM outputs with amountDecimal before any correction; never prepend a literal 1 based on expected label.
 - No application/backend modifications or deployment; member data and settings unchanged. Next new-log read starts at row 416. Prior deployed fixes remain resolved.
+
+## 2026-11-01 05:08 KST scan and amount replay
+
+- Latest main fetched: d5709d7; metadata and A416:A1000 checked, no new reports; last 415.
+- Restored native Canvas dependency and reproduced current amount crop/threshold/cleanAmountPixels/padding from row 381 stored original with real Tesseract eng. PSM SINGLE_LINE => 17k, SINGLE_WORD => mk, SPARSE_TEXT => 17k; amountDecimal returns null for all three. Therefore simple alternate segmentation retries do NOT fix this original; do not deploy such a change as resolved.
+- No production code modified, no guessed correction, no new deployment. Row 381 remains unresolved. Next investigate crop pixels/glyph separation or independent character recognition with unit and decimal validation. Prior fixed rows stay resolved; next new-log read row 416.
