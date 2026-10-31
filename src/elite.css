@@ -84,10 +84,18 @@ body[data-clan-theme="elite"] button:disabled{opacity:.7;cursor:not-allowed}
 body[data-clan-theme="elite"] :is(button,a,input,select,summary):focus-visible{outline:3px solid #266d91;outline-offset:3px}
 @media(max-width:600px){body[data-clan-theme="elite"] .registration>p,body[data-clan-theme="elite"] .registration>form,body[data-clan-theme="elite"] .registration>.ticket-import{margin-left:16px;margin-right:16px}}
 
-/* Visible ice crystals float above surfaces without intercepting input. */
+
+/* Three depths of drifting snow: distant dust, flakes, and soft foreground bokeh. */
 body[data-clan-theme="elite"] #root{isolation:isolate;min-height:100dvh}
 .elite-snow{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:20}
-.elite-snow span{position:absolute;top:-40px;left:var(--x);width:var(--size);height:var(--size);background:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2032%2032%22%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%232589ce%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20fill%3D%22%23e8faff%22%20d%3D%22m16%203%205%209%208%204-8%204-5%209-5-9-8-4%208-4Z%22%2F%3E%3Cpath%20d%3D%22M16%203v26M3%2016h26M7%207l18%2018M25%207%207%2025M12%207l4%204%204-4M12%2025l4-4%204%204M7%2012l4%204-4%204M25%2012l-4%204%204%204%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E") center/contain no-repeat;filter:drop-shadow(0 1px 2px #fff);opacity:.72;animation:elite-snowfall var(--duration) var(--delay) linear infinite}
-@keyframes elite-snowfall{from{transform:translate3d(0,-40px,0) rotate(0deg)}to{transform:translate3d(var(--drift),calc(100dvh + 80px),0) rotate(150deg)}}
-@media(max-width:600px){.elite-snow span:nth-child(n+17){display:none}}
+.elite-snow span{position:absolute;top:-45px;left:var(--x);width:var(--size);height:var(--size);animation:elite-snowfall var(--duration) var(--delay) linear infinite}
+.elite-snow i{display:block;width:100%;height:100%;border-radius:50%;background:radial-gradient(circle,#fff 0 30%,#f1fbffb3 55%,#fff0 75%);box-shadow:0 0 3px #5285aa55;animation:elite-snow-sway 5s var(--delay) ease-in-out infinite alternate}
+.elite-snow [data-depth="0"]{opacity:.45}
+.elite-snow [data-depth="1"]{opacity:.8}
+.elite-snow [data-depth="2"]{opacity:.65;filter:blur(1px)}
+.elite-snow .snow-crystal{width:19px;height:19px;opacity:.85;filter:drop-shadow(0 0 2px #668fac66)}
+.elite-snow .snow-crystal i{border-radius:0;box-shadow:none;background:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2040%2040%22%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22white%22%20stroke-width%3D%221.6%22%20stroke-linecap%3D%22round%22%3E%3Cpath%20id%3D%22a%22%20d%3D%22M20%202v36M15%207l5%205%205-5M15%2033l5-5%205%205%22%2F%3E%3Cuse%20href%3D%22%23a%22%20transform%3D%22rotate(60%2020%2020)%22%2F%3E%3Cuse%20href%3D%22%23a%22%20transform%3D%22rotate(120%2020%2020)%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E") center/contain no-repeat}
+@keyframes elite-snowfall{from{transform:translate3d(0,-45px,0)}to{transform:translate3d(var(--drift),calc(100dvh + 90px),0)}}
+@keyframes elite-snow-sway{from{transform:translateX(calc(-1 * var(--sway))) rotate(-15deg);opacity:.6}to{transform:translateX(var(--sway)) rotate(30deg);opacity:1}}
+@media(max-width:600px){.elite-snow span:nth-child(n+43){display:none}}
 @media(prefers-reduced-motion:reduce){.elite-snow{display:none}}
