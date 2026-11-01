@@ -222,3 +222,12 @@ for(const [x,w] of [[44,4],[50,8],[59,9],[69,8],[83,9]])for(let y=279;y<289;y++)
 for(const x of [58,68])joinedMerge.data.set([130,130,130,255],(283*400+x)*4);
 for(const kind of ['eggMerge','mountMerge'])assert.deepEqual(findLandmarks(joinedMerge,kind).selected,{x:44,y:279,width:33,height:10});
 console.log('Joined numeric components split without losing faint leading digits.');
+
+// Compact skill header: dark top resource bar must beat the gray stat banner.
+const compactSkill={width:400,height:720,data:new Uint8ClampedArray(400*720*4).fill(255)};
+function compactFill(x,y,w,h,color){for(let row=y;row<y+h;row++)for(let col=x;col<x+w;col++)compactSkill.data.set([color,color,color,255],(row*400+col)*4);}
+compactFill(22,16,54,14,35);compactFill(68,45,40,15,115);
+for(const x of [43,51,59,67])compactFill(x,19,4,8,255);
+assert.equal(findLandmarks(compactSkill,'skill').amount.y,16);
+assert.equal(findLandmarks(compactSkill,'skill').amount.x,22);
+console.log('Compact dark skill resource header detected above stat banner.');
