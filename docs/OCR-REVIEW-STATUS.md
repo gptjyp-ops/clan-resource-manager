@@ -1,11 +1,13 @@
 # OCR review checkpoint
 
-Updated: 2026-11-01 15:57 KST. Last report scanner: 2026-10-31.1.
+Updated: 2026-11-01 17:06 KST. Last report scanner: 2026-10-31.1.
 
 ## Current scan
 
-- Latest main fetched: 873af63. Spreadsheet metadata and ocr_errors A414:J1000 read; recent rows414–415 unchanged and rows416–1000 empty; no new reports. Last record is row415. Next scan starts at row416.
-- No application/backend changes or tests performed this scan; no new application deployment requested. Row415 remains open with the previously documented original-resolution replay limitation; no new resolution claimed. Earlier investigation history is preserved in Git history; current status below supersedes old pending notes.
+- Latest main fetched: 11325a4af9e9df974ba99b6448d25b0fd5b99125. Spreadsheet metadata confirms ocr_errors has 1000 rows and 26 columns. Read A414:J1000; new reports rows416–417, rows418–1000 empty. Last record row417; next scan starts row418.
+- Rows416–417: mount amount OCR-04, general/compatibility, 2026-11-01T07:33:00.227Z / 07:33:19.184Z. Both log 22.49k and the same uploaded image dimensions/size (1080x2340, 429796 bytes). Stored Drive JPEGs each have 70166 bytes. Row416 stored image is 738x1600; visually 22.4k with the summon-info maximum label. No missing leading digit or merge-screen confusion is evident in this stored image.
+- Replayed latest scanScreen on row416 stored JPEG with native Canvas and actual local Tesseract eng/kor: amount22.4k, level100, empty progress/target, no diagnostic issues. The amount crop separately returns 22.4k with single-line/sparse OCR and 224k with single-word OCR; pixel decimal validation returns22.4k for all three. Logged extra9 is not reproducible on the stored resized image. This is not original-upload-resolution or live-browser proof; keep rows416–417 unresolved and do not delete9 by assumption. Row417 shares report metadata and stored size but its pixels were not independently replayed.
+- No application/backend changes or new application deployment this scan. Existing main Code checks41282818192 and Pages41282818286 succeeded. No Apps Script deployment necessary. Existing unresolved row415 remains open; no new resolution claimed.
 
 ## Resolved cases
 
@@ -20,6 +22,8 @@ Updated: 2026-11-01 15:57 KST. Last report scanner: 2026-10-31.1.
 - Rows412–413: earlier confirmed compact egg merge672 versus72 fix, retained as resolved.
 
 ## Open follow-up
+
+- Rows416–417: logged22.49k versus visible22.4k on row416; saved-JPEG replay succeeds. Original upload/browser-resolution evidence is needed to reproduce the failure. Do not force the visible reference into member data.
 
 - Row415: 2026-10-31T15:47:38.338Z, eggMerge selected OCR-04. Original JPEG visually397; logged whole reads397/3974 and isolated3,9,7,empty. Stored-JPEG scanScreen replay returns397 with no issues. Cannot reproduce original browser-resolution failure; do not guess correction or claim browser success.
 - Other earlier candidates (green vial location/read failures, other compact maximum/merge captures) remain unverified individually. Do not generalize resolved examples to all screenshots. Reopen original evidence only when pursuing a specific report.
