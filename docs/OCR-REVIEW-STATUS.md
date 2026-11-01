@@ -1,13 +1,14 @@
 # OCR review checkpoint
 
-Updated: 2026-11-01 19:02 KST. Last report scanner: 2026-10-31.1.
+Updated: 2026-11-01 20:05 KST. Last report scanner: 2026-10-31.1.
 
 ## Current scan
 
-- Latest main fetched: b14b5aa09362b1c0c292dd72f4b3866b3a5fdde6. Spreadsheet metadata confirms ocr_errors has 1000 rows and 26 columns. Read A416:J1000; rows416–417 unchanged, rows418–1000 empty. No new reports. Last record row417; next scan starts row418.
+- Latest main fetched: 23a5032ac0716a96d7ed3216b280e69f4f05b2bb. Metadata confirms ocr_errors has 1000 rows and 26 columns. Read A416:J1000; rows416–417 unchanged, new rows418–419, rows420–1000 empty. Last record row419; next scan starts row420.
 - Rows416–417: mount amount OCR-04, general/compatibility, 2026-11-01T07:33:00.227Z / 07:33:19.184Z. Both log 22.49k and the same uploaded image dimensions/size (1080x2340, 429796 bytes). Stored Drive JPEGs each have 70166 bytes. Row416 stored image is 738x1600; visually 22.4k with the summon-info maximum label. No missing leading digit or merge-screen confusion is evident in this stored image.
 - Previous investigation replayed scanScreen on row416 stored JPEG with native Canvas and actual local Tesseract eng/kor: amount22.4k, level100, empty progress/target, no diagnostic issues. The amount crop separately returns 22.4k with single-line/sparse OCR and 224k with single-word OCR; pixel decimal validation returns22.4k for all three. Logged extra9 is not reproducible on the stored resized image. This is not original-upload-resolution or live-browser proof; keep rows416–417 unresolved and do not delete9 by assumption. Row417 shares report metadata and stored size but its pixels were not independently replayed.
-- No application/backend changes, new tests or new application deployment this scan. Existing main Code checks41291471576 and Pages41291471542 succeeded. No Apps Script deployment necessary. Existing unresolved row415 remains open; no new resolution claimed.
+- Rows418–419: mountMerge selected OCR-04, general/compatibility, 2026-11-01T10:50:09.263Z / 10:50:40.854Z. Log whole54 repeatedly, isolated5,4,empty. Uploaded metadata1080x2520,751301 bytes; both stored JPEGs686x1600,133170 bytes, byte-identical SHA25671538c6e294e328c8ed1477beaa6f75463c940edbeb344737263720afe50d92b. Visually54 selected in a true merge dialog; decimals/k and missing leading digits are not evident.
+- Replayed row418 stored JPEG using latest scanScreen, native Canvas and actual Tesseract eng/kor: selected54, original reads54 selected/54, no issues. Synthetic resize to1080x2520 also returns54 without issues, but is not the original upload. Both saved files are identical; original browser-resolution failure remains unconfirmed. No forced correction or application/backend change; no new application deployment. Existing main Code checks41295692979 and Pages41295693020 succeeded. Apps Script deployment unnecessary. Rows415–419 remain unresolved as documented.
 
 ## Resolved cases
 
@@ -22,6 +23,8 @@ Updated: 2026-11-01 19:02 KST. Last report scanner: 2026-10-31.1.
 - Rows412–413: earlier confirmed compact egg merge672 versus72 fix, retained as resolved.
 
 ## Open follow-up
+
+- Rows418–419: selected54, saved-JPEG and synthetic-size replay succeed; original browser failure not reproduced. Retain as unresolved; do not force54 into member inventory.
 
 - Rows416–417: logged22.49k versus visible22.4k on row416; saved-JPEG replay succeeds. Original upload/browser-resolution evidence is needed to reproduce the failure. Do not force the visible reference into member data.
 
