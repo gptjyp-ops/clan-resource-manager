@@ -1,10 +1,10 @@
 # OCR review checkpoint
 
-Updated: 2026-11-02 00:57 KST. Last report scanner: 2026-10-31.1.
+Updated: 2026-11-02 02:03 KST. Last report scanner: 2026-10-31.1.
 
 ## Current scan
 
-- Main reviewed: 22642253496be9cffcd1913cb3f03f50fdb3b3a0. Metadata confirms ocr_errors has 1000 rows and 26 columns. Read A420:J1000; row420 unchanged, rows421–1000 empty. No new reports. Last record row420; next scan starts row421. Existing main Code checks41319492272 and Pages41319492286 succeeded. No application/backend changes or new application deployment this scan.
+- Main reviewed: 383613cb50ad70aeba4a16db6a27193807364c14. Metadata confirms ocr_errors has 1000 rows and 26 columns. Read A420:J1000; row420 unchanged, rows421–1000 empty. No new reports. Last record row420; next scan starts row421. Existing main Code checks41323792252 and Pages41323792290 succeeded. No application/backend changes or new application deployment this scan.
 - Row420: skill, 2026-11-01T14:37:06.717Z, OCR-03 amount/level; uploaded PNG539x970, stored JPEG539x970. Visually150k, summon Lv71, progress25/110. Full scanScreen replay with native Canvas and actual Tesseract reproduces missing amount and level, matching the report. Compact top resource bar (gray35) was excluded by the top offset and gray>40 rule; a gray stat banner was selected instead. Skill-only search now includes the top edge and darker gray>20; egg/mount thresholds and geometry unchanged. Same saved image now returns150k,25/110 with only the level issue remaining. No expected value injected. No decimal/unit/leading-digit correction was necessary.
 - Previous fix added a synthetic regression with a dark top resource bar and a lower gray stat banner. Screen-layout and scan-diagnostics regressions, type check and build passed locally. Final commit Code checks41319390397 and Pages41319390369 both completed successfully. This frontend-only change requires no Apps Script deployment. Member resources, credentials, tickets and clan settings unchanged. Level71 remains unresolved: alternative sparse OCR produced7 in investigation and was rejected; no retry change applied. Replays are native Canvas, not live-browser proof.
 - Rows416–417: mount amount OCR-04, general/compatibility, 2026-11-01T07:33:00.227Z / 07:33:19.184Z. Both log 22.49k and the same uploaded image dimensions/size (1080x2340, 429796 bytes). Stored Drive JPEGs each have 70166 bytes. Row416 stored image is 738x1600; visually 22.4k with the summon-info maximum label. No missing leading digit or merge-screen confusion is evident in this stored image.
