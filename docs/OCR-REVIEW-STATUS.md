@@ -1,19 +1,22 @@
 # OCR review checkpoint
 
-Updated: 2026-11-01 22:58 KST. Last report scanner: 2026-10-31.1.
+Updated: 2026-11-02 00:06 KST. Last report scanner: 2026-10-31.1.
 
 ## Current scan
 
-- Latest main fetched: aee29938cc2342eb48d3cfaa7598c68bb737d7a6. Metadata confirms ocr_errors has 1000 rows and 26 columns. Read A418:J1000; rows418–419 unchanged, rows420–1000 empty. No new reports. Last record row419; next scan starts row420. No application/backend changes, new tests or new application deployment this scan.
+- Main reviewed: ad666a50f7bbdd7040a29c10cbc700d9023af175; fix deployed: 1e239797f0e908eabc38d5abe459dac5a7da087b. Metadata confirms ocr_errors has 1000 rows and 26 columns. Read A418:J1000; new row420, rows421–1000 empty. Last record row420; next scan starts row421.
+- Row420: skill, 2026-11-01T14:37:06.717Z, OCR-03 amount/level; uploaded PNG539x970, stored JPEG539x970. Visually150k, summon Lv71, progress25/110. Full scanScreen replay with native Canvas and actual Tesseract reproduces missing amount and level, matching the report. Compact top resource bar (gray35) was excluded by the top offset and gray>40 rule; a gray stat banner was selected instead. Skill-only search now includes the top edge and darker gray>20; egg/mount thresholds and geometry unchanged. Same saved image now returns150k,25/110 with only the level issue remaining. No expected value injected. No decimal/unit/leading-digit correction was necessary.
+- Added a synthetic regression with a dark top resource bar and a lower gray stat banner. Screen-layout and scan-diagnostics regressions, type check and build passed locally. Final commit Code checks41319390397 and Pages41319390369 both completed successfully. This frontend-only change requires no Apps Script deployment. Member resources, credentials, tickets and clan settings unchanged. Level71 remains unresolved: alternative sparse OCR produced7 in investigation and was rejected; no retry change applied. Replays are native Canvas, not live-browser proof.
 - Rows416–417: mount amount OCR-04, general/compatibility, 2026-11-01T07:33:00.227Z / 07:33:19.184Z. Both log 22.49k and the same uploaded image dimensions/size (1080x2340, 429796 bytes). Stored Drive JPEGs each have 70166 bytes. Row416 stored image is 738x1600; visually 22.4k with the summon-info maximum label. No missing leading digit or merge-screen confusion is evident in this stored image.
 - Previous investigation replayed scanScreen on row416 stored JPEG with native Canvas and actual local Tesseract eng/kor: amount22.4k, level100, empty progress/target, no diagnostic issues. The amount crop separately returns 22.4k with single-line/sparse OCR and 224k with single-word OCR; pixel decimal validation returns22.4k for all three. Logged extra9 is not reproducible on the stored resized image. This is not original-upload-resolution or live-browser proof; keep rows416–417 unresolved and do not delete9 by assumption. Row417 shares report metadata and stored size but its pixels were not independently replayed.
 - Rows418–419: mountMerge selected OCR-04, general/compatibility, 2026-11-01T10:50:09.263Z / 10:50:40.854Z. Log whole54 repeatedly, isolated5,4,empty. Uploaded metadata1080x2520,751301 bytes; both stored JPEGs686x1600,133170 bytes, byte-identical SHA25671538c6e294e328c8ed1477beaa6f75463c940edbeb344737263720afe50d92b. Visually54 selected in a true merge dialog; decimals/k and missing leading digits are not evident.
-- Previous investigation replayed row418 stored JPEG using scanScreen, native Canvas and actual Tesseract eng/kor: selected54, original reads54 selected/54, no issues. Synthetic resize to1080x2520 also returns54 without issues, but is not the original upload. Both saved files are identical; original browser-resolution failure remains unconfirmed. No forced correction or application/backend change; no new application deployment. Existing main Code checks41309584711 and Pages41309584732 succeeded. Apps Script deployment unnecessary. Rows415–419 remain unresolved as documented.
+- Previous investigation replayed row418 stored JPEG using scanScreen, native Canvas and actual Tesseract eng/kor: selected54, original reads54 selected/54, no issues. Synthetic resize to1080x2520 also returns54 without issues, but is not the original upload. Both saved files are identical; original browser-resolution failure remains unconfirmed. No forced correction or application/backend change; no new application deployment. Previous review confirmed Code checks41309584711 and Pages41309584732 succeeded. Apps Script deployment unnecessary. Rows415–419 remain unresolved as documented.
 
 ## Resolved cases
 
 | Rows | Confirmed behavior and change | Fix commit | Successful Code checks / Pages runs |
 | --- | --- | --- | --- |
+| 420 (amount only) | Compact skill150k resource bar detected above gray stat banner; level still open | 1e239797f0e908eabc38d5abe459dac5a7da087b | 41319390397 / 41319390369 |
 | 380 | 169k + maximum; Korean maximum-label OCR uses sparse text | 3ae4a92fb3a6c51c3a81bca859f6d04f92d778f8 | 41222112749 / 41222112669 |
 | 381 | 117k repeated leading 1 recovered from independent glyph reads and amountDecimal validation | 0028572b454661e27003dcd23b2d4a1e7c4363c2 | 41246610819 / 41246610846 |
 | 387 | Selected210 located relative to detected dialog width on wide screenshot | b610679250fab716bf3b81a613fb4f4d744b156e | 41218334190 / 41218334202 |
@@ -23,6 +26,8 @@ Updated: 2026-11-01 22:58 KST. Last report scanner: 2026-10-31.1.
 - Rows412–413: earlier confirmed compact egg merge672 versus72 fix, retained as resolved.
 
 ## Open follow-up
+
+- Row420 level: visible Lv71; replay still fails. Do not accept the investigated sparse-read7 or force71. Amount150k resolved independently; retain report partially unresolved.
 
 - Rows418–419: selected54, saved-JPEG and synthetic-size replay succeed; original browser failure not reproduced. Retain as unresolved; do not force54 into member inventory.
 
