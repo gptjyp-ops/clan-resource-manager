@@ -1,10 +1,10 @@
 # OCR review checkpoint
 
-Updated: 2026-11-01 12:00 KST. Last report scanner: 2026-10-31.1.
+Updated: 2026-11-01 12:58 KST. Last report scanner: 2026-10-31.1.
 
 ## Current scan
 
-- Latest main fetched: 01846d8. Spreadsheet metadata and ocr_errors A410:J1000 read; recent rows410–415 unchanged and rows416–1000 empty; no new reports. Last record is row415. Next scan starts at row416.
+- Latest main fetched: 2ebea7a. Spreadsheet metadata and ocr_errors A414:J1000 read; recent rows414–415 unchanged and rows416–1000 empty; no new reports. Last record is row415. Next scan starts at row416.
 - No application/backend changes or tests performed this scan; no new application deployment requested. Row415 remains open with the previously documented original-resolution replay limitation; no new resolution claimed. Earlier investigation history is preserved in Git history; current status below supersedes old pending notes.
 
 ## Resolved cases
