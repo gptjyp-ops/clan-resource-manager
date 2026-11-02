@@ -1,8 +1,10 @@
 # OCR review checkpoint
 
-Updated: 2026-11-02 20:00 KST. Last report scanner: 2026-10-31.1.
+Updated: 2026-11-02 22:00 KST. Last report scanner: 2026-10-31.1.
 
 ## Current scan
+
+- 2026-11-02 22:00 KST incremental review: fetched latest main54edff84356154fc3cdcc4ac874b90ccda44f243; OCR paths unchanged. Metadata1000x26; read A431:J1000; new436–438,439–1000 empty; next439. Row436 mountMerge OCR-06: stored image visually a mount SUMMON screen (44.7k, summon Lv56), so merge-slot rejection is correct; never import44.7k as selected. Rows437–438 mountMerge OCR-04 log404 consistently with empty isolated read. Representative437 stored JPEG738x1600 visually404 selected on actual mount merge dialog; no decimal/k or missing-first-digit ambiguity. Full scanScreen native Canvas/actual Tesseract replay returns404 with no issues. Original1440x3120 upload/browser failure remains unconfirmed;438 pixels not independently compared. Keep437–438 unresolved, no forced404. Prior open cases retained. No application/backend changes or deployment required; no live resources/passwords/tickets/clan settings modified. Replay uses stored compressed JPEG, not original-resolution or live-browser proof.
 
 - 2026-11-02 20:00 KST incremental review: latest main 7281174d51b9d2fdd095da2d731711b05b437a08 fetched. Metadata ocr_errors1000x26; read A429:J1000. New rows431–435, rows436–1000 empty; next scan436. Rows431–434 eggMerge OCR-04 log1198/11984 and isolated1,1,9,8,empty; representative row431 stored JPEG738x1600 visually1198 selected in a real pet merge dialog. Native Canvas + actual Tesseract full scanScreen replay with unchanged latest OCR paths returns1198 with no issues. Original uploaded1080x2340 failure not reproduced; other repeated images not independently pixel-compared. No decimal/k or missing-first-digit correction established; keep431–434 unresolved. Row435 image is a total-bonus/technology information popup, with no merge selected count: wrong source screen, never substitute the visible126k resource into selected. Prior open cases415–420(partial),423–428,430 retained unchanged. No application/backend change, no deployment needed; no live member resources/credentials/tickets/settings modified. Stored compressed image replay is not original-resolution or live-browser proof.
 
