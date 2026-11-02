@@ -1,8 +1,10 @@
 # OCR review checkpoint
 
-Updated: 2026-11-03 06:01 KST. Last report scanner: 2026-10-31.1.
+Updated: 2026-11-03 07:57 KST. Last report scanner: 2026-10-31.1.
 
 ## Current scan
+
+- 2026-11-03 07:57 KST incremental check: latest main58e21462581b917806d0103eab338fbfab9285b5. Metadata ocr_errors1000x26; read A447:J1000; last populated448,449–1000 empty; next449 unchanged. No new reports or additional evidence for existing open cases; retain all unresolved findings without speculative corrections. No application/backend change or deployment required. Member inventory, passwords, tickets and clan settings untouched.
 
 - 2026-11-03 06:01 KST incremental check: latest main7c6ae67d88b0b75b6317c88027d06fb0277953bf; metadata ocr_errors1000x26; read A447:J1000, only previously reviewed447–448 present and449–1000 empty. Next449; no new evidence or changed error classification. Existing unresolved cases retained, including441 maximum recognition,442 potion811 and448 selected1834. No application/backend change, tests or deployment required this scan. No live member resources, passwords, tickets or clan settings changed.
 
