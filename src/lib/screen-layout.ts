@@ -159,6 +159,14 @@ export function isForeignPhotoInSkillSlot(p:Pixels,kind:PhotoKind):boolean{
  const mount=findLandmarks(p,'mount');
  return !normal.amount&&!!mount.amount&&!!mount.info;
 }
+// A left-header summon resource is incompatible with the centered mount header.
+// Require positive header and information anchors; uncertain crops keep OCR.
+export function isForeignPhotoInMountSlot(p:Pixels,kind:PhotoKind):boolean{
+ if(kind!=='mount')return false;
+ if(findLandmarks(p,'mount').amount)return false;
+ const leftHeader=findLandmarks(p,'egg');
+ return !!leftHeader.amount&&!!leftHeader.info;
+}
 export type LocatedRegion={field:'amount'|'level'|'ratio'|'selected';rect:[number,number,number,number];mode:'white'|'black'|'yellow'|'mixed'|'raw';alternativeRect?:[number,number,number,number]};
 export function locateRegions(p:Pixels,kind:PhotoKind):LocatedRegion[]{
  const landmarks=findLandmarks(p,kind),out:LocatedRegion[]=[],w=p.width;
