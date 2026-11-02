@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import ts from 'typescript';
 const source=ts.transpileModule(fs.readFileSync('src/lib/screen-layout.ts','utf8'),{compilerOptions:{module:ts.ModuleKind.ESNext,target:ts.ScriptTarget.ES2022}}).outputText;
-const {mergeDialog,findLandmarks,locateRegions,ratioCandidates,digitBands,amountDecimal,cleanAmountPixels,isSummonPhotoInMergeSlot,isForeignPhotoInSkillSlot}=await import('data:text/javascript;base64,'+Buffer.from(source).toString('base64'));
+const {mergeDialog,findLandmarks,locateRegions,ratioCandidates,digitBands,amountDecimal,cleanAmountPixels,isSummonPhotoInMergeSlot,isForeignPhotoInSkillSlot,isForeignPhotoInMountSlot}=await import('data:text/javascript;base64,'+Buffer.from(source).toString('base64'));
 // Three narrow neighbouring 1s must remain three glyphs even when the OCR
 // engine returns a syntactically valid single 1. Ignore isolated speckles.
 const numeric={width:90,height:50,data:new Uint8ClampedArray(90*50*4).fill(255)};
@@ -231,3 +231,12 @@ for(const x of [43,51,59,67])compactFill(x,19,4,8,255);
 assert.equal(findLandmarks(compactSkill,'skill').amount.y,16);
 assert.equal(findLandmarks(compactSkill,'skill').amount.x,22);
 console.log('Compact dark skill resource header detected above stat banner.');
+
+// Positive left header + info rejects foreign summon photos in mount only.
+assert.equal(isForeignPhotoInMountSlot(a,'mount'),true);
+assert.equal(isForeignPhotoInMountSlot(a,'egg'),false);
+assert.equal(isForeignPhotoInMountSlot(foreignMount,'mount'),false);
+const uncertainMount={width:400,height:870,data:new Uint8ClampedArray(400*870*4).fill(255)};
+assert.equal(isForeignPhotoInMountSlot(uncertainMount,'mount'),false);
+assert.equal(isForeignPhotoInMountSlot(mergeImage(0),'mount'),false);
+console.log('Foreign mount summon photo requires positive left header and info.');
