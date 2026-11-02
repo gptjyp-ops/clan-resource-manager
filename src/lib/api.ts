@@ -103,10 +103,10 @@ export async function enterMemberTicket(ticket:MemberTicket):Promise<MemberRecor
  const r=await rpc('list',{operation:'ticketEnter',nickname:ticket.nickname,token:ticket.token}) as Reply & {record:MemberRecord};
  rememberTicket(ticket);return r.record;
 }
-export async function issueMemberTicket(nickname:string,password:string){
+export async function issueMemberTicket(nickname:string,password:string,preservePassword=false){
  const capability=await rpc('list',{operation:'capabilities'}) as Reply & {memberTickets?:boolean};
  if(!capability.memberTickets)throw Error('개인 티켓 기능을 업데이트 중입니다. 잠시 후 다시 시도해주세요.');
- return rpc('list',{operation:'issueMemberTicket',nickname,password}) as Promise<Reply & {token:string;record:MemberRecord}>;
+ return rpc('list',{operation:'issueMemberTicket',nickname,password,preservePassword}) as Promise<Reply & {token:string;record:MemberRecord}>;
 }
 
 // Validate membership before granting entry; never put the credential in a URL.

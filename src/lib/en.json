@@ -572,7 +572,7 @@
   "QR 티켓을 발급했습니다. 티켓 이미지를 꼭 저장해주세요.": "Your QR ticket has been issued. Save the ticket image.",
   "티켓 발급 실패": "Ticket issuance failed.",
   "수정 비밀번호로 로그인하거나, 같은 닉네임·비밀번호로 QR 티켓을 발급할 수 있습니다.": "Log in with your edit password, or use the same nickname and password to issue a QR ticket.",
-  "QR 발급 후에는 기존 비밀번호 대신 QR 티켓으로 로그인합니다. 티켓 이미지를 꼭 저장해주세요.": "After issuance, use your QR ticket instead of the old password to log in. Save the ticket image.",
+  "QR 발급 후에도 기존 비밀번호로 로그인할 수 있습니다. 티켓 이미지를 꼭 저장해주세요.": "You can still log in with your existing password after issuing a QR ticket. Save the ticket image.",
   "QR 티켓 새로 발급": "Issue a new QR ticket",
   "기존 회원 로그인 · QR 티켓 발급": "Existing member login / QR ticket issuance",
   "이번 주 등록": "Registered this week",

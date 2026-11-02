@@ -86,7 +86,8 @@ function save_(p,clan){
   var s=sheet_(clan),rows=rows_(s),index=rows.findIndex(function(r){return JSON.parse(r[0])===nickname;}),old=index>=0?rows[index]:null;
   if(old&&Number(old[7])>Date.now())throw Error('비밀번호 확인 시도가 많습니다. 10분 뒤 다시 시도해주세요.');
   var salt=old?old[2]:Utilities.getUuid(),hash=hash_(password,salt);
-  if(old&&old[1]!==hash){var fails=Number(old[6]||0)+1;s.getRange(index+2,7,1,2).setValues([[fails,fails>=5?Date.now()+600000:0]]);SpreadsheetApp.flush();throw Error('이 닉네임의 수정 비밀번호가 맞지 않습니다.');}
+  if(old&&!memberCredential_(clan,nickname,old,password)){var fails=Number(old[6]||0)+1;s.getRange(index+2,7,1,2).setValues([[fails,fails>=5?Date.now()+600000:0]]);SpreadsheetApp.flush();throw Error('이 닉네임의 수정 비밀번호가 맞지 않습니다.');}
+  if(old&&p.newPassword===undefined)hash=old[1];
   if(p.newPassword!==undefined){salt=Utilities.getUuid();hash=hash_(p.newPassword,salt);}
   var details=mergeInventory_(old?JSON.parse(old[3]):null,incoming,p.changedFields);
   var photos=old?JSON.parse(old[4]):{},obsolete=[],folder=DriveApp.getFolderById(clan?clan.folderId:PropertiesService.getScriptProperties().getProperty('FOLDER_ID'));
@@ -249,12 +250,12 @@ function memberLogin_(p,clan){
  if(typeof p.nickname!=='string'||typeof p.password!=='string'||p.nickname.length>24||p.password.length<6||p.password.length>100)throw Error('닉네임과 비밀번호를 입력해주세요.');
  // Successful read-only logins do not wait behind uploads and resets.
  var quickName=p.nickname.trim().normalize('NFKC'),quickRow=rows_(sheet_(clan)).find(function(r){return JSON.parse(r[0])===quickName;});
- if(quickRow&&!Number(quickRow[6]||0)&&Number(quickRow[7]||0)<=Date.now()&&hash_(p.password,quickRow[2])===quickRow[1])return {ok:true,record:publicRow_(quickRow)};
+ if(quickRow&&!Number(quickRow[6]||0)&&Number(quickRow[7]||0)<=Date.now()&&memberCredential_(clan,quickName,quickRow,p.password))return {ok:true,record:publicRow_(quickRow)};
  var lock=LockService.getScriptLock();lock.waitLock(30000);
  try{var s=sheet_(clan),rows=rows_(s),name=p.nickname.trim().normalize('NFKC'),index=rows.findIndex(function(r){return JSON.parse(r[0])===name;}),r=index>=0?rows[index]:null;
  if(!r)throw Error('닉네임 또는 비밀번호가 맞지 않습니다.');
  if(Number(r[7])>Date.now())throw Error('비밀번호 확인 시도가 많습니다. 10분 뒤 다시 시도해주세요.');
- if(hash_(p.password,r[2])!==r[1]){var fails=Number(r[6]||0)+1;s.getRange(index+2,7,1,2).setValues([[fails,fails>=5?Date.now()+600000:0]]);SpreadsheetApp.flush();throw Error('닉네임 또는 비밀번호가 맞지 않습니다.');}
+ if(!memberCredential_(clan,name,r,p.password)){var fails=Number(r[6]||0)+1;s.getRange(index+2,7,1,2).setValues([[fails,fails>=5?Date.now()+600000:0]]);SpreadsheetApp.flush();throw Error('닉네임 또는 비밀번호가 맞지 않습니다.');}
  s.getRange(index+2,7,1,2).setValues([[0,0]]);SpreadsheetApp.flush();return {ok:true,record:publicRow_(r)};
  }finally{lock.releaseLock();}
 }
@@ -303,7 +304,7 @@ function memberRecovery_(p,operation){
   if(operation==='issueMemberRecovery'){
    if(!r)throw Error('닉네임 또는 비밀번호가 맞지 않습니다.');
    if(Number(r[7])>Date.now())throw Error('비밀번호 확인 시도가 많습니다. 10분 뒤 다시 시도해주세요.');
-   if(hash_(p.password,r[2])!==r[1]){var fails=Number(r[6]||0)+1;s.getRange(index+2,7,1,2).setValues([[fails,fails>=5?Date.now()+600000:0]]);SpreadsheetApp.flush();throw Error('닉네임 또는 비밀번호가 맞지 않습니다.');}
+   if(!memberCredential_(clan,name,r,p.password)){var fails=Number(r[6]||0)+1;s.getRange(index+2,7,1,2).setValues([[fails,fails>=5?Date.now()+600000:0]]);SpreadsheetApp.flush();throw Error('닉네임 또는 비밀번호가 맞지 않습니다.');}
    var code=issueRecovery_(clan.id,name,r[2]);s.getRange(index+2,7,1,2).setValues([[0,0]]);SpreadsheetApp.flush();return {ok:true,recoveryCode:code};
   }
   var code=p.recoveryCode.replace(/[\s-]/g,'').toLowerCase(),operator=JSON.parse(props.getProperty('OPERATOR_RECOVERY_CODE')||'null');
@@ -343,6 +344,11 @@ function operatorRecoveryCode_(p){
 
 // Personal tickets use the existing salted credential hash. No raw ticket is
 // persisted server-side. Rotation/password recovery revokes older tickets.
+// Retain the password hash separately, bound to the current credential salt.
+// The previous salt keeps password access intact if the following sheet write fails.
+function passwordBackupKey_(clan,name){return 'MEMBER_PASSWORD:'+clan.id+':'+encodeURIComponent(name);}
+function passwordBackup_(clan,name,row){var b=JSON.parse(PropertiesService.getScriptProperties().getProperty(passwordBackupKey_(clan,name))||'null');return b&&(b.ticketSalt===row[2]||b.previousTicketSalt===row[2])?b:null;}
+function memberCredential_(clan,name,row,password){if(hash_(password,row[2])===row[1])return true;var b=passwordBackup_(clan,name,row);return !!b&&hash_(password,b.salt)===b.hash;}
 function ticketEnter_(p,clan){
  if(typeof p.nickname!=='string'||!p.nickname.trim()||p.nickname.length>24||typeof p.token!=='string'||! /^[a-f0-9]{64}$/.test(p.token))throw Error('개인 티켓이 유효하지 않습니다.');
  var name=p.nickname.trim().normalize('NFKC'),r=rows_(sheet_(clan)).find(function(r){return JSON.parse(r[0])===name;});
@@ -357,8 +363,10 @@ function issueMemberTicket_(p,clan){
   var s=sheet_(clan),name=p.nickname.trim().normalize('NFKC'),rows=rows_(s),index=rows.findIndex(function(r){return JSON.parse(r[0])===name;}),r=index>=0?rows[index]:null;
   if(!r)throw Error('닉네임 또는 비밀번호가 맞지 않습니다.');
   if(Number(r[7])>Date.now())throw Error('비밀번호 확인 시도가 많습니다. 10분 뒤 다시 시도해주세요.');
-  if(hash_(p.password,r[2])!==r[1]){var fails=Number(r[6]||0)+1;s.getRange(index+2,7,1,2).setValues([[fails,fails>=5?Date.now()+600000:0]]);SpreadsheetApp.flush();throw Error('닉네임 또는 비밀번호가 맞지 않습니다.');}
+  if(!memberCredential_(clan,name,r,p.password)){var fails=Number(r[6]||0)+1;s.getRange(index+2,7,1,2).setValues([[fails,fails>=5?Date.now()+600000:0]]);SpreadsheetApp.flush();throw Error('닉네임 또는 비밀번호가 맞지 않습니다.');}
+  var backup=passwordBackup_(clan,name,r);if(!backup&&p.preservePassword===true)backup={hash:r[1],salt:r[2]};
   var token=Utilities.getUuid().replace(/-/g,'')+Utilities.getUuid().replace(/-/g,''),salt=Utilities.getUuid();
+  if(backup){backup.previousTicketSalt=r[2];backup.ticketSalt=salt;PropertiesService.getScriptProperties().setProperty(passwordBackupKey_(clan,name),JSON.stringify(backup));}
   r[1]=hash_(token,salt);r[2]=salt;r[6]=0;r[7]=0;s.getRange(index+2,1,1,8).setValues([r]);SpreadsheetApp.flush();
   return {ok:true,token:token,record:publicRow_(r),recoveryCode:issueRecovery_(clan.id,name,salt)};
  }finally{lock.releaseLock();}
