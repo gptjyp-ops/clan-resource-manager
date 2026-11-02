@@ -2,7 +2,7 @@ import {createOcrWorker} from './ocr-worker';
 import {newScanReport,missingIssues,ScanFailure} from './scan-diagnostics';
 import {parseNumber} from './ocr';
 import type {PhotoKind,Group,Item} from './inventory';
-import {mergeDialog,locateRegions,ratioCandidates,digitBands,amountDecimal,cleanAmountPixels,isSummonPhotoInMergeSlot,isForeignPhotoInSkillSlot} from './screen-layout';
+import {mergeDialog,locateRegions,ratioCandidates,digitBands,amountDecimal,cleanAmountPixels,isSummonPhotoInMergeSlot,isForeignPhotoInSkillSlot,isForeignPhotoInMountSlot} from './screen-layout';
 import {maximumStatus} from './summon-status';
 export type Region={field:'amount'|'level'|'ratio'|'selected';rect:[number,number,number,number];mode:'white'|'black'|'yellow'|'mixed'|'raw'};
 export const regions:Record<PhotoKind,Region[]>={
@@ -26,6 +26,7 @@ export async function scanScreen(file:File,kind:PhotoKind,onProgress:(n:number)=
  const overview=document.createElement('canvas');overview.width=400;overview.height=Math.round(bitmap.height*400/bitmap.width);const overviewContext=overview.getContext('2d')!;overviewContext.drawImage(bitmap,0,0,overview.width,overview.height);
  const overviewPixels=overviewContext.getImageData(0,0,overview.width,overview.height);
  if(isForeignPhotoInSkillSlot(overviewPixels,kind)){diagnostics.issues=[{code:'OCR-06',message:'스킬 칸에 다른 종류의 사진이 감지되었습니다. 초록색 스킬 소환 재화와 소환 레벨이 함께 보이는 스킬 화면을 올려주세요.'}];onProgress(100);return {item,original,diagnostics};}
+ if(isForeignPhotoInMountSlot(overviewPixels,kind)){diagnostics.issues=[{code:'OCR-06',message:'탈것 칸에 다른 종류의 소환 사진이 감지되었습니다. 화면 가운데 열쇠 재화가 보이는 탈것 소환 사진을 올려주세요.'}];onProgress(100);return {item,original,diagnostics};}
  if(isSummonPhotoInMergeSlot(overviewPixels,kind)){
   diagnostics.issues=[{code:'OCR-06',field:'selected',message:'합성 칸에 일반 소환 화면을 올렸습니다. ‘선택됨’ 숫자가 보이는 합성 화면을 올려주세요.'}];
   onProgress(100);return {item,original,diagnostics};
