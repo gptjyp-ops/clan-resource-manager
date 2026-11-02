@@ -1,10 +1,10 @@
 # OCR review checkpoint
 
-Updated: 2026-11-02 14:04 KST. Last report scanner: 2026-10-31.1.
+Updated: 2026-11-02 16:08 KST. Last report scanner: 2026-10-31.1.
 
 ## Current scan
 
-- Main reviewed: c580bde03639a1f4e33fb4a4d1ab0f86761f3602. Metadata confirms1000 rows/26 columns. Read A429:J1000; row429 unchanged, rows430–1000 empty. No new reports. Next scan starts430. Existing unresolved rows423–428 and420 level remain open; no new reproduction or resolution claimed. No application/backend changes, tests or deployment this scan.
+- Main reviewed: 458f3d1df10d7cdc3ddc5b8d3123da83b7eb2faa. Metadata confirms1000 rows/26 columns. Read A429:J1000; row429 unchanged, rows430–1000 empty. No new reports. Current main Code checks41391865694 and Pages41391865682 succeeded. Next scan starts430. Existing unresolved rows423–428 and420 level remain open; no new reproduction or resolution claimed. No application/backend changes, tests or deployment this scan.
 - New reports423–425: eggMerge OCR-04, repeated whole1394 but independent reads1,3,empty. Representative stored image visually1394 selected. Rows427–428: eggMerge OCR-04 whole977 but independent empty; representative visually977 selected. Original stored images inspected; full OCR reproduction and correction not completed, remain unresolved. Duplicate report images not independently compared; do not claim identical pixels.
 - Row426: mount OCR-06, visually actual mount summon37.8k/maximum with a broad white strip on the right. Possible layout misclassification, not confirmed; retain unresolved, do not substitute values. Row429: mount OCR-06 with empty attempts; actual image is pet/egg merge828 selected, so wrong-slot rejection is appropriate. No numeric correction needed.
 - Rows421–422: mount slot, OCR-02 amount, 2026-11-02T00:54:17.512Z / 00:54:30.037Z. Actual image is the pet/egg summon screen (visible159k and maximum), not the centered-key mount summon screen. Both stored JPEGs738x1600,117838 bytes are byte-identical SHA256436cd78942cf3e2374e436e8ce35552ce7b8dbd370437c4747354456a4c6cf8f. Upload metadata1440x3120,793835 bytes. Baseline scanScreen reproduces fallback B and OCR-02. No decimal, compact-unit or missing-leading-digit correction is appropriate: the slot is wrong.
