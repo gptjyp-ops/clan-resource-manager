@@ -1,8 +1,10 @@
 # OCR review checkpoint
 
-Updated: 2026-11-02 18:20 KST. Last report scanner: 2026-10-31.1.
+Updated: 2026-11-02 20:00 KST. Last report scanner: 2026-10-31.1.
 
 ## Current scan
+
+- 2026-11-02 20:00 KST incremental review: latest main 7281174d51b9d2fdd095da2d731711b05b437a08 fetched. Metadata ocr_errors1000x26; read A429:J1000. New rows431–435, rows436–1000 empty; next scan436. Rows431–434 eggMerge OCR-04 log1198/11984 and isolated1,1,9,8,empty; representative row431 stored JPEG738x1600 visually1198 selected in a real pet merge dialog. Native Canvas + actual Tesseract full scanScreen replay with unchanged latest OCR paths returns1198 with no issues. Original uploaded1080x2340 failure not reproduced; other repeated images not independently pixel-compared. No decimal/k or missing-first-digit correction established; keep431–434 unresolved. Row435 image is a total-bonus/technology information popup, with no merge selected count: wrong source screen, never substitute the visible126k resource into selected. Prior open cases415–420(partial),423–428,430 retained unchanged. No application/backend change, no deployment needed; no live member resources/credentials/tickets/settings modified. Stored compressed image replay is not original-resolution or live-browser proof.
 
 - Main reviewed: 8e6ff15780a36268caa7085f7fd1193b8ffcf597. Metadata1000 rows/26 columns. Read A429:J1000; new row430, rows431–1000 empty. Next scan431. Main Code checks41404380240 and Pages41404380239 succeeded. No application/backend changes or deployment this scan.
 - Row430: egg OCR-02 amount, 2026-11-02T09:07:17.632Z; uploaded1768x2208, stored1281x1600 JPEG. Original visually145k/maximum in a wide pet summon screen, correct slot; no obvious decimal/unit or leading-digit ambiguity. Logged automatic amount landmark absent and fallback empty. Suspected wide-layout resource header detection; full replay and validated fix not completed. Keep unresolved without forcing145k. Prior unresolved cases remain open.
