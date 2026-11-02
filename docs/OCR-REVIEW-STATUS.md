@@ -1,8 +1,10 @@
 # OCR review checkpoint
 
-Updated: 2026-11-03 01:56 KST. Last report scanner: 2026-10-31.1.
+Updated: 2026-11-03 04:04 KST. Last report scanner: 2026-10-31.1.
 
 ## Current scan
+
+- 2026-11-03 04:04 KST incremental check: latest main08b37ff0e7fddf2c1d9340ec88dc9a82b2f0d5d0; metadata1000x26, read A447:J1000. Only previously reviewed447–448 present;449–1000 empty; next449 unchanged. No new diagnostic evidence; all prior unresolved cases retained, especially441 maximum label,442 potion811 and448 selected1834 validation. No numeric corrections, source changes or application/backend deployment required. Member inventory, credentials, tickets and clan settings untouched.
 
 - 2026-11-03 01:56 KST incremental review: latest main4ac3a0f3dca609199e022cad15920338dbbd7b8a fetched; OCR paths unchanged. Metadata1000x26; read A445:J1000; new447–448;449–1000 empty; next449. Both stored photos independently viewed and SHA256043b2bcdb8dadd95d6e1012888229563d807b93b462aef963f66fb459282331a identical. Actual image pet merge1834 selected; row447 skill-slot OCR-06 rejection appropriate. Row448 eggMerge OCR-04 reproduced with latest-path full scanScreen native Canvas/actual Tesseract: whole1834 repeated, glyph1/8/3/4 followed by empty; item withheld. Code review locates failure in selected digitBands count versus recognized length and failed additional glyph validation. Extra component origin has not been established; do not discard it or force1834 without pixel evidence and regressions. No decimal/k or missing-first-digit ambiguity visually apparent. Keep448 unresolved; previous open cases remain. No validated fix or application/backend deployment this scan; no live member inventory/password/ticket/clan settings modified. Replay uses stored compressed738x1600 JPEG, not original1080x2340 or live browser.
 
