@@ -1,10 +1,12 @@
 # OCR review checkpoint
 
-Updated: 2026-11-02 09:59 KST. Last report scanner: 2026-10-31.1.
+Updated: 2026-11-02 12:02 KST. Last report scanner: 2026-10-31.1.
 
 ## Current scan
 
-- Main reviewed: c71f4fb7224c563c94b182b70c70a98349ad5d5d; final fix/test commit afcea7768e578fa8fa3f1c118e8ee3cbc1090f99. Metadata confirms ocr_errors has 1000 rows and 26 columns. Read A420:J1000; new rows421–422, rows423–1000 empty. Last record row422; next scan starts row423.
+- Main reviewed: a8230b49886af91ad8b62d92aa76ea9de472c596. Metadata confirms1000 rows/26 columns. Read A421:J1000; new rows423–429, rows430–1000 empty. Next scan starts430. Current main Code checks41370057628 and Pages41370057630 succeeded. No application/backend changes or new deployment this scan.
+- New reports423–425: eggMerge OCR-04, repeated whole1394 but independent reads1,3,empty. Representative stored image visually1394 selected. Rows427–428: eggMerge OCR-04 whole977 but independent empty; representative visually977 selected. Original stored images inspected; full OCR reproduction and correction not completed, remain unresolved. Duplicate report images not independently compared; do not claim identical pixels.
+- Row426: mount OCR-06, visually actual mount summon37.8k/maximum with a broad white strip on the right. Possible layout misclassification, not confirmed; retain unresolved, do not substitute values. Row429: mount OCR-06 with empty attempts; actual image is pet/egg merge828 selected, so wrong-slot rejection is appropriate. No numeric correction needed.
 - Rows421–422: mount slot, OCR-02 amount, 2026-11-02T00:54:17.512Z / 00:54:30.037Z. Actual image is the pet/egg summon screen (visible159k and maximum), not the centered-key mount summon screen. Both stored JPEGs738x1600,117838 bytes are byte-identical SHA256436cd78942cf3e2374e436e8ce35552ce7b8dbd370437c4747354456a4c6cf8f. Upload metadata1440x3120,793835 bytes. Baseline scanScreen reproduces fallback B and OCR-02. No decimal, compact-unit or missing-leading-digit correction is appropriate: the slot is wrong.
 - Added positive foreign-mount detection requiring a left summon resource header and info anchor, with no centered mount resource header. Uncertain images continue ordinary OCR. scanScreen now returns empty item and OCR-06 directing the user to upload a mount summon screenshot; never imports159k into mount inventory. Real stored-image replay verifies this guidance. Normal mount row416 still replays22.4k/maximum with no issues. Native Canvas and actual Tesseract replays are not live-browser proof.
 - Screen-layout and scan-diagnostics regressions, type check and build passed locally. Final Code checks41369957633 and Pages41369957624 completed successfully; live site returned HTML with assets/index-aGY09JTj.js. Frontend-only: no Apps Script deployment needed. Member resources, passwords, tickets and clan settings unchanged.
@@ -30,6 +32,8 @@ Updated: 2026-11-02 09:59 KST. Last report scanner: 2026-10-31.1.
 - Rows412–413: earlier confirmed compact egg merge672 versus72 fix, retained as resolved.
 
 ## Open follow-up
+
+- Rows423–425 and427–428:1394/977 selected validation failures; need latest-source replay before changes. Row426 actual mount37.8k image with right white margin: investigate false wrong-screen classification. Row429 correctly rejects pet merge photo in mount slot. Review representative image references via source sheet only; no private photo URLs copied here.
 
 - Row420 level: visible Lv71; replay still fails. Follow-up on the stored level crop: thresholded Lv and numeric text were inspected as separate bands; the adjacent71 forms one connected numeric band. Whole-line and isolated-band Tesseract still return no valid numeric value. This suggests segmentation sensitivity, but does not establish a safe correction; no OCR retry change applied. Do not accept the investigated sparse-read7 or force71. Amount150k resolved independently; retain report partially unresolved.
 
