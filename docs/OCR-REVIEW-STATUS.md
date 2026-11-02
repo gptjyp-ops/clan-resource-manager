@@ -1,10 +1,13 @@
 # OCR review checkpoint
 
-Updated: 2026-11-02 08:56 KST. Last report scanner: 2026-10-31.1.
+Updated: 2026-11-02 09:59 KST. Last report scanner: 2026-10-31.1.
 
 ## Current scan
 
-- Main reviewed: b01d5682ca7fbb85d40aca65797b4993b47f13a6. Metadata confirms ocr_errors has 1000 rows and 26 columns. Read A420:J1000; row420 unchanged, rows421–1000 empty. No new reports. Last record row420; next scan starts row421. Existing main Code checks41360208332 and Pages41360208457 succeeded. No application/backend changes or new application deployment this scan.
+- Main reviewed: c71f4fb7224c563c94b182b70c70a98349ad5d5d; final fix/test commit afcea7768e578fa8fa3f1c118e8ee3cbc1090f99. Metadata confirms ocr_errors has 1000 rows and 26 columns. Read A420:J1000; new rows421–422, rows423–1000 empty. Last record row422; next scan starts row423.
+- Rows421–422: mount slot, OCR-02 amount, 2026-11-02T00:54:17.512Z / 00:54:30.037Z. Actual image is the pet/egg summon screen (visible159k and maximum), not the centered-key mount summon screen. Both stored JPEGs738x1600,117838 bytes are byte-identical SHA256436cd78942cf3e2374e436e8ce35552ce7b8dbd370437c4747354456a4c6cf8f. Upload metadata1440x3120,793835 bytes. Baseline scanScreen reproduces fallback B and OCR-02. No decimal, compact-unit or missing-leading-digit correction is appropriate: the slot is wrong.
+- Added positive foreign-mount detection requiring a left summon resource header and info anchor, with no centered mount resource header. Uncertain images continue ordinary OCR. scanScreen now returns empty item and OCR-06 directing the user to upload a mount summon screenshot; never imports159k into mount inventory. Real stored-image replay verifies this guidance. Normal mount row416 still replays22.4k/maximum with no issues. Native Canvas and actual Tesseract replays are not live-browser proof.
+- Screen-layout and scan-diagnostics regressions, type check and build passed locally. Final Code checks41369957633 and Pages41369957624 completed successfully; live site returned HTML with assets/index-aGY09JTj.js. Frontend-only: no Apps Script deployment needed. Member resources, passwords, tickets and clan settings unchanged.
 - Row420: skill, 2026-11-01T14:37:06.717Z, OCR-03 amount/level; uploaded PNG539x970, stored JPEG539x970. Visually150k, summon Lv71, progress25/110. Full scanScreen replay with native Canvas and actual Tesseract reproduces missing amount and level, matching the report. Compact top resource bar (gray35) was excluded by the top offset and gray>40 rule; a gray stat banner was selected instead. Skill-only search now includes the top edge and darker gray>20; egg/mount thresholds and geometry unchanged. Same saved image now returns150k,25/110 with only the level issue remaining. No expected value injected. No decimal/unit/leading-digit correction was necessary.
 - Previous fix added a synthetic regression with a dark top resource bar and a lower gray stat banner. Screen-layout and scan-diagnostics regressions, type check and build passed locally. Final commit Code checks41319390397 and Pages41319390369 both completed successfully. This frontend-only change requires no Apps Script deployment. Member resources, credentials, tickets and clan settings unchanged. Level71 remains unresolved: alternative sparse OCR produced7 in investigation and was rejected; no retry change applied. Replays are native Canvas, not live-browser proof.
 - Rows416–417: mount amount OCR-04, general/compatibility, 2026-11-01T07:33:00.227Z / 07:33:19.184Z. Both log 22.49k and the same uploaded image dimensions/size (1080x2340, 429796 bytes). Stored Drive JPEGs each have 70166 bytes. Row416 stored image is 738x1600; visually 22.4k with the summon-info maximum label. No missing leading digit or merge-screen confusion is evident in this stored image.
@@ -16,6 +19,7 @@ Updated: 2026-11-02 08:56 KST. Last report scanner: 2026-10-31.1.
 
 | Rows | Confirmed behavior and change | Fix commit | Successful Code checks / Pages runs |
 | --- | --- | --- | --- |
+| 421–422 | Pet/egg summon photo in mount slot now gets explicit OCR-06 guidance; no numeric substitution | afcea7768e578fa8fa3f1c118e8ee3cbc1090f99 | 41369957633 / 41369957624 |
 | 420 (amount only) | Compact skill150k resource bar detected above gray stat banner; level still open | 1e239797f0e908eabc38d5abe459dac5a7da087b | 41319390397 / 41319390369 |
 | 380 | 169k + maximum; Korean maximum-label OCR uses sparse text | 3ae4a92fb3a6c51c3a81bca859f6d04f92d778f8 | 41222112749 / 41222112669 |
 | 381 | 117k repeated leading 1 recovered from independent glyph reads and amountDecimal validation | 0028572b454661e27003dcd23b2d4a1e7c4363c2 | 41246610819 / 41246610846 |
