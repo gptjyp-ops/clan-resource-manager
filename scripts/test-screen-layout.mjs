@@ -240,3 +240,13 @@ const uncertainMount={width:400,height:870,data:new Uint8ClampedArray(400*870*4)
 assert.equal(isForeignPhotoInMountSlot(uncertainMount,'mount'),false);
 assert.equal(isForeignPhotoInMountSlot(mergeImage(0),'mount'),false);
 console.log('Foreign mount summon photo requires positive left header and info.');
+
+// Touching trailing digits must not be dropped because their combined component
+// is wider than one glyph, even when the darker threshold cannot split them.
+for(const kind of ['eggMerge','mountMerge']){
+ const p=mergeImage(0);
+ for(let y=278;y<288;y++)for(let x=66;x<76;x++)p.data.set([215,215,215,255],(y*400+x)*4);
+ for(let y=278;y<288;y++)for(let x=52;x<70;x++)p.data.set([0,0,0,255],(y*400+x)*4);
+ const selected=findLandmarks(p,kind).selected;
+ assert.deepEqual(selected,{x:44,y:278,width:26,height:10});
+}

@@ -91,7 +91,9 @@ export function findLandmarks(p:Pixels,kind:PhotoKind):{amount?:Box;info?:Box;pr
     .flatMap(b=>b.width>=.04*w?components(p,b,(r,g,b)=>Math.max(r,g,b)<100,.12):[b])
     // Compact PC captures can leave a leading curved digit one pixel shorter
     // than its neighbours after downscaling; keep it in the numeric run.
-    .filter(b=>b.height>.0125*w&&b.height<.045*w&&b.width<.04*w).sort((a,b)=>a.x-b.x);
+    // Some adjacent digits stay connected even at the darker threshold.
+    // Retain their full component; independent OCR still validates the count.
+    .filter(b=>b.height>.0125*w&&b.height<.045*w&&b.width<.08*w).sort((a,b)=>a.x-b.x);
    const first=glyphs[0];
    if(first){const number={...first};for(const b of glyphs.slice(1)){if(Math.abs(b.y-first.y)>.012*w)continue;if(b.x-(number.x+number.width)>Math.min(.008*w,first.height*.4))break;const bottom=Math.max(number.y+number.height,b.y+b.height);number.width=b.x+b.width-number.x;number.y=Math.min(number.y,b.y);number.height=bottom-number.y;}result.selected=number;}
   }
