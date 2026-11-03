@@ -1,8 +1,10 @@
 # OCR review checkpoint
 
-Updated: 2026-11-03 15:57 KST. Last report scanner: 2026-10-31.1.
+Updated: 2026-11-03 18:03 KST. Last report scanner: 2026-10-31.1.
 
 ## Current scan
+
+- 2026-11-03 18:03 KST review: latest maine2156a0b9fe41ea1aa621236587664c27f8c8ad7 fetched; OCR paths unchanged. Metadata1000x26; read A478:J1000; new480–483,484–1000 empty; next484.480/481/483 egg OCR-03 level+ratio share upload metadata with prior441; representative480 original viewed: true pet summon10.3k with maximum. Full scanScreen native Canvas/actual Tesseract reproduces correct10.3k but missing maximum/level and ratio. Keep linked to441 unresolved; no guessed level100.481/483 pixels not independently compared.482 eggMerge photo actually mount summon61.1k/maximum, no selected count; wrong source screen, never import61.1k into selected. Prior unresolved cases retained. No validated safe fix, application/backend changes or deployment; no live member resources/passwords/tickets/clan settings changed. Saved compressed JPEG replay is not original1248x1972/browser proof.
 
 - 2026-11-03 15:57 KST review: latest main9cbf11ad41deb3d2fcdc10f831c2bf8f627e9265 fetched; OCR paths unchanged. Metadata1000x26; read A471:J1000; new473–479,480–1000 empty; next480.473–478 eggMerge OCR-04 repeat960 plus isolated9/6/0/empty. Representative473 stored746x1600 JPEG visually960 selected in true pet merge. Full scanScreen native Canvas/actual Tesseract reproduces rejection: whole960 selected, numeric9604 and isolated9/6/0/empty. Additional nonnumeric band is suspected but pixel source not established, no forced960 or discarded4. Other repeated images not independently compared.479 skill slot actually pet summon845/Lv52/14of23; OCR-06 rejection appropriate, never import845 into skill. No decimal/k/missing-first-digit ambiguity evident in inspected473. Prior unresolved cases retained,473–478 open. No validated safe fix, source/backend changes or deployment this scan; no live resources/passwords/tickets/clan settings changed. Replay uses stored compressed image, not original1440x3088/browser proof.
 
