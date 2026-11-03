@@ -1,8 +1,10 @@
 # OCR review checkpoint
 
-Updated: 2026-11-04 00:04 KST. Last report scanner: 2026-10-31.1.
+Updated: 2026-11-04 02:00 KST. Last report scanner: 2026-10-31.1.
 
 ## Current scan
+
+- 2026-11-04 02:00 KST review: latest main904c61ce670e526c861a6bda8afc822da105a9a1 fetched. Metadata1000x26; read A483:J1000; no new rows, next485. Pursued unresolved484: re-fetched private saved JPEG; instrumented actual selected canvas before OCR. Pixel inspection confirms the crop contains entire `4 선택됨`, not just4. digitBands returns four full-height bands: digit4 and three Korean label glyphs. This establishes Korean label contamination as the cause of the count mismatch in484, rather than an unknown numerical component. findLandmarks numeric-run component grouping currently includes label pieces. No safe general boundary change has been validated against narrow/leading/repeated digits, so484 remains unresolved with confirmed cause. Similar448/466/473 are candidates, not individually proven by this crop. No guessed values, application/backend source changes or deployment; all live member resources/passwords/tickets/clan settings untouched. Native Canvas/stored-JPEG investigation, not original-resolution/browser proof.
 
 - 2026-11-04 00:04 KST incremental check: latest maina9fb0a2a9539537fc45d9809893cd2c1d1784524; metadata1000x26; read A483:J1000. Last populated484,485–1000 empty; next485 unchanged. No new diagnostic evidence; retain every previous unresolved case without numeric substitution. No application/backend source change or deployment required. Live member resources/passwords/tickets/clan settings untouched.
 
