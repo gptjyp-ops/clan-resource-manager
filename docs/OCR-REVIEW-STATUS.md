@@ -1,8 +1,10 @@
 # OCR review checkpoint
 
-Updated: 2026-11-03 07:57 KST. Last report scanner: 2026-10-31.1.
+Updated: 2026-11-03 09:59 KST. Last report scanner: 2026-10-31.1.
 
 ## Current scan
+
+- 2026-11-03 09:59 KST review: latest main3b71551e6014fcde34890291675cbe8bad031c57 fetched, OCR source paths unchanged. Metadata1000x26; read A447:J1000; new449–463,464–1000 empty; next464. Representatives449,450,453,454,456,457 stored images viewed.449 potion slot is mount summon7.78k/Lv77/13of20;456 egg slot is mount summon13.1k/maximum: wrong slots, never substitute these amounts.450–452 pet merge visually144,453/455 visually244; latest-path full scanScreen with native Canvas/actual Tesseract reproduces whole144/244 versus retry1/2 and OCR-04, item withheld.454 potion visually11 but replay1/1 rejected OCR-04. Exact crop/segmentation cause not established for these cases; retain unresolved, no guessed repeated4 or1.457–463 pet merge logged5477 versus547; representative457 visually547, replay returns547/no issues, original960x2079 PNG/browser failure not reproduced. Duplicate images not independently compared; do not claim identical pixels. No decimal/k or missing-first-digit ambiguity evident in the inspected valid merge/potion originals. Prior unresolved cases retained. No validated safe fix, source/backend changes or deployment this scan; no live resources/passwords/tickets/clan settings changed. Replays use stored compressed JPEGs, not original upload/browser proof.
 
 - 2026-11-03 07:57 KST incremental check: latest main58e21462581b917806d0103eab338fbfab9285b5. Metadata ocr_errors1000x26; read A447:J1000; last populated448,449–1000 empty; next449 unchanged. No new reports or additional evidence for existing open cases; retain all unresolved findings without speculative corrections. No application/backend change or deployment required. Member inventory, passwords, tickets and clan settings untouched.
 
