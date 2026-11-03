@@ -1,8 +1,10 @@
 # OCR review checkpoint
 
-Updated: 2026-11-04 06:03 KST. Last report scanner: 2026-10-31.1.
+Updated: 2026-11-04 08:00 KST. Last report scanner: 2026-10-31.1.
 
 ## Current scan
+
+- 2026-11-04 08:00 KST incremental check: metadata ocr_errors1000x26; read A483:J1000. Only previously reviewed483–484 present;485–1000 empty, next485 unchanged. Latest mainc37b477e1951ca3376e659117f7c8026f2080c89 contains the verified touching-digit fix; latest source width retention inspected. Main Code checks41719269776 and Pages41719269815 succeeded, as did the application fix runs41719063693/41719063704. No new diagnostic evidence or changed classification; retain previous unresolved cases including441/480/481/483 maximum label,442/454 potion,468–470 leading digit,420 level and430 wide summon amount, without speculative corrections. No application/backend change or new application deployment required; no live resources/passwords/tickets/clan settings modified.
 
 - 2026-11-04 06:03 KST: metadata1000x26; read A483:J1000, only483–484 present, no new reports, next485. Latest maind74c5d0941369698741a14459c50441c673e723a. Investigated unresolved450/453 against stored private JPEGs: numeric crop cuts144/244 down to1/2. At400px overview, adjacent44 remains one18px component even at dark threshold100; single-glyph width limit (~15.8px) excludes it. Preserve joined components up to.08 of dialog width (previously.04), retaining height/gap filtering and all independent numeric/Korean agreement validation. No expected values injected. Latest-source full scanScreen/native Canvas/real Tesseract replays450=144,453=244 and prior484=4,448=1834,466=1343,473=960,431=1198,437=404,457=547 all pass without issues. Joined-component synthetic regression, existing screen-layout/scan-diagnostics, TypeScript and production build pass. Only representative450/453 proven, related duplicates not individually replayed; other unresolved cases retained. Compressed-JPEG/native replay is not original-resolution/live-browser proof. Frontend only, no Apps Script change or deployment required. Code checks41719063693 and Pages41719063704 succeeded for099b8c73b32ac3cfbf2347d8d062749fed1d9a5b; deploy-pages step succeeded. Live site HTML now references assets/index-BxLmTBp7.js, matching the published build log. No live member resources/passwords/tickets/clan settings modified.
 
