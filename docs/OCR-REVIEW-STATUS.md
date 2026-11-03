@@ -1,8 +1,10 @@
 # OCR review checkpoint
 
-Updated: 2026-11-04 02:00 KST. Last report scanner: 2026-10-31.1.
+Updated: 2026-11-04 04:02 KST. Last report scanner: 2026-10-31.1.
 
 ## Current scan
+
+- 2026-11-04 04:02 KST: no new reports; metadata1000x26, A483:J1000 last484, next485. Latest main849b1209bce88e50a79d1b378ff58475ed9d482c. Fixed confirmed Korean label contamination: exclude excess bands only when a separate Korean OCR of the suffix reads exactly 선택됨 and the full prompt supplied a labeled numeric count. Existing independent numeric recognition and disagreement rejection remain. Real saved-JPEG full scanScreen replays now resolve484=4,448=1834,466=1343,473=960 with no issues; normal431=1198,437=404,457=547 remain correct.450=144 and453=244 still reject safely and remain unresolved; other previous open cases retained. No expected values injected. Screen-layout/diagnostics regressions, TypeScript and current-main build pass. Frontend only, no Apps Script deployment required; Pages verification follows deployment. No live member resources/passwords/tickets/clan settings modified. Native Canvas/real Tesseract compressed-JPEG replays are not original/browser proof.
 
 - 2026-11-04 02:00 KST review: latest main904c61ce670e526c861a6bda8afc822da105a9a1 fetched. Metadata1000x26; read A483:J1000; no new rows, next485. Pursued unresolved484: re-fetched private saved JPEG; instrumented actual selected canvas before OCR. Pixel inspection confirms the crop contains entire `4 선택됨`, not just4. digitBands returns four full-height bands: digit4 and three Korean label glyphs. This establishes Korean label contamination as the cause of the count mismatch in484, rather than an unknown numerical component. findLandmarks numeric-run component grouping currently includes label pieces. No safe general boundary change has been validated against narrow/leading/repeated digits, so484 remains unresolved with confirmed cause. Similar448/466/473 are candidates, not individually proven by this crop. No guessed values, application/backend source changes or deployment; all live member resources/passwords/tickets/clan settings untouched. Native Canvas/stored-JPEG investigation, not original-resolution/browser proof.
 

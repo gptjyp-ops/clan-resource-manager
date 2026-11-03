@@ -86,6 +86,12 @@ export async function scanScreen(file:File,kind:PhotoKind,onProgress:(n:number)=
  }
  if(r.field==='selected'){
   const bands=digitBands(data);
+  // Exclude a suffix only after independently recognizing the actual Korean label.
+  if(mergeTextCount&&bands.length>mergeTextCount.length){
+   const end=bands[mergeTextCount.length].x,label=document.createElement('canvas');label.width=canvas.width-end+40;label.height=canvas.height+40;const lc=label.getContext('2d')!;lc.fillStyle='white';lc.fillRect(0,0,label.width,label.height);lc.drawImage(canvas,end,0,canvas.width-end,canvas.height,20,20,canvas.width-end,canvas.height);
+   koreanWorker=await createOcrWorker(createWorker,'kor',options,signal);await koreanWorker.setParameters({tessedit_pageseg_mode:PSM.SINGLE_LINE});const suffix=(await koreanWorker.recognize(label)).data.text.replace(/\s/g,'');await koreanWorker.terminate();koreanWorker=undefined;
+   if(suffix==='선택됨')bands.splice(mergeTextCount.length);
+  }
   if(!bands.length||bands.length>8){parsed={};}
   else if(parsed.selected?.length!==bands.length){
    for(const mode of [PSM.SINGLE_WORD,PSM.SPARSE_TEXT]){
