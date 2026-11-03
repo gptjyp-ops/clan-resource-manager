@@ -135,3 +135,11 @@ body[data-clan-theme="elite"] .registration-counts .input-complete{background:#e
 body[data-clan-theme="elite"] .ascension-crown{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;margin-left:6px;vertical-align:middle;color:#704000;background:none;border:0;border-radius:0;box-shadow:none;flex-shrink:0}
 body[data-clan-theme="elite"] .ascension-crown svg{width:23px;height:23px;fill:#ffbd25;stroke:#704000;stroke-width:2.2}
 @media(max-width:600px){body[data-clan-theme="elite"] .ascension-crown{width:29px;height:29px;margin-left:4px}body[data-clan-theme="elite"] .ascension-crown svg{width:21px;height:21px}}
+
+/* Keep the upload action distinct from the pale winter panels. */
+body[data-clan-theme="elite"] .registration .photo-slot .upload:not(.has-photo){background:#123e68;border:2px dashed #80d5ff;color:#fff;box-shadow:0 3px 0 #123e6826;min-height:170px}
+body[data-clan-theme="elite"] .registration .photo-slot .upload:not(.has-photo) strong{color:#fff;font-size:19px;font-weight:800}
+body[data-clan-theme="elite"] .registration .photo-slot .upload:not(.has-photo) :is(span,small,svg){color:#e4f3ff;opacity:1}
+body[data-clan-theme="elite"] .registration .photo-slot .upload:not(.has-photo):hover{background:#1b527f;border-color:#fff}
+body[data-clan-theme="elite"] .registration .photo-slot:focus-within .upload{outline:3px solid #e0a62c;outline-offset:3px}
+body[data-clan-theme="elite"] .registration .photo-slot .upload.has-photo .replace{background:#123e68;color:#fff;border:1px solid #123e68;font-weight:700;padding:12px;border-radius:8px}
