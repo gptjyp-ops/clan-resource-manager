@@ -1,8 +1,10 @@
 # OCR review checkpoint
 
-Updated: 2026-11-03 12:02 KST. Last report scanner: 2026-10-31.1.
+Updated: 2026-11-03 13:56 KST. Last report scanner: 2026-10-31.1.
 
 ## Current scan
+
+- 2026-11-03 13:56 KST incremental review: latest main0e892567d1217e35add8101e4c6d1b8441fd5820 fetched; OCR paths unchanged. Metadata1000x26; read A466:J1000; new468–472,473–1000 empty; next473.468–470 egg amount OCR-04: representative468 true pet summon visually47, Lv79,17/23. Native Canvas/actual Tesseract full scanScreen reproduces7/7 rejected, level79 and17/23 correct. Missing leading4 confirmed visually, but crop/recognition mechanism not established; never prepend4 by assumption.469–470 repeated upload metadata, pixels not independently compared.471 egg slot actually pet merge245;472 mount slot actually mount merge1966: both OCR-06 wrong-screen rejection appropriate, no inventory substitutions. Stored representative originals468,471,472 viewed; no decimal/k ambiguity on468. Prior open cases retained;468–470 unresolved. No validated safe fix, application/backend change or deployment; no live resources/passwords/tickets/clan settings modified. Replay compressed738x1600 JPEG, not original1080x2340/browser proof.
 
 - 2026-11-03 12:02 KST review: latest maine7da2ffbf3c13a9cfc9e3070a40858724d8a92e1 fetched; OCR paths unchanged. Metadata1000x26; read A462:J1000; new464–467;468–1000 empty; next468. Representative464 is pet summon27.6k/Lv90/16of23, submitted to skill;465 same upload metadata submitted to eggMerge, individual photo not compared. Wrong slots must not receive numeric substitution. Representative466 actual mount merge visually1343 selected. Native Canvas/actual Tesseract full scanScreen reproduces OCR-04: whole1343 repeatedly, isolated1/3/4/3 plus an extra unreadable band. Same pattern as448; origin of extra component still unconfirmed, do not discard it or force1343 without pixel-level evidence/regressions.467 same report metadata, pixels not independently compared. No decimal/k/missing-first-digit ambiguity evident. Keep466–467 and all prior unresolved cases open. No validated safe source fix, application/backend change or deployment this scan. No live resources/passwords/tickets/clan settings changed. Replay is stored compressed720x1560 JPEG, not live-browser proof.
 
