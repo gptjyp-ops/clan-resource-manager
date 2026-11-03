@@ -1,8 +1,10 @@
 # OCR review checkpoint
 
-Updated: 2026-11-03 18:03 KST. Last report scanner: 2026-10-31.1.
+Updated: 2026-11-03 20:04 KST. Last report scanner: 2026-10-31.1.
 
 ## Current scan
+
+- 2026-11-03 20:04 KST review: latest mainbe2db751a3db7ea924795c526bfffc2152eadb86 fetched; OCR paths unchanged. Metadata1000x26; read A482:J1000; new484 only,485–1000 empty; next485.484 true mount merge visually4 selected; original stored738x1600 JPEG viewed. Full scanScreen native Canvas/actual Tesseract reproduces whole4 selected, repeated4 and isolated4 followed by empty, withholding selected with OCR-04. Additional band origin remains unconfirmed, similar to448/466/473; no guessed correction or discarded component. No decimal/k/missing-leading-digit ambiguity visually apparent. Retain484 and all previous unresolved cases. No validated safe fix, source/backend change or deployment; no live member resources/passwords/tickets/clan settings modified. Stored compressed JPEG replay is not original1440x3120/browser proof.
 
 - 2026-11-03 18:03 KST review: latest maine2156a0b9fe41ea1aa621236587664c27f8c8ad7 fetched; OCR paths unchanged. Metadata1000x26; read A478:J1000; new480–483,484–1000 empty; next484.480/481/483 egg OCR-03 level+ratio share upload metadata with prior441; representative480 original viewed: true pet summon10.3k with maximum. Full scanScreen native Canvas/actual Tesseract reproduces correct10.3k but missing maximum/level and ratio. Keep linked to441 unresolved; no guessed level100.481/483 pixels not independently compared.482 eggMerge photo actually mount summon61.1k/maximum, no selected count; wrong source screen, never import61.1k into selected. Prior unresolved cases retained. No validated safe fix, application/backend changes or deployment; no live member resources/passwords/tickets/clan settings changed. Saved compressed JPEG replay is not original1248x1972/browser proof.
 
