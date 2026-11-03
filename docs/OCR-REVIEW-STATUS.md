@@ -1,8 +1,10 @@
 # OCR review checkpoint
 
-Updated: 2026-11-03 13:56 KST. Last report scanner: 2026-10-31.1.
+Updated: 2026-11-03 15:57 KST. Last report scanner: 2026-10-31.1.
 
 ## Current scan
+
+- 2026-11-03 15:57 KST review: latest main9cbf11ad41deb3d2fcdc10f831c2bf8f627e9265 fetched; OCR paths unchanged. Metadata1000x26; read A471:J1000; new473–479,480–1000 empty; next480.473–478 eggMerge OCR-04 repeat960 plus isolated9/6/0/empty. Representative473 stored746x1600 JPEG visually960 selected in true pet merge. Full scanScreen native Canvas/actual Tesseract reproduces rejection: whole960 selected, numeric9604 and isolated9/6/0/empty. Additional nonnumeric band is suspected but pixel source not established, no forced960 or discarded4. Other repeated images not independently compared.479 skill slot actually pet summon845/Lv52/14of23; OCR-06 rejection appropriate, never import845 into skill. No decimal/k/missing-first-digit ambiguity evident in inspected473. Prior unresolved cases retained,473–478 open. No validated safe fix, source/backend changes or deployment this scan; no live resources/passwords/tickets/clan settings changed. Replay uses stored compressed image, not original1440x3088/browser proof.
 
 - 2026-11-03 13:56 KST incremental review: latest main0e892567d1217e35add8101e4c6d1b8441fd5820 fetched; OCR paths unchanged. Metadata1000x26; read A466:J1000; new468–472,473–1000 empty; next473.468–470 egg amount OCR-04: representative468 true pet summon visually47, Lv79,17/23. Native Canvas/actual Tesseract full scanScreen reproduces7/7 rejected, level79 and17/23 correct. Missing leading4 confirmed visually, but crop/recognition mechanism not established; never prepend4 by assumption.469–470 repeated upload metadata, pixels not independently compared.471 egg slot actually pet merge245;472 mount slot actually mount merge1966: both OCR-06 wrong-screen rejection appropriate, no inventory substitutions. Stored representative originals468,471,472 viewed; no decimal/k ambiguity on468. Prior open cases retained;468–470 unresolved. No validated safe fix, application/backend change or deployment; no live resources/passwords/tickets/clan settings modified. Replay compressed738x1600 JPEG, not original1080x2340/browser proof.
 
