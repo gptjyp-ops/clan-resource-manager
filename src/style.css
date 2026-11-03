@@ -302,3 +302,5 @@ html[lang="en"] .panel-heading{flex-wrap:wrap;gap:8px}
  .merge-summary>span+span{border-top:1px solid #2d3a50;padding-top:8px}
  .merge-summary strong{margin-left:auto;flex-shrink:0;text-align:right;font-variant-numeric:tabular-nums}
 }
+
+.save-complete{display:flex;align-items:center;gap:16px;padding:24px;margin:20px 0;border:2px solid #48b49e;border-radius:16px;background:#e5faf3;color:#103b33;scroll-margin-top:24px}.save-complete h2{margin:0 0 8px;font-size:22px}.save-complete p{margin:0}.save-complete button{margin-left:auto}@media(max-width:600px){.save-complete{flex-wrap:wrap;padding:18px}.save-complete button{width:100%;margin:0}}
