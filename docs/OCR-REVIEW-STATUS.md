@@ -1,8 +1,10 @@
 # OCR review checkpoint
 
-Updated: 2026-11-03 20:04 KST. Last report scanner: 2026-10-31.1.
+Updated: 2026-11-03 21:56 KST. Last report scanner: 2026-10-31.1.
 
 ## Current scan
+
+- 2026-11-03 21:56 KST incremental check: latest main8490672df566927e88f575317195086914bc8485; metadata1000x26, read A483:J1000. Only previously reviewed483–484 present;485–1000 empty, next485 unchanged. No additional evidence or changed classifications; all prior unresolved cases retained without numeric corrections. No application/backend change or deployment required; member resources/passwords/tickets/clan settings untouched.
 
 - 2026-11-03 20:04 KST review: latest mainbe2db751a3db7ea924795c526bfffc2152eadb86 fetched; OCR paths unchanged. Metadata1000x26; read A482:J1000; new484 only,485–1000 empty; next485.484 true mount merge visually4 selected; original stored738x1600 JPEG viewed. Full scanScreen native Canvas/actual Tesseract reproduces whole4 selected, repeated4 and isolated4 followed by empty, withholding selected with OCR-04. Additional band origin remains unconfirmed, similar to448/466/473; no guessed correction or discarded component. No decimal/k/missing-leading-digit ambiguity visually apparent. Retain484 and all previous unresolved cases. No validated safe fix, source/backend change or deployment; no live member resources/passwords/tickets/clan settings modified. Stored compressed JPEG replay is not original1440x3120/browser proof.
 
