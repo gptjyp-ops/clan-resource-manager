@@ -1,8 +1,10 @@
 # OCR review checkpoint
 
-Updated: 2026-11-04 16:00 KST. Last report scanner: 2026-10-31.1.
+Updated: 2026-11-04 18:01 KST. Last report scanner: 2026-10-31.1.
 
 ## Current scan
+
+- 2026-11-04 18:01 KST incremental check: metadata ocr_errors1000x26; read A483:J1000, last484, next485 unchanged. No new reports since prior scan. Latest main172bf2a37c29f70d6fd087fd9bfdf2056d8178c1; latest source includes circular info-anchor validation. Main Code checks41794116829 and Pages41794116686 succeeded. Earlier user-original tablet fix is already verified and reported; do not claim all stored441/480/481/483 JPEGs independently resolved without replay. Other previous unresolved cases and PC QR complaint remain tracked. No new application/backend change or deployment required this run; no live member resources/passwords/tickets/clan settings modified.
 
 - 2026-11-04 user tablet report: original attached1248x1972 PNG reproduces10.3k with missing level/status. Native Canvas picks pet artwork bbox(295,460,25,24) instead of actual info circle(275,355,15,14) in400px overview. Added solid circular annulus validation after density/aspect checks; actual ring coverage1.0 vs artwork.534. Original and synthetic624/1872px versions now full scanScreen/real Tesseract return10.3k,level100,empty progress/target,no issues; Korean OCR independently reads 최대. No numeric forcing. Aspect-ratio632/870/1000 landmark regressions and existing screen-layout/diagnostics, TypeScript/build pass. These resizes are synthetic, not independent device evidence; no guarantee for every layout. Other unresolved cases remain open. Frontend only; no GAS changes. Deployment verified:28c08c558bc9a353845b1087e1590f5d2ddf6dbc Code checks41793982286 and Pages41793982271 succeeded. Live HTML references new assets/index-BDaJW2xu.js. No live resources/passwords/tickets/settings changed.
 
