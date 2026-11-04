@@ -1,8 +1,10 @@
 # OCR review checkpoint
 
-Updated: 2026-11-04 18:01 KST. Last report scanner: 2026-10-31.1.
+Updated: 2026-11-04 20:00 KST. Last report scanner: 2026-10-31.1.
 
 ## Current scan
+
+- 2026-11-04 20:00 KST incremental check: metadata ocr_errors1000x26; read A483:J1000, only previously reviewed483–484 present; next485 unchanged. Latest main585156f0c433e231e26c59c1e21394b87ac773d9; circular info-anchor source inspected and retained. Main Code checks41804198587 and Pages41804198741 succeeded. No new reports or additional evidence for unresolved cases; prior classifications retained, including requirement to replay stored tablet JPEGs individually before marking them resolved. No guessed numerical corrections, application/backend changes or application deployment needed this scan. No live member resources/passwords/tickets/clan settings modified.
 
 - 2026-11-04 18:01 KST incremental check: metadata ocr_errors1000x26; read A483:J1000, last484, next485 unchanged. No new reports since prior scan. Latest main172bf2a37c29f70d6fd087fd9bfdf2056d8178c1; latest source includes circular info-anchor validation. Main Code checks41794116829 and Pages41794116686 succeeded. Earlier user-original tablet fix is already verified and reported; do not claim all stored441/480/481/483 JPEGs independently resolved without replay. Other previous unresolved cases and PC QR complaint remain tracked. No new application/backend change or deployment required this run; no live member resources/passwords/tickets/clan settings modified.
 
