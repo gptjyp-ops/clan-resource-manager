@@ -1,8 +1,10 @@
 # OCR review checkpoint
 
-Updated: 2026-11-04 08:00 KST. Last report scanner: 2026-10-31.1.
+Updated: 2026-11-04 10:04 KST. Last report scanner: 2026-10-31.1.
 
 ## Current scan
+
+- 2026-11-04 10:04 KST incremental check: metadata1000x26; read A483:J1000, last populated484, next485 unchanged. No new reports or diagnostic evidence. Latest maind9eef55bf5cf1b9003809a728edf4ff348a4d3c3; latest OCR landmark source inspected, previous touching-digit fix retained. Main Code checks41735809119 and Pages41735809275 succeeded. Previous unresolved cases remain open without guessed corrections. Separate PC QR login complaint remains unconfirmed; no new error screenshot or browser-profile evidence, no speculative auth/bridge change. No application/backend changes or application deployment required; no live member resources/passwords/tickets/clan settings modified.
 
 - 2026-11-04 08:00 KST incremental check: metadata ocr_errors1000x26; read A483:J1000. Only previously reviewed483–484 present;485–1000 empty, next485 unchanged. Latest mainc37b477e1951ca3376e659117f7c8026f2080c89 contains the verified touching-digit fix; latest source width retention inspected. Main Code checks41719269776 and Pages41719269815 succeeded, as did the application fix runs41719063693/41719063704. No new diagnostic evidence or changed classification; retain previous unresolved cases including441/480/481/483 maximum label,442/454 potion,468–470 leading digit,420 level and430 wide summon amount, without speculative corrections. No application/backend change or new application deployment required; no live resources/passwords/tickets/clan settings modified.
 
