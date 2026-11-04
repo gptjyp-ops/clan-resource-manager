@@ -107,7 +107,10 @@ export function findLandmarks(p:Pixels,kind:PhotoKind):{amount?:Box;info?:Box;pr
   // Small captures lose dark edge pixels when scaled down. Keep the filled
   // information icon, while excluding the much sparser notification rings.
   const circles=components(p,{x:.62*w,y:.43*h,width:.30*w,height:.44*h},(r,g,b)=>Math.max(r,g,b)<90,.50)
-   .filter(b=>b.width>.025*w&&b.width<.075*w&&b.height/b.width>.8&&b.height/b.width<1.25);
+   .filter(b=>b.width>.025*w&&b.width<.075*w&&b.height/b.width>.8&&b.height/b.width<1.25)
+   // A real information button has a solid circular outer ring. Pet artwork
+   // can have the same bounding box and density, especially on tablet layouts.
+   .filter(b=>{let ring=0,ink=0;for(let y=0;y<b.height;y++)for(let x=0;x<b.width;x++){const d=((x+.5-b.width/2)/(b.width/2))**2+((y+.5-b.height/2)/(b.height/2))**2;if(d>.4&&d<.85){ring++;const i=((b.y+y)*p.width+b.x+x)*4;if(Math.max(p.data[i],p.data[i+1],p.data[i+2])<90)ink++;}}return ring>0&&ink/ring>=.7;});
   circles.sort((a,b)=>b.y-a.y);result.info=circles[0];
   if(result.info){const info=result.info,cx=info.x+info.width/2,bottom=info.y+info.height;
    const progressBars=components(p,{x:cx-.095*w,y:bottom+.015*w,width:.19*w,height:.105*w},(r,g,b)=>Math.max(r,g,b)<180,.15)

@@ -250,3 +250,13 @@ for(const kind of ['eggMerge','mountMerge']){
  const selected=findLandmarks(p,kind).selected;
  assert.deepEqual(selected,{x:44,y:278,width:26,height:10});
 }
+
+// Tablet pet artwork below the real info button has a dense square bounding
+// box, but lacks the solid circular ring. Do not choose it by bottom-most Y.
+for(const height of [632,870,1000])for(const kind of ['egg','skill','mount']){
+ const anchor=Math.round(height*.55),base=image(40,anchor),p={width:400,height,data:new Uint8ClampedArray(400*height*4).fill(255)};
+ p.data.set(base.data.slice(0,Math.min(base.height,height)*400*4));
+ for(let y=anchor+105;y<anchor+129;y++)for(let x=295;x<320;x++)if(x<299||x>=316||y>=anchor+121)p.data.set([0,0,0,255],(y*400+x)*4);
+ assert.equal(findLandmarks(p,kind).info.y,anchor-10);
+}
+console.log('Tablet artwork cannot replace a circular information anchor across aspect ratios.');
