@@ -1,8 +1,10 @@
 # OCR review checkpoint
 
-Updated: 2026-11-04 14:04 KST. Last report scanner: 2026-10-31.1.
+Updated: 2026-11-04 16:00 KST. Last report scanner: 2026-10-31.1.
 
 ## Current scan
+
+- 2026-11-04 16:00 KST incremental check: metadata ocr_errors1000x26; read A483:J1000, only previous483–484 populated; next485 unchanged. Latest main96677783833c10dcb92dac93c75d66ae502363a3; OCR landmark source inspected, verified touching-digit fix retained. Main Code checks41777036278 and Pages41777036121 succeeded. No new reports or diagnostic evidence; all prior unresolved OCR cases and unconfirmed PC QR issue remain tracked without speculative changes. No application/backend change, tests or application deployment required. No live member resources/passwords/tickets/clan settings modified during this run.
 
 - 2026-11-04 14:04 KST incremental check: metadata ocr_errors1000x26; read A483:J1000, last populated484, next485 unchanged. No new reports or additional diagnostic evidence. Latest maine455f3f2343f6d27b1b1132cb67dea2d73b32900; latest OCR landmark source retains verified touching-digit fix. Main Code checks41764396936 and Pages41764396989 succeeded. All previously unresolved cases, including maximum-label/leading-digit cases and unconfirmed PC QR connectivity, remain tracked without guessed corrections. No application/backend source changes, tests or application deployment required this scan. No live member resources/passwords/tickets/clan settings modified.
 
