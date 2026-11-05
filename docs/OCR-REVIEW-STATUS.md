@@ -1,8 +1,10 @@
 # OCR review checkpoint
 
-Updated: 2026-11-06 00:20 KST. Last report scanner: 2026-10-31.1.
+Updated: 2026-11-06 01:58 KST. Last report scanner: 2026-10-31.1.
 
 ## Current scan
+
+- 2026-11-06 01:58 KST incremental check: metadata ocr_errors1000x26; read A485:J1000, only previously reviewed485–486 present; next487 unchanged. Latest maine190566890d5748c7ea83fe666a84cc50adffaca; latest OCR anchor source inspected and previous fix retained. Code checks42054211374 and Pages42054211464 completed successfully. No new reports or changed diagnostic evidence. Runtime OCR-01 cases485–486 and all previous unresolved cases remain open without guessed values. No application/backend changes, tests or application deployment required this scan; Apps Script deployment unnecessary. No live member resources/passwords/tickets/clan settings modified.
 
 - 2026-11-06 00:20 KST: metadata1000x26; A483:J1000 read, new485–486, next487. Both skill OCR-01 reports have empty attempts, same upload metadata1080x2280/729273 bytes. Both stored images independently viewed: true skill summon65.6k, maximum, cost168; no visible decimal/k/missing-leading-digit ambiguity or merge-screen confusion. These are visual references only, never member-value corrections. Empty attempts do not establish a numeric recognition failure or runtime root cause; retain485–486 unresolved pending reproducible runtime evidence. Latest mainc5722ca4c4c3bbce5357ff05b7951e89ba66aec3 inspected; circular anchor fix retained. Code checks42045499466 and Pages42045499367 succeeded for separately requested theme changes. No validated OCR fix, application/backend change or new application deployment this review; Apps Script deployment unnecessary. Prior unresolved cases remain open. No live member resources/passwords/tickets/settings modified.
 
