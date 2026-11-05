@@ -1,0 +1,1 @@
+POTATO theme updated 2026-11-05 using three artwork images supplied by the clan owner: Vault Boy, wasteland poster, and Pip-Boy. Scoped to Fallout theme only. TypeScript check and Vite production build passed. No clan data, credentials, tickets, or backend changed.
