@@ -23,3 +23,15 @@ body[data-community-theme] #root{isolation:isolate}
 @keyframes community-fall{from{transform:translate3d(0,-100px,0) rotate(0deg)}to{transform:translate3d(var(--drift),calc(100vh + 240px),0) rotate(calc(var(--spin)*360deg))}}
 @media(max-width:700px){.community-floater:nth-child(n+19){display:none}.community-floater{opacity:.22}}
 @media(prefers-reduced-motion:reduce){.community-floater{animation:none;top:calc(var(--left)*.85);transform:rotate(-18deg);will-change:auto}}
+/* POTATO: retro-futuristic vault, steel walls and bottle-cap currency. */
+body[data-community-theme="fallout"]{--background:#101e21;--foreground:#d9f4bd;--card:#142421;--card-foreground:#d9f4bd;--primary:#f2cd64;--primary-foreground:#142a35;--border:#71866a;--theme-highlight:#f2cd64;--theme-panel:#142421;--theme-ink:#d9f4bd;--theme-muted:#b6caa1;background:#12252f url('./../public/images/potato-vault.svg') center/cover fixed}
+body[data-community-theme="fallout"] .community-atmosphere{background:linear-gradient(90deg,#08131c18,#08131c66 35%,#08131c66 65%,#08131c18)}
+body[data-community-theme="fallout"] .community-banner{background:linear-gradient(105deg,#173e60,#245675 65%,#17384f);border:3px solid #e3bd55;border-radius:12px;box-shadow:0 6px 0 #091722,0 15px 45px #0008;max-width:1120px;color:#ffeb9f}
+body[data-community-theme="fallout"] .community-banner h2{color:#ffe695;text-shadow:2px 3px #102b3c}body[data-community-theme="fallout"] .community-banner p{color:#e3d7a8}body[data-community-theme="fallout"] .community-emblem{background:#e7c45d;color:#173e60;border:5px double #14364f;box-shadow:0 0 0 3px #e7c45d}
+body[data-community-theme="fallout"] .community-decoration{opacity:.2;color:#f8d977}
+body[data-community-theme="fallout"] .community-floater{opacity:.72;width:calc(var(--size)*1.4)}
+body[data-community-theme="fallout"] :is(.panel,.summary article,.mount-merge-calculator){background:linear-gradient(120deg,#172b22f7,#0d1e19fc);border:1px solid #7b9564;border-radius:7px;box-shadow:inset 0 0 35px #7aaf4c0a,0 8px 24px #0006}
+body[data-community-theme="fallout"] .panel-heading{background:#1e3942;border-bottom:2px solid #d9b653;color:#f4d77b}
+body[data-community-theme="fallout"] :is(h1,h2,h3,.nickname,.resource-amount){color:#c3f5a0}body[data-community-theme="fallout"] .submit{background:#e9c359;color:#173447;box-shadow:0 4px 0 #8a6c28;border-radius:5px;text-transform:uppercase}
+body[data-community-theme="fallout"] :is(.upload,.ticket-import-button){background:#132f27;border:2px dashed #9ac976;color:#dcf0bf}body[data-community-theme="fallout"] .upload strong{color:#c4f798}
+@media(max-width:700px){body[data-community-theme="fallout"]{background-position:38% center}body[data-community-theme="fallout"] .community-floater{opacity:.5;width:var(--size)}}
