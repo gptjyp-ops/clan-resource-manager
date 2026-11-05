@@ -12,3 +12,14 @@ body[data-community-theme] .submit{background:var(--theme-highlight);color:#1720
 body[data-community-theme] :is(.upload,.ticket-import-button){background:var(--secondary);color:var(--theme-ink);border:2px dashed var(--theme-highlight)}body[data-community-theme] .upload strong{color:var(--theme-highlight)}body[data-community-theme] :is(th,td){border-color:var(--border)}
 body[data-community-theme] :is(button,a,input,select,textarea):focus-visible{outline:3px solid var(--theme-highlight);outline-offset:3px}
 @media(max-width:700px){.community-banner{margin:16px 12px 0;padding:22px 18px;gap:16px}.community-emblem{font-size:44px;width:65px;height:65px}.community-eyebrow{font-size:10px}.community-banner h2{font-size:23px}.community-banner p{font-size:13px}.community-decoration{font-size:120px}}
+
+/* Decorative layer stays behind opaque content and never intercepts clicks. */
+body[data-community-theme] #root{isolation:isolate}
+.community-atmosphere{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:-1}
+.community-floater{position:absolute;left:var(--left);top:-120px;width:var(--size);opacity:.34;animation:community-fall var(--duration) var(--delay) linear infinite;will-change:transform}
+.community-floater svg{width:100%;height:auto;filter:drop-shadow(2px 4px 3px #0008)}
+.floating-card{display:block;position:relative;width:100%;aspect-ratio:5/7;background:#eee7dc;border:2px solid #c8b9ce;border-radius:5px;color:#252034;box-shadow:2px 4px 10px #0008;font-family:Georgia,serif}
+.floating-card.red{color:#a92b49}.floating-card b{position:absolute;left:7%;top:4%;font-size:calc(var(--size)*.23);line-height:1}.floating-card em{position:absolute;inset:25% 0;text-align:center;font-size:calc(var(--size)*.56);font-style:normal;line-height:1.2}.floating-card small{position:absolute;right:7%;bottom:4%;font-size:calc(var(--size)*.22);transform:rotate(180deg)}
+@keyframes community-fall{from{transform:translate3d(0,-100px,0) rotate(0deg)}to{transform:translate3d(var(--drift),calc(100vh + 240px),0) rotate(calc(var(--spin)*360deg))}}
+@media(max-width:700px){.community-floater:nth-child(n+19){display:none}.community-floater{opacity:.22}}
+@media(prefers-reduced-motion:reduce){.community-floater{animation:none;top:calc(var(--left)*.85);transform:rotate(-18deg);will-change:auto}}
