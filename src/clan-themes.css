@@ -37,7 +37,7 @@ body[data-community-theme="fallout"] :is(.upload,.ticket-import-button){backgrou
 @media(max-width:700px){body[data-community-theme="fallout"]{background-position:38% center}body[data-community-theme="fallout"] .community-floater{opacity:.5;width:var(--size)}}
 
 /* Artwork supplied by the clan owner; scoped to POTATO only. */
-body[data-community-theme="fallout"]{background-color:#101917;background-image:linear-gradient(90deg,#07131318,#071313bb 32%,#071313bb 68%,#07131318),url('../public/images/potato-wasteland.png'),url('../public/images/potato-vault-boy.png');background-position:center,left center,right center;background-size:cover,auto 100vh,auto 90vh;background-repeat:no-repeat;background-attachment:fixed}
+body[data-community-theme="fallout"]{background-color:#101917;background-image:linear-gradient(90deg,#07131318,#071313bb 32%,#071313bb 68%,#07131318),url('../public/images/potato-wasteland.webp'),url('../public/images/potato-vault-boy.png');background-position:center,left center,right center;background-size:cover,auto 100vh,auto 90vh;background-repeat:no-repeat;background-attachment:fixed}
 body[data-community-theme="fallout"] .community-atmosphere{background:repeating-linear-gradient(0deg,#0000 0 3px,#0002 3px 4px);box-shadow:inset 0 0 140px #0008}
 body[data-community-theme="fallout"] .community-banner{min-height:220px;background:linear-gradient(90deg,#183c49f5,#17372bdc),url('../public/images/potato-pip-boy.png') right center/cover;border:3px solid #bba353;box-shadow:inset 0 0 0 5px #182b29,0 12px 45px #0009}
 body[data-community-theme="fallout"] .community-emblem{width:140px;height:170px;background:none;border:0;border-radius:0;box-shadow:none;overflow:hidden}
@@ -45,4 +45,9 @@ body[data-community-theme="fallout"] .community-emblem img{width:100%;height:100
 body[data-community-theme="fallout"] .community-banner h2{font-family:Impact,'Arial Narrow',sans-serif;font-style:italic;font-size:clamp(27px,4vw,46px);letter-spacing:.015em;color:#e5c862}
 body[data-community-theme="fallout"] :is(.panel,.summary article,.mount-merge-calculator){background:repeating-linear-gradient(0deg,#102019f5 0 3px,#13251bf5 3px 4px);border:3px solid #6c7050;box-shadow:inset 0 0 0 3px #263626,inset 0 0 40px #0009,0 8px 24px #0008}
 body[data-community-theme="fallout"] :is(.resource-amount,.panel-heading){color:#78fa91;text-shadow:0 0 8px #76ff7740}
-@media(max-width:700px){body[data-community-theme="fallout"]{background-image:linear-gradient(#0c1919a0,#0c1919dc),url('../public/images/potato-wasteland.png');background-size:cover,cover;background-position:center;background-attachment:scroll}body[data-community-theme="fallout"] .community-banner{min-height:170px;gap:12px}body[data-community-theme="fallout"] .community-emblem{width:74px;height:120px}body[data-community-theme="fallout"] .community-banner h2{font-size:26px}}
+@media(max-width:700px){body[data-community-theme="fallout"]{background-image:linear-gradient(#0c1919a0,#0c1919dc),url('../public/images/potato-wasteland.webp');background-size:cover,cover;background-position:center;background-attachment:scroll}body[data-community-theme="fallout"] .community-banner{min-height:170px;gap:12px}body[data-community-theme="fallout"] .community-emblem{width:74px;height:120px}body[data-community-theme="fallout"] .community-banner h2{font-size:26px}}
+
+body[data-community-theme="fallout"] .community-floater{width:calc(var(--size)*.52);opacity:.8}
+.nuka-cap{display:block;position:relative;aspect-ratio:1;overflow:hidden;clip-path:circle(48% at 50% 50%);filter:drop-shadow(1px 3px 2px #0008)}
+.nuka-cap img{position:absolute;width:138%;max-width:none;height:auto;left:-13%;top:-3%;pointer-events:none}
+@media(max-width:700px){body[data-community-theme="fallout"] .community-floater{width:calc(var(--size)*.45);opacity:.65}}
