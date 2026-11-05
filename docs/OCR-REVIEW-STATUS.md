@@ -1,8 +1,10 @@
 # OCR review checkpoint
 
-Updated: 2026-11-05 18:04 KST. Last report scanner: 2026-10-31.1.
+Updated: 2026-11-05 20:02 KST. Last report scanner: 2026-10-31.1.
 
 ## Current scan
+
+- 2026-11-05 20:02 KST incremental check: metadata ocr_errors1000x26; read A483:J1000, only previously reviewed483–484 present; next485 unchanged. Latest main8ba2d1e460612f051c333b5ccc5379a69f137be3; OCR anchor source inspected and prior fix retained. Main Code checks41999480475 and Pages41999480485 completed successfully. No new reports or changed diagnostic evidence; prior unresolved cases remain tracked without guessed values. No application/backend changes, tests or application deployment required this scan. No live member resources/passwords/tickets/clan settings modified.
 
 - 2026-11-05 18:04 KST incremental check: metadata ocr_errors1000x26; read A483:J1000, only previously reviewed483–484 populated; next485 unchanged. Latest mainbb938bb6a161ac4de092534b886bf604f4093c42; latest OCR anchor source inspected and previous fix retained. Main Code checks41984770030 and Pages41984770032 completed successfully. No new reports or changed diagnostic evidence; prior unresolved cases remain tracked without guessed values. No application/backend changes, tests or application deployment required this scan. No live member resources/passwords/tickets/clan settings modified.
 
