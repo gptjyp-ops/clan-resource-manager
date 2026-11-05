@@ -51,3 +51,20 @@ body[data-community-theme="fallout"] .community-floater{width:calc(var(--size)*.
 .nuka-cap{display:block;position:relative;aspect-ratio:1;overflow:hidden;clip-path:circle(48% at 50% 50%);filter:drop-shadow(1px 3px 2px #0008)}
 .nuka-cap img{position:absolute;width:138%;max-width:none;height:auto;left:-13%;top:-3%;pointer-events:none}
 @media(max-width:700px){body[data-community-theme="fallout"] .community-floater{width:calc(var(--size)*.45);opacity:.65}}
+/* Pip-Boy phosphor: readable green controls and numbers on a dark CRT surface. */
+body[data-community-theme="fallout"]{--primary:#6dff83;--primary-foreground:#082013;--theme-highlight:#6dff83;--ring:#6dff83;--border:#497d48;--input:#497d48;--theme-ink:#c1f8bb;--theme-muted:#9dba96;--secondary:#183823;--secondary-foreground:#c1f8bb;--accent:#224b2d;--accent-foreground:#c1f8bb}
+body[data-community-theme="fallout"] .community-banner{background:linear-gradient(95deg,#102b1bf5,#07190edf),url('../public/images/potato-pip-boy.png') right center/cover;border-color:#5c9e52;box-shadow:inset 0 0 0 4px #28382a,inset 0 0 45px #51ff6b0d,0 12px 45px #0009}
+body[data-community-theme="fallout"] .community-banner h2{color:#7cff8a;text-shadow:0 0 12px #60ff733b}
+body[data-community-theme="fallout"] .community-banner p{color:#b1d5a6}
+body[data-community-theme="fallout"] :is(.community-eyebrow,.community-stamp,.community-decoration){color:#79ff8b}
+body[data-community-theme="fallout"] :is(.panel,.summary article,.mount-merge-calculator){border-color:#527948;box-shadow:inset 0 0 0 3px #263a25,inset 0 0 40px #0008,0 8px 24px #0008}
+body[data-community-theme="fallout"] :is(.panel-heading,.merge-calculator-heading){background:#102a19;border-bottom:1px solid #63ab55;color:#81ff8e}
+body[data-community-theme="fallout"] :is(.summary-number,.resource-amount,.merge-calculator-result strong){color:#7dff8b;font-variant-numeric:tabular-nums;text-shadow:0 0 9px #63ff7a42}
+body[data-community-theme="fallout"] :is(.summary-content strong,.calculator-result-label,.calculator-step-number){color:#7dff8b}
+body[data-community-theme="fallout"] .submit{background:#78f88a;color:#082313;border:1px solid #a4ffae;box-shadow:0 3px 0 #275d30,0 0 14px #68ff7924}
+body[data-community-theme="fallout"] :is(.quiet,.capture-paste,.save-mode button,.resource-sort button){background:#122c1b;color:#bdfbc2;border-color:#51794b}
+body[data-community-theme="fallout"] :is(.save-mode button.active,.resource-sort button.active,button[aria-pressed="true"]){background:#285d32;color:#bfffc7;border-color:#7aff8c;box-shadow:inset 0 -2px #7aff8c}
+body[data-community-theme="fallout"] :is(.upload,.ticket-import-button){background:#102b1b;border-color:#75ea7f;color:#c0f8bf}
+body[data-community-theme="fallout"] :is(.upload strong,input,select,textarea){color:#b7ffc0!important}
+body[data-community-theme="fallout"] :is(button,a){transition:background-color .15s,border-color .15s}
+body[data-community-theme="fallout"] button:not(:disabled):hover{border-color:#a0ffac}
