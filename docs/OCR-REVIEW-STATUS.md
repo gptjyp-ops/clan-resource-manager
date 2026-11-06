@@ -1,8 +1,10 @@
 # OCR review checkpoint
 
-Updated: 2026-11-07 04:03 KST. Last report scanner: 2026-10-31.1.
+Updated: 2026-11-07 06:05 KST. Last report scanner: 2026-10-31.1.
 
 ## Current scan
+
+- 2026-11-07 06:05 KST incremental check: metadata ocr_errors1000x26; read A485:J1000, only reviewed485–486 present, next487 unchanged. Latest main7375b2bede3a04318fdd07b6ff08fadf5eac67df; OCR anchor source inspected, prior fix retained. Code checks42276276501 succeeded. Pages42276276479 attempt1 failed at deploy-pages: uploaded artifact13533356223 was immediately invisible to artifact lookup (zero artifacts found). Build/upload succeeded; no source defect established. Retried failed workflow jobs using Actions API; attempt2 rebuilt successfully and remains in deploy-pages in_progress at this checkpoint. Do not mark deployment recovered until terminal success; check this run on next review. No new OCR evidence;485–486 runtime failures and prior unresolved cases remain open without guessed values. No application/backend source changes or GAS deployment required; no live member resources/passwords/tickets/settings modified.
 
 - 2026-11-07 04:03 KST incremental check: metadata ocr_errors1000x26; read A485:J1000, only previously reviewed485–486 populated; next487 unchanged. Latest main6018c40dd52d93588724bf457ccf80d690d587e1; latest OCR anchor source inspected and prior fix retained. Code checks42258161001 and Pages42258160863 completed successfully. No new reports or changed diagnostic evidence. Runtime OCR-01 cases485–486 and all prior unresolved cases remain open without guessed corrections. No application/backend changes, tests or application deployment required this scan; Apps Script deployment unnecessary. No live member resources/passwords/tickets/clan settings modified.
 
