@@ -1,8 +1,10 @@
 # OCR review checkpoint
 
-Updated: 2026-11-07 06:05 KST. Last report scanner: 2026-10-31.1.
+Updated: 2026-11-07 08:00 KST. Last report scanner: 2026-10-31.1.
 
 ## Current scan
+
+- 2026-11-07 08:00 KST incremental check: metadata ocr_errors1000x26; read A485:J1000, only previously reviewed485–486 populated; next487 unchanged. Latest maina165db2f1fc34321a327ba555ee958395d6655fc; latest OCR anchor source inspected and prior fix retained. Code checks42293784172 and Pages42293784171 completed successfully. Earlier Pages42276276479 retry attempt2 ended cancelled; superseded by successful latest-main Pages deployment, so deployment recovery confirmed via42293784171 (not by claiming cancelled retry succeeded). No new OCR reports or changed diagnostic evidence;485–486 and prior unresolved cases retained without guessed values. No application/backend source changes or GAS deployment required. No live member resources/passwords/tickets/clan settings modified.
 
 - 2026-11-07 06:05 KST incremental check: metadata ocr_errors1000x26; read A485:J1000, only reviewed485–486 present, next487 unchanged. Latest main7375b2bede3a04318fdd07b6ff08fadf5eac67df; OCR anchor source inspected, prior fix retained. Code checks42276276501 succeeded. Pages42276276479 attempt1 failed at deploy-pages: uploaded artifact13533356223 was immediately invisible to artifact lookup (zero artifacts found). Build/upload succeeded; no source defect established. Retried failed workflow jobs using Actions API; attempt2 rebuilt successfully and remains in deploy-pages in_progress at this checkpoint. Do not mark deployment recovered until terminal success; check this run on next review. No new OCR evidence;485–486 runtime failures and prior unresolved cases remain open without guessed values. No application/backend source changes or GAS deployment required; no live member resources/passwords/tickets/settings modified.
 
