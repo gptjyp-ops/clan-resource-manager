@@ -1,8 +1,10 @@
 # OCR review checkpoint
 
-Updated: 2026-11-09 18:31 KST. Last report scanner: 2026-10-31.1.
+Updated: 2026-11-09 19:55 KST. Last report scanner: 2026-10-31.1.
 
 ## Current scan
+
+- 2026-11-09 19:55 KST review: metadata1000x26; A508:J1000 read; new512–513, next514. Both stored photos independently viewed.512 is genuine wide technology/potion810, same upload dimensions/bytes as511 but not byte-compared; OCR-02 repeats open wide header failure.513 egg slot actually technology/potion screen visually0, so OCR-06 rejection is appropriate; never import potion0 into egg inventory. No decimal/k/leading-digit or merge ambiguity in these two photos. Main ef98a39381063cab7212357c9cae38b2dffaf83f: Code42594261957 and Pages42594261992 SUCCESS. Existing source paths inspected;508–509 false rejection and510–512 wide header localization remain open, no safe correction established or full replay completed this run. Prior runtime and numeric cases retained. No application/backend changes or deployment; GAS unnecessary. No member resources/passwords/tickets/settings modified. No changed root cause or repeated user notification warranted.
 
 - 2026-11-09 18:31 KST review: metadata1000x26; read A507:J1000; new508–511, next512. All four stored photos independently viewed.508–509 are genuine pet summon24.5k/maximum, incorrectly rejected OCR-06;510 wide1768x2208 pet summon22.9k/maximum lacks amount landmark (OCR-02), matching open wide-layout430.511 same wide size technology/potion screen visually810, amount landmark missing (OCR-02). No decimal/k/leading-digit ambiguity or merge confusion in these images. These are unresolved recognition/layout failures, not wrong uploads. Latest main4a781bf5b5fb6113c106698bd7c1d5c89dd9168e source inspected; raw maximum retry retained. Full reproduction and cause-specific tests not completed this run; no guessed numeric corrections or claim of resolution. Code42577426657 and Pages42577426729 SUCCESS. No application/backend changes or new deployment; GAS unnecessary. Prior open cases retained; no member resources/passwords/tickets/settings changed. Follow-up: reproduce false wrong-screen detection508 and shared wide header localization510/511.
 
