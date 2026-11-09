@@ -1,8 +1,10 @@
 # OCR review checkpoint
 
-Updated: 2026-11-09 19:55 KST. Last report scanner: 2026-10-31.1.
+Updated: 2026-11-09 22:08 KST. Last report scanner: 2026-10-31.1.
 
 ## Current scan
+
+- 2026-11-09 22:08 KST review: metadata1000x26; read A512:J1000; new514–515, next516. Both stored photos independently viewed.514 mountMerge is actually skill SUMMON64.5k/Lv94/25of110, no selected merge count;515 mount is actually pet MERGE880 selected, not mount summon inventory. OCR-06 rejection appropriate in both cases. No decimal/k/leading-digit correction warranted; visual values are references only, never substitute across slots. Latest main7be772e0706a59470d52bf576d42ec18c0e6849c; latest screen-ocr source inspected, wrong-screen guards retained. Code42604970382 and Pages42604970444 SUCCESS. Existing508–509 false rejection and510–512 wide layout failures plus prior unresolved cases remain open, no new causal evidence. No application/backend changes, tests or deployment required for these wrong-slot reports; GAS unnecessary. No live resources/passwords/tickets/clan settings changed.
 
 - 2026-11-09 19:55 KST review: metadata1000x26; A508:J1000 read; new512–513, next514. Both stored photos independently viewed.512 is genuine wide technology/potion810, same upload dimensions/bytes as511 but not byte-compared; OCR-02 repeats open wide header failure.513 egg slot actually technology/potion screen visually0, so OCR-06 rejection is appropriate; never import potion0 into egg inventory. No decimal/k/leading-digit or merge ambiguity in these two photos. Main ef98a39381063cab7212357c9cae38b2dffaf83f: Code42594261957 and Pages42594261992 SUCCESS. Existing source paths inspected;508–509 false rejection and510–512 wide header localization remain open, no safe correction established or full replay completed this run. Prior runtime and numeric cases retained. No application/backend changes or deployment; GAS unnecessary. No member resources/passwords/tickets/settings modified. No changed root cause or repeated user notification warranted.
 
