@@ -260,3 +260,11 @@ for(const height of [632,870,1000])for(const kind of ['egg','skill','mount']){
  assert.equal(findLandmarks(p,kind).info.y,anchor-10);
 }
 console.log('Tablet artwork cannot replace a circular information anchor across aspect ratios.');
+
+// Tablet header width can equal the phone minimum; relax only wide captures.
+for(const height of [500,870]){
+ const p={width:400,height,data:new Uint8ClampedArray(400*height*4).fill(255)};
+ const top=Math.ceil(height*.025)+2;
+ for(let y=top;y<top+12;y++)for(let x=19;x<55;x++)p.data.set([100,100,100,255],(y*400+x)*4);
+ assert.equal(!!findLandmarks(p,'egg').amount,height===500);
+}

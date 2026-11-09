@@ -1,8 +1,10 @@
 # OCR review checkpoint
 
-Updated: 2026-11-10 00:09 KST. Last report scanner: 2026-10-31.1.
+Updated: 2026-11-10 01:55 KST. Last report scanner: 2026-10-31.1.
 
 ## Current scan
+
+- 2026-11-10 01:55 KST review: metadata1000x26; A514:J1000 read, no new rows, next516. Confirmed510 wide pet resource bar is36px at400px overview, exactly excluded by strict width>9% rule. For aspect h/w<1.5 only, allow width>7.5%; phone thresholds unchanged. Actual stored510 scanScreen replay now22.9k/maximum level100/no issues without expected values injected.511 potion still OCR-02, retained open with512; do not generalize fix. Added synthetic wide-versus-phone regression; layout, diagnostics, cancellation, worker, typecheck/build pass. Prior main9f0309f85f7546e54dfd998559f18203500d9dac Code42642285894/Pages42642285956 SUCCESS. Frontend-only fix; GAS unnecessary. Deployment verification pending.508–509 and all other open cases retained; no member resources/passwords/tickets/settings changed. Stored resized-JPEG native Canvas replay is not live-browser proof.
 
 - 2026-11-10 00:09 KST review: metadata1000x26; read A514:J1000, last515, next516 unchanged. Latest mainee6b1d0e4242c224516675957f1ba43ffe89e619; Code42622969231 and Pages42622969314 SUCCESS. Recovered replay dependencies after workspace maintenance removed previous dependencies; independently fetched stored510/511 again. Native Canvas + actual Tesseract full scanScreen reproduces both wide-image amount OCR-02 failures;510 maximum now recognized as level100 but amount absent,511 potion amount absent. This confirms open wide-layout failures remain reproducible after compact maximum fix. No numeric substitution. Header geometry thresholds need isolated pixel-level regression before safe change; no application/backend changes or deployment completed. Prior508–509 and all other unresolved causes retained. No member resources/passwords/tickets/settings modified. Replays use stored resized JPEGs, not original upload/live browser.
 
