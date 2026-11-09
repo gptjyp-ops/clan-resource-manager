@@ -1,8 +1,10 @@
 # OCR review checkpoint
 
-Updated: 2026-11-09 08:03 KST. Last report scanner: 2026-10-31.1.
+Updated: 2026-11-09 09:58 KST. Last report scanner: 2026-10-31.1.
 
 ## Current scan
+
+- 2026-11-09 09:58 KST review: metadata ocr_errors1000x26; read A485:J1000; new487–489, next490. Independently viewed all three stored images. Row487 eggMerge is actually pet SUMMON (visually191, Lv84,14/23), without a selected merge count. Rows488–489 mountMerge are actually mount SUMMON (visually79.1k, maximum, cost40), without a selected merge count. OCR-06 wrong-screen rejection is appropriate in all three; do not import summon inventory or cost as selected. Decimal/k and missing-first-digit correction is not warranted. Values are visual references only; no member corrections. Latest main680ea0b9f25692e38ae656b320b46250b07e21be; OCR anchor fix inspected and retained. Code checks42533280548 and Pages42533280531 completed successfully. No validated source defect, application/backend changes or application deployment required; Apps Script deployment unnecessary. Runtime485–486 and prior unresolved cases remain open without guessed corrections. No live member resources/passwords/tickets/clan settings modified.
 
 - 2026-11-09 08:03 KST incremental check: metadata ocr_errors1000x26; read A485:J1000, only previously reviewed485–486 populated; next487 unchanged. Latest main3f1bcb305fd297f466cbf3402d7f28d0547f4ace; latest OCR anchor source inspected and prior fix retained. Code checks42522819198 and Pages42522819172 completed successfully. No new reports or changed diagnostic evidence. Runtime OCR-01 cases485–486 and prior unresolved cases remain open without guessed corrections. No application/backend changes, tests or application deployment required this scan; Apps Script deployment unnecessary. No live member resources/passwords/tickets/clan settings modified.
 
