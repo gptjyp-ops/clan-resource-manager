@@ -1,8 +1,10 @@
 # OCR review checkpoint
 
-Updated: 2026-11-10 01:55 KST. Last report scanner: 2026-10-31.1.
+Updated: 2026-11-10 03:55 KST. Last report scanner: 2026-10-31.1.
 
 ## Current scan
+
+- 2026-11-10 03:55 KST incremental review: metadata1000x26; read A514:J1000, only reviewed514–515 populated; next516 unchanged. Latest mainc3704797d91774966417fec0212a8c463dba8be5 source inspected: wide-header fix retained. Code42660245386 and Pages42660245438 completed SUCCESS. No new records or changed diagnostic evidence.511–512 potion header,508–509 false wrong-screen and prior unresolved cases remain open without numeric guesses. No additional application/backend change or deployment needed this scan; GAS unnecessary. No member resources/passwords/tickets/settings changed.
 
 - 2026-11-10 01:55 KST review: metadata1000x26; A514:J1000 read, no new rows, next516. Confirmed510 wide pet resource bar is36px at400px overview, exactly excluded by strict width>9% rule. For aspect h/w<1.5 only, allow width>7.5%; phone thresholds unchanged. Actual stored510 scanScreen replay now22.9k/maximum level100/no issues without expected values injected.511 potion still OCR-02, retained open with512; do not generalize fix. Added synthetic wide-versus-phone regression; layout, diagnostics, cancellation, worker, typecheck/build pass. Prior main9f0309f85f7546e54dfd998559f18203500d9dac Code42642285894/Pages42642285956 SUCCESS. Frontend-only fix; GAS unnecessary. Fix f6a7824a6b1504cc15ca615717ea2be9b82a5273 verified: Code42660061610 and Pages42660061618 SUCCESS. Live site HTML fetched and references index-BUr-q4hM.js. Browser upload not tested.508–509 and all other open cases retained; no member resources/passwords/tickets/settings changed. Stored resized-JPEG native Canvas replay is not live-browser proof.
 
