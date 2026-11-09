@@ -1,8 +1,10 @@
 # OCR review checkpoint
 
-Updated: 2026-11-09 22:08 KST. Last report scanner: 2026-10-31.1.
+Updated: 2026-11-10 00:09 KST. Last report scanner: 2026-10-31.1.
 
 ## Current scan
+
+- 2026-11-10 00:09 KST review: metadata1000x26; read A514:J1000, last515, next516 unchanged. Latest mainee6b1d0e4242c224516675957f1ba43ffe89e619; Code42622969231 and Pages42622969314 SUCCESS. Recovered replay dependencies after workspace maintenance removed previous dependencies; independently fetched stored510/511 again. Native Canvas + actual Tesseract full scanScreen reproduces both wide-image amount OCR-02 failures;510 maximum now recognized as level100 but amount absent,511 potion amount absent. This confirms open wide-layout failures remain reproducible after compact maximum fix. No numeric substitution. Header geometry thresholds need isolated pixel-level regression before safe change; no application/backend changes or deployment completed. Prior508–509 and all other unresolved causes retained. No member resources/passwords/tickets/settings modified. Replays use stored resized JPEGs, not original upload/live browser.
 
 - 2026-11-09 22:08 KST review: metadata1000x26; read A512:J1000; new514–515, next516. Both stored photos independently viewed.514 mountMerge is actually skill SUMMON64.5k/Lv94/25of110, no selected merge count;515 mount is actually pet MERGE880 selected, not mount summon inventory. OCR-06 rejection appropriate in both cases. No decimal/k/leading-digit correction warranted; visual values are references only, never substitute across slots. Latest main7be772e0706a59470d52bf576d42ec18c0e6849c; latest screen-ocr source inspected, wrong-screen guards retained. Code42604970382 and Pages42604970444 SUCCESS. Existing508–509 false rejection and510–512 wide layout failures plus prior unresolved cases remain open, no new causal evidence. No application/backend changes, tests or deployment required for these wrong-slot reports; GAS unnecessary. No live resources/passwords/tickets/clan settings changed.
 
