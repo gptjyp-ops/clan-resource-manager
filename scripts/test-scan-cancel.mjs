@@ -20,4 +20,15 @@ try{
  const controller=new AbortController();const running=scanScreen(file,'skill',()=>{},false,controller.signal);await ready;controller.abort();
  await assert.rejects(running,e=>e.name==='AbortError');assert.equal(closed,2);assert.ok(terminated>0);
  console.log('Cancelled scans close bitmaps, terminate OCR workers and reject without a false OCR error.');
+ // Preserve the ordinary numeric pass; only the final unthresholded Korean
+ // single-line retry may establish maximum, and only from the exact label.
+ for(const label of ['최대','희대','2']){
+  let whitelist='0123456789',mode=7,statusPasses=0;
+  globalThis.testOcrWorker={async setParameters(p){if(p.tessedit_char_whitelist!==undefined)whitelist=p.tessedit_char_whitelist;mode=p.tessedit_pageseg_mode;},async recognize(){if(whitelist===''&&mode===11)statusPasses++;return {data:{text:whitelist===''&&mode===7&&statusPasses>=2?label:''}};},async terminate(){}};
+  const result=await scanScreen(file,'egg',()=>{});
+  assert.equal(result.item.level,label==='최대'?'100':undefined);
+  assert.equal(result.diagnostics.attempts.at(-1).text,label);
+ }
+ console.log('Raw Korean maximum retry accepts only the exact label, never similar text or a digit.');
+
 }finally{await rm(dir,{recursive:true,force:true});}
