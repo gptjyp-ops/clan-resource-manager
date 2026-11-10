@@ -1,8 +1,10 @@
 # OCR review checkpoint
 
-Updated: 2026-11-11 02:02 KST. Last report scanner: 2026-10-31.1.
+Updated: 2026-11-11 04:03 KST. Last report scanner: 2026-10-31.1.
 
 ## Current scan
+
+- 2026-11-11 04:03 KST incremental review: metadata1000x26; A517:J1000 read; last520, next521 unchanged. Latest main28520a4a14161edc4dae1417356e7671e2c039e2 info-anchor source inspected. Code42860885034 and Pages42860885126 SUCCESS. No new reports or changed diagnostic evidence.517–520 joined-notification anchor,511–512 potion header,508–509 and prior unresolved cases retained without guessed correction. No application/backend change or deployment this scan; GAS unnecessary. Member resources/passwords/tickets/settings untouched.
 
 - 2026-11-11 02:02 KST review: metadata1000x26; A517:J1000 read; new520, next521. Stored520 independently viewed: genuine pet summon147k/maximum with red notification adjoining info icon; log amount147k correct, false level7/missing ratio, same class517–519. No decimal/k/leading-digit or merge confusion.520 not independently replayed; retain unresolved with517–519, never force100. Latest main7a4b716f0238545fb898ad5f85b48857abf457d6 info-anchor source inspected. Code42839437706 and Pages42839438337 SUCCESS. No changed cause or validated code fix; prior open cases retained. No application/backend change or deployment; GAS unnecessary. Member resources/passwords/tickets/settings untouched. Group repeated anchor reports to avoid unchanged notifications.
 
