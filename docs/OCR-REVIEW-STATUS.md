@@ -1,8 +1,10 @@
 # OCR review checkpoint
 
-Updated: 2026-11-10 18:02 KST. Last report scanner: 2026-10-31.1.
+Updated: 2026-11-10 20:03 KST. Last report scanner: 2026-10-31.1.
 
 ## Current scan
+
+- 2026-11-10 20:03 KST incremental review: metadata1000x26; read A517:J1000; last519, next520 unchanged. Latest main5a2a971adf19a1c25c4026b3a7ac65c9fca69169 info-anchor source inspected. Code42787603869 and Pages42787603752 SUCCESS. No new reports or changed diagnostic evidence.517–519 joined-notification anchor,511–512 potion header,508–509 and prior unresolved cases remain open without guessed values. No application/backend change or deployment this scan; GAS unnecessary. Member resources/passwords/tickets/settings untouched.
 
 - 2026-11-10 18:02 KST review: metadata1000x26; A517:J1000 read; last519, next520 unchanged. Main6d4301f006b805903d2bc30d42023ded01e731d4; Code42772858423/Pages42772858738 SUCCESS. Pursued517 anchor mechanism with native Canvas overview components: adjacent notification outline and information disk are joined into22x23 dark component at(302,478) in400px overview; info remains undefined. Independent thresholds60/40/20 still produce joined22x22/20x22/20x21 components; simply lowering darkness is not an established fix. No production threshold change made.517–519 remain open pending safe shape segmentation/regression; no guessed100. Existing511–512,508–509 and all prior open cases retained. No new application/backend change or deployment; GAS unnecessary. Member resources/passwords/tickets/settings untouched. Pixel probes use stored resized JPEG, not original/live browser.
 
