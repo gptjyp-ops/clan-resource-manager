@@ -1,8 +1,10 @@
 # OCR review checkpoint
 
-Updated: 2026-11-10 12:00 KST. Last report scanner: 2026-10-31.1.
+Updated: 2026-11-10 13:56 KST. Last report scanner: 2026-10-31.1.
 
 ## Current scan
+
+- 2026-11-10 13:56 KST review: metadata1000x26; A517:J1000 read; new518–519, next520. Both stored photos independently viewed: genuine pet summon30.6k/maximum with red notification adjoining information icon, same visible failure class as517. Logged false level7/missing ratio; amount30.6k agrees with pixels. No decimal/k/leading-digit or merge confusion. Latest main d8499c5a452748a2446169983bd776d91dc685dd info-anchor source inspected; circular-component geometry/ring validation may reject notification-adjacent icon, but exact safe segmentation fix not established.518–519 not independently replayed this scan; retain unresolved with517, do not force100 or claim fixed. Code42746848610 and Pages42746848510 SUCCESS. Prior open cases retained. No application/backend change or deployment; GAS unnecessary. No member resources/passwords/tickets/settings changed. Group repeated same-class reports to avoid duplicate alerts without changed cause/status.
 
 - 2026-11-10 12:00 KST review: metadata1000x26; A516:J1000 read; new517, next518. Stored517 independently viewed: genuine pet summon77.7k/maximum, information icon has adjacent red notification. Native Canvas+actual Tesseract full scanScreen reproduces amount77.7k, false level7 and missing ratio OCR-02. Amount correct, no decimal/k/leading-digit or merge confusion. Suspect information-anchor localization rather than raw maximum recognition; exact mechanism and safe correction not yet established. Keep517 unresolved, never force100/77.7k. Latest main6dc6b501b9e940552d80af54a2f2736822071402 source inspected; wide-header fix retained. Code42732895772/Pages42732895909 SUCCESS.516 original-resolution failure,511–512,508–509 and prior open cases retained. No validated new application/backend change or deployment; GAS unnecessary. No member resources/passwords/tickets/settings changed. Replay uses stored compressed JPEG, not original upload/live browser.
 
