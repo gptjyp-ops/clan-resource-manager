@@ -1,8 +1,10 @@
 # OCR review checkpoint
 
-Updated: 2026-11-10 07:56 KST. Last report scanner: 2026-10-31.1.
+Updated: 2026-11-10 10:00 KST. Last report scanner: 2026-10-31.1.
 
 ## Current scan
+
+- 2026-11-10 10:00 KST review: metadata1000x26; A514:J1000 read; new516, next517. Stored516 independently viewed: actual mount merge404 selected, no decimal/k/leading-digit or summon/merge ambiguity. Native Canvas + actual Tesseract full scanScreen replay of stored JPEG returns selected404/no issues (reads404 선택됨/404); original1440x3120 browser failure remains unreproduced. Same class as437–438; do not force404 or mark resolved. Latest mainbf60faf60574c077bfba67c6ecd68b96af6dcbb2 source inspected; wide-header fix retained. Code42716419015 and Pages42716418976 SUCCESS. Existing511–512,508–509 and all prior unresolved cases retained. No validated new code change or application/backend deployment; GAS unnecessary. No member resources/passwords/tickets/settings changed. Replay uses stored compressed image, not original upload/live-browser proof.
 
 - 2026-11-10 07:56 KST incremental review: metadata1000x26; A514:J1000 read; last515, next516 unchanged. Main472430924ca080ac8b5d25bc66590a938528bd04 source inspected, wide-header fix retained. Code42698671701 and Pages42698672137 SUCCESS. No new records or changed diagnostic evidence. Existing511–512 potion header,508–509 false wrong-screen and prior unresolved cases retained without guessed correction. No application/backend change or deployment needed; GAS unnecessary. Member resources/passwords/tickets/settings untouched.
 
