@@ -1,8 +1,10 @@
 # OCR review checkpoint
 
-Updated: 2026-11-10 10:00 KST. Last report scanner: 2026-10-31.1.
+Updated: 2026-11-10 12:00 KST. Last report scanner: 2026-10-31.1.
 
 ## Current scan
+
+- 2026-11-10 12:00 KST review: metadata1000x26; A516:J1000 read; new517, next518. Stored517 independently viewed: genuine pet summon77.7k/maximum, information icon has adjacent red notification. Native Canvas+actual Tesseract full scanScreen reproduces amount77.7k, false level7 and missing ratio OCR-02. Amount correct, no decimal/k/leading-digit or merge confusion. Suspect information-anchor localization rather than raw maximum recognition; exact mechanism and safe correction not yet established. Keep517 unresolved, never force100/77.7k. Latest main6dc6b501b9e940552d80af54a2f2736822071402 source inspected; wide-header fix retained. Code42732895772/Pages42732895909 SUCCESS.516 original-resolution failure,511–512,508–509 and prior open cases retained. No validated new application/backend change or deployment; GAS unnecessary. No member resources/passwords/tickets/settings changed. Replay uses stored compressed JPEG, not original upload/live browser.
 
 - 2026-11-10 10:00 KST review: metadata1000x26; A514:J1000 read; new516, next517. Stored516 independently viewed: actual mount merge404 selected, no decimal/k/leading-digit or summon/merge ambiguity. Native Canvas + actual Tesseract full scanScreen replay of stored JPEG returns selected404/no issues (reads404 선택됨/404); original1440x3120 browser failure remains unreproduced. Same class as437–438; do not force404 or mark resolved. Latest mainbf60faf60574c077bfba67c6ecd68b96af6dcbb2 source inspected; wide-header fix retained. Code42716419015 and Pages42716418976 SUCCESS. Existing511–512,508–509 and all prior unresolved cases retained. No validated new code change or application/backend deployment; GAS unnecessary. No member resources/passwords/tickets/settings changed. Replay uses stored compressed image, not original upload/live-browser proof.
 
