@@ -5,6 +5,7 @@ on:
     branches: [main]
 permissions:
   contents: read
+  actions: read
   pages: write
   id-token: write
 concurrency:
@@ -33,6 +34,21 @@ jobs:
         with:
           path: dist
           name: github-pages-${{ github.run_id }}-${{ github.run_attempt }}
+      - name: Wait for Pages artifact metadata
+        timeout-minutes: 3
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ARTIFACT_NAME: github-pages-${{ github.run_id }}-${{ github.run_attempt }}
+        run: |
+          for attempt in {1..10}; do
+            if artifact_id=$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/artifacts?per_page=100" --jq ".artifacts[] | select(.name == \"$ARTIFACT_NAME\" and .expired == false) | .id") && [[ -n "$artifact_id" ]]; then
+              echo "Pages artifact metadata is available."
+              exit 0
+            fi
+            if [[ "$attempt" -lt 10 ]]; then sleep 3; fi
+          done
+          echo "::error::Pages artifact metadata did not become available."
+          exit 1
       - id: deployment
         uses: actions/deploy-pages@v4
         with:
