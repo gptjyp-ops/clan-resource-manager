@@ -26,6 +26,27 @@ const oldRegions=locateRegions(a,'skill'),newRegions=locateRegions(b,'skill');
 for(const field of ['level','ratio'])assert.ok(Math.abs((newRegions.find(r=>r.field===field).rect[1]-oldRegions.find(r=>r.field===field).rect[1])*870-40)<1e-8);
 assert.deepEqual(findLandmarks({width:400,height:870,data:new Uint8ClampedArray(400*870*4).fill(255)},'skill'),{amount:undefined,info:undefined});
 assert.deepEqual(locateRegions(a,'eggMerge'),[]);
+
+// A notification badge touches the top-right edge of the filled info button.
+// Keep the info anchor at its original position; a badge alone is not an icon.
+for(const kind of ['skill','egg','mount']){
+ const p=image(62,490);
+ const paint=(x,y,c)=>p.data.set([...c,255],(y*p.width+x)*4);
+ for(let y=474;y<=488;y++)for(let x=315;x<=329;x++){
+  const d=(x-322)**2+(y-481)**2;
+  if(d<=49)paint(x,y,d>36?[0,0,0]:d>25?[255,255,255]:[235,65,85]);
+ }
+ const info=findLandmarks(p,kind).info;
+ assert.ok(info&&Math.abs(info.x-302)<=1&&Math.abs(info.y-480)<=1);
+ assert.ok(Math.abs(info.width-21)<=2&&Math.abs(info.height-21)<=2);
+}
+const badgeOnly={width:400,height:870,data:new Uint8ClampedArray(400*870*4).fill(255)};
+for(let y=474;y<=488;y++)for(let x=315;x<=329;x++){
+ const d=(x-322)**2+(y-481)**2;
+ if(d<=49)badgeOnly.data.set(d>36?[0,0,0,255]:d>25?[255,255,255,255]:[235,65,85,255],(y*400+x)*4);
+}
+assert.equal(findLandmarks(badgeOnly,'egg').info,undefined);
+
 // Downscaled filled icons can have only ~58% dark pixels because of the
 // white information glyph and antialiasing. A notification ring is sparser.
 const small=image(62,660);
