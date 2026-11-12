@@ -1,8 +1,10 @@
 # OCR review checkpoint
 
-Updated: 2026-11-12 22:00 KST. Latest deployed scanner: 2026-11-12.1.
+Updated: 2026-11-13 00:03 KST. Latest deployed scanner: 2026-11-12.1.
 
 ## Current scan
+
+- 2026-11-13 00:03 KST incremental review: fresh metadata ocr_errors667079903,1000x26; A523:J1000 read; only previously reviewed523–527 populated,528–1000 empty. Last527/next528 unchanged. Latest main e6fa2dc32fdfb0d3b25baf794944ef3da626f1cf; current ocr-worker.ts inspected: initialization errors/timeouts already retry once with cache disabled and fallback core, so empty-attempt OCR-01 reports alone do not establish a missing retry or justify a speculative change. No new browser/worker evidence;523–526 and earlier unresolved cases retained.527 remains correct wrong-screen rejection. No application/backend modification or deployment required; member resources/passwords/tickets/clan settings untouched.
 
 - 2026-11-12 22:00 KST review: metadata ocr_errors667079903,1000x26; A517:J1000 read; new523–527, last527/next528. Rows523–526 skill OCR-01 have empty attempts: recognizer loading failure, not numeric evidence. Representative523 saved original visually27.7k / summon74 /90of110, matching the separately supplied tablet image already tested in docs/OCR-TABLET-20261112.md. Its prior numeric fix does not establish the cause of these worker-load failures; retain523–526 unresolved pending browser/worker evidence. Repeated upload metadata does not prove identical pixels. Row527 representative independently viewed: ordinary pet summon, submitted to eggMerge; OCR-06 rejection correct, no selected count substituted. Latest main b2e2a56b8b74688e1fa41f7c0e07dc01eb0d98aa includes separately verified tablet fix0dcf1df91e61189c8297c69d50050d901455dd32 (Code43211234476 / Pages43211234484; diagnostic2026-11-12.1). Do not duplicate that deployment. Prior511–512,508–509,518–519 and other open cases retained. No confirmed new code fix or deployment in this review; no live member resources/passwords/tickets/settings changed.
 
