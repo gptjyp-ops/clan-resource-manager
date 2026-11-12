@@ -8,4 +8,4 @@ The user opens that page, enters the code and a new password twice, and submits 
 
 Tests: existing backend/deployment suites plus owner denial, hashed-code storage, issue-without-password-change, incorrect code, password validation, replacement, expiry, stale administrator salt, wrong clan, replay prevention, session/QR revocation and member preservation.
 
-Deployment status: pending CI and existing Apps Script web app update verification. No production code has been issued or password reset performed by the assistant. Credential entry and final submission are reserved for the user.
+Deployment verified for commit `0a5e641c62b018473e340d003eb030c4b5328637`: Code checks run 43208415524, Pages run 43208415347, and Google run 43208415357 all succeeded. The Google job explicitly completed `Update existing Google web app` successfully. Reloading the live Apps Script editor displayed and selected `preparePotatoAdminRecovery`. No production code has been issued or password reset performed by the assistant. Credential entry and final submission are reserved for the user.
