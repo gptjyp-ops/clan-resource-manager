@@ -334,3 +334,35 @@ assert.equal(action('removeMember',{clanId:qrClan.clan.id,adminToken:beforeRemov
 assert.equal(action('adminMembers',{clanId:qrClan.clan.id,adminToken:beforeRemovalAdmin.adminToken}).ok,false);
 assert.equal(action('adminTicketLogin',{...ownerRequest,token:finalOwnerQr.token}).ok,false);
 console.log('Only explicitly bound owner QR tickets grant admin access; ordinary/cross-clan tickets are rejected and QR rotation/unbinding revokes old admin sessions.');
+
+// Property lists over 50 rows are read-only in the editor. Recovery initiation
+// remains owner-only; the browser form accepts a short-lived one-use code.
+const recoveryId='ea36f0150d9e407d9f4329f2',recoveryRows=[['id'],[recoveryId,JSON.stringify('POTATO'),'invite','old-hash','old-salt','members','photos','created',3,999,'27']];
+const recoverySheet={getRange(row,col,count,width){return {setValues(values){values.forEach((r,i)=>r.forEach((v,j)=>recoveryRows[row-1+i][col-1+j]=v));}};}};
+context.findClan_=id=>{assert.equal(id,recoveryId);return {index:0,row:[...recoveryRows[1]],sheet:recoverySheet};};
+context.ScriptApp={getService:()=>({getUrl:()=> 'https://script.google.com/macros/s/test/exec'})};
+const recoveryLogs=[];context.console={log:text=>recoveryLogs.push(text)};
+const mint=()=>{context.preparePotatoAdminRecovery();return recoveryLogs.at(-1).match(/[a-f0-9]{64}$/)[0];};
+activeEmail='';assert.throws(()=>context.preparePotatoAdminRecovery());assert.equal(props.has('POTATO_ADMIN_RECOVERY'),false);
+activeEmail=effectiveEmail;
+const originalRecoveryRow=[...recoveryRows[1]],code1=mint();
+assert.deepEqual(recoveryRows[1],originalRecoveryRow);assert.equal(props.get('POTATO_ADMIN_RECOVERY').includes(code1),false);
+assert.throws(()=>context.completePotatoAdminRecovery('f'.repeat(64),'new-admin-password'));
+assert.throws(()=>context.completePotatoAdminRecovery(code1,'short'));
+assert.deepEqual(recoveryRows[1],originalRecoveryRow);
+const code2=mint();assert.throws(()=>context.completePotatoAdminRecovery(code1,'new-admin-password'));
+let pending=JSON.parse(props.get('POTATO_ADMIN_RECOVERY'));pending.expires=0;props.set('POTATO_ADMIN_RECOVERY',JSON.stringify(pending));
+assert.throws(()=>context.completePotatoAdminRecovery(code2,'new-admin-password'));
+const code3=mint();recoveryRows[1][4]='rotated-salt';assert.throws(()=>context.completePotatoAdminRecovery(code3,'new-admin-password'));recoveryRows[1][4]='old-salt';
+const code4=mint();recoveryRows[1][1]=JSON.stringify('Other');assert.throws(()=>context.completePotatoAdminRecovery(code4,'new-admin-password'));assert.throws(()=>mint());recoveryRows[1][1]=JSON.stringify('POTATO');
+const code5=mint();props.set('ADMIN_SESSION_'+recoveryId,'old-session');props.set('ADMIN_QR_'+recoveryId,'old-binding');
+const snapshotOtherSheets=JSON.stringify([...sheets].map(([name,s])=>[name,s.rows]));
+assert.equal(context.completePotatoAdminRecovery(code5,'new-admin-password').ok,true);
+assert.equal(props.has('POTATO_ADMIN_RECOVERY'),false);assert.equal(props.has('ADMIN_SESSION_'+recoveryId),false);assert.equal(props.has('ADMIN_QR_'+recoveryId),false);
+assert.throws(()=>context.completePotatoAdminRecovery(code5,'another-new-password'));
+for(const i of [0,1,2,5,6,7,10])assert.equal(recoveryRows[1][i],originalRecoveryRow[i]);
+assert.notEqual(recoveryRows[1][3],originalRecoveryRow[3]);assert.notEqual(recoveryRows[1][4],originalRecoveryRow[4]);assert.equal(recoveryRows[1][8],0);assert.equal(recoveryRows[1][9],0);
+assert.equal(JSON.stringify([...sheets].map(([name,s])=>[name,s.rows])),snapshotOtherSheets);
+assert.equal(JSON.stringify(recoveryRows).includes('new-admin-password'),false);
+assert.equal(recoveryLogs.some(s=>s.includes('new-admin-password')),false);
+console.log('One-use POTATO recovery: owner-only issue, hashed code, expiry/rotation/replay/stale-password/clan guards, session revocation and resource preservation passed.');

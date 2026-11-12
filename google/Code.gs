@@ -18,6 +18,7 @@ function setup_() {
  }finally{lock.releaseLock();}
 }
 function doGet(e){
+ if(e&&e.parameter&&e.parameter.adminRecovery==='1')return adminRecoveryPage_();
  var channel=String((e&&e.parameter&&e.parameter.channel)||'');
  if(!/^[a-zA-Z0-9-]{36}$/.test(channel))return HtmlService.createHtmlOutput('GitHub 클랜 재화관리 사이트에서 이용해주세요.');
  var t=HtmlService.createTemplateFromFile('Bridge');t.channel=channel;t.origin=CLAN_ORIGIN;
@@ -321,6 +322,49 @@ function recoverClanAdmin(){
   var result={id:id,name:JSON.parse(found.row[1]),managementUrl:CLAN_ORIGIN+'/clan-resource-manager/#manage='+id};
   console.log('클랜장 비밀번호 변경 완료: '+JSON.stringify(result));return result;
  }finally{lock.releaseLock();}
+}
+
+
+// Owner starts this explicitly in the editor. No credential changes until the
+// user submits the separate form. The code is never returned by a public RPC.
+function preparePotatoAdminRecovery(){
+ requireOperator_();
+ var lock=LockService.getScriptLock();lock.waitLock(15000);
+ try{
+  var id='ea36f0150d9e407d9f4329f2',found=findClan_(id);
+  if(JSON.parse(found.row[1])!=='POTATO')throw Error('감자클랜 정보를 확인해주세요.');
+  var url=ScriptApp.getService().getUrl();if(!url)throw Error('웹 앱 배포를 먼저 확인해주세요.');
+  var code=Utilities.getUuid().replace(/-/g,'')+Utilities.getUuid().replace(/-/g,''),salt=Utilities.getUuid();
+  PropertiesService.getScriptProperties().setProperty('POTATO_ADMIN_RECOVERY',JSON.stringify({id:id,hash:hash_(code,salt),salt:salt,adminSalt:String(found.row[4]),expires:Date.now()+600000}));
+  console.log('감자클랜 비밀번호 복구 화면: '+url+'?adminRecovery=1');
+  console.log('10분 이내 1회용 복구 코드 (공유하지 마세요): '+code);
+ }finally{lock.releaseLock();}
+}
+function completePotatoAdminRecovery(code,password){
+ var failure='복구 코드가 맞지 않거나 만료되었습니다. 운영 계정에서 다시 발급해주세요.';
+ if(typeof code!=='string'||!/^[a-f0-9]{64}$/.test(code))throw Error(failure);
+ clanPassword_(password);
+ var lock=LockService.getScriptLock();lock.waitLock(15000);
+ try{
+  var props=PropertiesService.getScriptProperties(),pending=JSON.parse(props.getProperty('POTATO_ADMIN_RECOVERY')||'null');
+  if(!pending||pending.id!=='ea36f0150d9e407d9f4329f2'||pending.expires<=Date.now()||hash_(code,pending.salt)!==pending.hash)throw Error(failure);
+  var found=findClan_(pending.id);
+  if(JSON.parse(found.row[1])!=='POTATO'||String(found.row[4])!==pending.adminSalt)throw Error(failure);
+  // Consume before writing, so a partial storage failure cannot replay the code.
+  props.deleteProperty('POTATO_ADMIN_RECOVERY');
+  var salt=Utilities.getUuid();
+  found.sheet.getRange(found.index+2,4,1,2).setValues([[hash_(password,salt),salt]]);
+  found.sheet.getRange(found.index+2,9,1,2).setValues([[0,0]]);
+  props.deleteProperty('ADMIN_SESSION_'+pending.id);props.deleteProperty('ADMIN_QR_'+pending.id);
+  SpreadsheetApp.flush();
+  return {ok:true};
+ }finally{lock.releaseLock();}
+}
+function adminRecoveryPage_(){
+ return HtmlService.createHtmlOutput(`<!doctype html><html lang="ko"><head><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="no-referrer"><title>감자클랜 비밀번호 복구</title>
+ <style>body{font:18px system-ui;background:#101e19;color:#e6f8ee;margin:0;padding:28px}main{max-width:480px;margin:35px auto}label{display:block;margin:24px 0 8px}input,button{box-sizing:border-box;width:100%;padding:14px;font:inherit;border-radius:8px;border:1px solid #789}button{margin-top:28px;background:#89deb2;color:#10271b;cursor:pointer}p{line-height:1.6}#status{white-space:pre-wrap}</style></head><body><main><h1>감자클랜 비밀번호 복구</h1><p>운영 계정에서 발급한 1회용 코드로 새 클랜장 비밀번호를 설정합니다. 회원 재화와 개인 티켓은 유지됩니다.</p>
+ <form id="form"><label for="code">1회용 복구 코드</label><input id="code" type="password" required autocomplete="off" pattern="[a-f0-9]{64}" minlength="64" maxlength="64"><label for="password">새 클랜장 비밀번호 (10~100자)</label><input id="password" type="password" required autocomplete="new-password" minlength="10" maxlength="100"><label for="confirm">새 비밀번호 확인</label><input id="confirm" type="password" required autocomplete="new-password" minlength="10" maxlength="100"><button id="submit" type="submit">비밀번호 변경</button></form><p id="status" role="status" aria-live="polite"></p>
+ <script>const form=document.getElementById('form'),status=document.getElementById('status'),button=document.getElementById('submit');form.addEventListener('submit',function(event){event.preventDefault();const password=document.getElementById('password').value;if(password!==document.getElementById('confirm').value){status.textContent='비밀번호 확인이 일치하지 않습니다.';return;}button.disabled=true;status.textContent='변경 중입니다…';google.script.run.withSuccessHandler(function(){form.reset();form.hidden=true;status.textContent='감자클랜 클랜장 비밀번호를 변경했습니다. 재화사이트에서 새 비밀번호로 로그인해주세요.';}).withFailureHandler(function(){button.disabled=false;status.textContent='변경하지 못했습니다. 비밀번호는 10~100자로 입력하고, 코드가 만료되었다면 운영 계정에서 다시 발급해주세요.';}).completePotatoAdminRecovery(document.getElementById('code').value,password);});</script></main></body></html>`).setTitle('감자클랜 비밀번호 복구');
 }
 
 function recoverySlot_(clanId,name){return 'MEMBER_RECOVERY_'+clanId+'_'+hash_(name,'recovery-name');}
