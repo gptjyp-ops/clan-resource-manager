@@ -1,8 +1,10 @@
 # OCR review checkpoint
 
-Updated: 2026-11-13 00:03 KST. Latest deployed scanner: 2026-11-12.1.
+Updated: 2026-11-13 02:04 KST. Latest deployed scanner: 2026-11-12.1.
 
 ## Current scan
+
+- 2026-11-13 02:04 KST incremental review: fresh metadata ocr_errors667079903,1000x26; A523:J1000 read; only523–527 populated,528–1000 empty. Last527/next528 unchanged. Latest main d38cddf0d25d8cc0817dd7a463582e92822481f0; its Code checks43243685786 and Pages43243686304 succeeded. No new worker/browser evidence for523–526 or earlier unresolved cases; previous classifications retained without numeric guesses.527 remains correctly rejected ordinary pet summon in merge slot. No application/backend change or additional application deployment required; member resources/passwords/tickets/clan settings untouched.
 
 - 2026-11-13 00:03 KST incremental review: fresh metadata ocr_errors667079903,1000x26; A523:J1000 read; only previously reviewed523–527 populated,528–1000 empty. Last527/next528 unchanged. Latest main e6fa2dc32fdfb0d3b25baf794944ef3da626f1cf; current ocr-worker.ts inspected: initialization errors/timeouts already retry once with cache disabled and fallback core, so empty-attempt OCR-01 reports alone do not establish a missing retry or justify a speculative change. No new browser/worker evidence;523–526 and earlier unresolved cases retained.527 remains correct wrong-screen rejection. No application/backend modification or deployment required; member resources/passwords/tickets/clan settings untouched.
 
