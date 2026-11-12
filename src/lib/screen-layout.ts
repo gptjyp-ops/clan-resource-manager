@@ -100,7 +100,8 @@ export function findLandmarks(p:Pixels,kind:PhotoKind):{amount?:Box;info?:Box;pr
  }
  if(kind==='skill'||kind==='egg'||kind==='mount'){
   // Compact skill captures place a darker resource bar against the top edge.
-  const area=kind==='mount'?{x:.34*w,y:.17*h,width:.32*w,height:.38*h}:{x:.04*w,y:kind==='skill'?0:.025*h,width:.23*w,height:kind==='skill'?.185*h:.16*h};
+  // Short mount dialogs put their centered resource header above the collection.
+  const area=kind==='mount'?{x:.34*w,y:.025*h,width:.32*w,height:.525*h}:{x:.04*w,y:kind==='skill'?0:.025*h,width:.23*w,height:kind==='skill'?.185*h:.16*h};
   const bars=components(p,area,(r,g,b)=>Math.min(r,g,b)>(kind==='skill'?20:40)&&Math.max(r,g,b)<185&&Math.max(r,g,b)-Math.min(r,g,b)<40)
    .filter(b=>b.width>(h/w<1.5?.075:.09)*w&&b.height>.022*w&&b.height<.075*w&&b.width/b.height>2.3);
   bars.sort((a,b)=>a.y-b.y);result.amount=bars.find(bar=>components(p,bar,(r,g,b)=>Math.min(r,g,b)>205,.12).some(b=>b.height>.012*w&&b.width>.005*w))||bars[0];

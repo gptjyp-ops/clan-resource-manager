@@ -289,3 +289,14 @@ for(const height of [500,870]){
  for(let y=top;y<top+12;y++)for(let x=19;x<55;x++)p.data.set([100,100,100,255],(y*400+x)*4);
  assert.equal(!!findLandmarks(p,'egg').amount,height===500);
 }
+
+// A short mount dialog places its centered amount above the old 17% cutoff.
+for(const [height,top] of [[592,62],[870,220]]){
+ const p={width:400,height,data:new Uint8ClampedArray(400*height*4).fill(255)};
+ for(let y=top;y<top+16;y++)for(let x=176;x<236;x++)p.data.set([100,100,100,255],(y*400+x)*4);
+ for(const left of [191,201,211])for(let y=top+3;y<top+13;y++)for(let x=left;x<left+5;x++)p.data.set([255,255,255,255],(y*400+x)*4);
+ const before=Array.from(p.data);
+ assert.deepEqual(findLandmarks(p,'mount').amount,{x:176,y:top,width:60,height:16});
+ assert.deepEqual(Array.from(p.data),before,'Landmark detection must not alter OCR image pixels');
+}
+console.log('Short mount modal and ordinary phone headers retain their full numeric resource bar.');
