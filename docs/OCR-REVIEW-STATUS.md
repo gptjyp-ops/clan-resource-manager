@@ -1,8 +1,10 @@
 # OCR review checkpoint
 
-Updated: 2026-11-12 10:00 KST. Last report scanner: 2026-10-31.1.
+Updated: 2026-11-12 12:03 KST. Last report scanner: 2026-10-31.1.
 
 ## Current scan
+
+- 2026-11-12 12:03 KST incremental review: metadata ocr_errors667079903,1000x26; A517:J1000 read, only517–520 populated, last520/next521 unchanged. Latest main4cf55ca4a90fbd468a7b0dd3910933a6e3d6ebfc OCR anchor and Pages workflow inspected; badge segmentation fix and bounded artifact-metadata gate retained. Code43131374397 and Pages43131374579 SUCCESS. No new reports or changed diagnostic evidence.517/520 saved-replay fix verified previously;518–519 original-browser-only failures,511–512 potion header,508–509 and other unverified cases retained without guessed values. No application/backend changes or application deployment this scan; GAS unnecessary. Member resources/passwords/tickets/settings untouched.
 
 - 2026-11-12 10:00 KST incremental review: metadata ocr_errors667079903,1000x26; A517:J1000 read, only517–520 populated, last520/next521 unchanged. Latest mainc8703fac3da110d077aecdbbcccb64f557949a06 OCR anchor and Pages workflow inspected; badge segmentation fix and bounded artifact-metadata gate retained. Code43116642557 and Pages43116642543 SUCCESS. No new reports or changed diagnostic evidence.517/520 saved-replay fix verified previously;518–519 original-browser-only failures,511–512 potion header,508–509 and other unverified cases retained without guessed values. No application/backend changes or application deployment this scan; GAS unnecessary. Member resources/passwords/tickets/settings untouched.
 
