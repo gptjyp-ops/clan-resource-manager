@@ -1,0 +1,11 @@
+import {useEffect,useState} from 'react';
+import {TicketImport} from './MemberTicket';
+import {clanAction,adminTicketSupported} from './lib/api';
+import {rememberTicket} from './lib/member-ticket';
+import {t} from './lib/i18n';
+
+export default function ClanAdminQr({clanId,adminToken,disabled,onSession}:{clanId:string;adminToken:string;disabled:boolean;onSession:(token:string)=>void}){
+ const [nickname,setNickname]=useState(''),[busy,setBusy]=useState(false),[error,setError]=useState(''),[notice,setNotice]=useState('');
+ useEffect(()=>{let live=true;if(adminTicketSupported)clanAction('adminTicketInfo',{clanId,adminToken}).then(r=>{if(live)setNickname(r.adminTicketNickname||'');}).catch(e=>{if(live)setError(e instanceof Error?e.message:t('QR 연결 확인 실패'));});return()=>{live=false;};},[clanId,adminToken]);
+ return <section className="member-password-reset"><h3>{t('클랜장 QR 연결')}</h3><p className="helper">{t('처음 한 번 본인 개인 QR을 연결하세요. 다음부터 이 QR로 들어오면 클랜장 관리가 바로 열립니다. 일반 회원 QR에는 관리 권한이 없습니다.')}</p>{!adminTicketSupported?<p role="status">{t('클랜장 QR은 구글 스크립트 업데이트 후 사용할 수 있습니다.')}</p>:<><p>{nickname?nickname+' · '+t('클랜장 QR 연결됨'):t('연결된 클랜장 QR이 없습니다.')}</p><TicketImport disabled={busy||disabled} onImport={async ticket=>{if(busy||disabled)return;if(ticket.clanId!==clanId)throw Error(t('현재 클랜의 본인 QR을 선택해주세요.'));setBusy(true);setError('');setNotice('');try{const r=await clanAction('bindAdminTicket',{clanId,adminToken,nickname:ticket.nickname,ticketToken:ticket.token});if(!r.adminToken)throw Error(t('클랜장 응답을 확인하지 못했습니다.'));rememberTicket(ticket);setNickname(ticket.nickname);onSession(r.adminToken);setNotice(t('본인 QR을 클랜장으로 연결했습니다. 다음부터 QR로 관리할 수 있습니다.'));}finally{setBusy(false);}}}/>{nickname&&<button type="button" className="capture-paste" disabled={busy||disabled} onClick={async()=>{setBusy(true);setError('');setNotice('');try{const r=await clanAction('unbindAdminTicket',{clanId,adminToken});if(!r.adminToken)throw Error(t('클랜장 응답을 확인하지 못했습니다.'));onSession(r.adminToken);setNickname('');setNotice(t('클랜장 QR 연결을 해제했습니다.'));}catch(e){setError(e instanceof Error?e.message:t('QR 연결 해제 실패'));}finally{setBusy(false);}}}>{t('클랜장 QR 연결 해제')}</button>}<p className="helper">{t('QR 재발급·회원 비밀번호 변경·회원 삭제 시에는 클랜장 QR을 다시 연결해야 합니다. 본인 QR만 연결하고 다른 사람에게 공유하지 마세요.')}</p></>}{error&&<p role="alert">{t(error)}</p>}{notice&&<p role="status">{notice}</p>}</section>;
+}

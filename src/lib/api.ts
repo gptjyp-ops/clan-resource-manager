@@ -18,9 +18,10 @@ export type ClanInfo={id:string;name:string;server?:string;inviteKey?:string;ent
 export let serverSelectionSupported=false;
 export let memberPasswordResetSupported=false;
 export let memberRemovalSupported=false;
+export let adminTicketSupported=false;
 export let entryPasswordSupported=false;
 export let serverOptions:string[]=[];
-type Reply={memberRemoval?:boolean;memberRecords?:{nickname:string;updated_at:string}[];ticketClanEntry?:boolean;passwordUpdated?:boolean;ticketPasswordSave?:boolean;photoRemoval?:boolean;operatorRecovery?:boolean;expiresAt?:number;entryPassword?:boolean;entryAccessKey?:string;memberSelfRecovery?:boolean;recoveryCode?:string;members?:string[];memberPasswordReset?:boolean;clan?:ClanInfo;adminToken?:string;multiClan?:boolean;diagnosticPhotos?:boolean;diagnosticReports?:boolean;preserveExisting?:boolean;details?:Inventory;serverSelection?:boolean;servers?:string[];ok:boolean;error?:string;records?:any[];photos?:Partial<Record<PhotoKind,string>>;base64?:string;type?:string};
+type Reply={adminTicket?:boolean;adminTicketLogin?:boolean;adminTicketNickname?:string;memberRemoval?:boolean;memberRecords?:{nickname:string;updated_at:string}[];ticketClanEntry?:boolean;passwordUpdated?:boolean;ticketPasswordSave?:boolean;photoRemoval?:boolean;operatorRecovery?:boolean;expiresAt?:number;entryPassword?:boolean;entryAccessKey?:string;memberSelfRecovery?:boolean;recoveryCode?:string;members?:string[];memberPasswordReset?:boolean;clan?:ClanInfo;adminToken?:string;multiClan?:boolean;diagnosticPhotos?:boolean;diagnosticReports?:boolean;preserveExisting?:boolean;details?:Inventory;serverSelection?:boolean;servers?:string[];ok:boolean;error?:string;records?:any[];photos?:Partial<Record<PhotoKind,string>>;base64?:string;type?:string};
 let bridgePromise:Promise<{source:Window;origin:string;channel:string}>|undefined;
 let bridgeCleanup:(()=>void)|undefined;
 const pending=new Map<string,{resolve:(r:Reply)=>void;reject:(e:Error)=>void;timer:ReturnType<typeof setTimeout>}>();
@@ -62,7 +63,7 @@ export async function saveInventory(nickname:string,password:string,inventory:In
  if(removedPhotos.length)throw Error('사진 삭제는 구글 저장 연결에서 사용할 수 있습니다.');
  const form=new FormData();form.set('nickname',nickname);form.set('password',password);form.set('inventory',JSON.stringify(inventory));if(changedFields)form.set('changedFields',JSON.stringify(changedFields));for(const [kind,file] of Object.entries(files))if(file)form.set('photo_'+kind,file);const r=await fetch(apiUrl('/api/records'),{method:'POST',body:form});const d:any=await r.json();if(!r.ok)throw Error(d.error);return d as Reply;
 }
-export async function supportsClans(){try{const reply=await rpc('list',{operation:'capabilities'});serverSelectionSupported=!!reply.serverSelection;memberPasswordResetSupported=!!reply.memberPasswordReset;memberRemovalSupported=!!reply.memberRemoval;entryPasswordSupported=!!reply.entryPassword;serverOptions=(reply.servers||[]).filter(s=>/^\d{1,6}$/.test(s));return !!reply.multiClan;}catch(e){if(e instanceof Error&&e.message.includes('클랜 입장 코드가 맞지 않습니다'))return false;throw e;}}
+export async function supportsClans(){try{const reply=await rpc('list',{operation:'capabilities'});serverSelectionSupported=!!reply.serverSelection;memberPasswordResetSupported=!!reply.memberPasswordReset;memberRemovalSupported=!!reply.memberRemoval;adminTicketSupported=!!reply.adminTicketLogin;entryPasswordSupported=!!reply.entryPassword;serverOptions=(reply.servers||[]).filter(s=>/^\d{1,6}$/.test(s));return !!reply.multiClan;}catch(e){if(e instanceof Error&&e.message.includes('클랜 입장 코드가 맞지 않습니다'))return false;throw e;}}
 export async function clanAction(operation:string,payload:Record<string,unknown>={}){return rpc('list',{operation,...payload});}
 export function invitationLink(clan:ClanInfo){return location.origin+import.meta.env.BASE_URL+'#'+new URLSearchParams(clan.entryPasswordRequired?{clan:clan.id}:{clan:clan.id,code:clan.inviteKey||''}).toString();}
 const photoCache=new Map<string,Promise<string>>();
@@ -119,6 +120,7 @@ export async function enterClanTicket(input:MemberTicket):Promise<void>{
  if(result.clan?.id!==ticket.clanId||!result.entryAccessKey)throw Error('티켓의 클랜 입장 정보를 확인하지 못했습니다.');
  rememberTicket(ticket);
  sessionStorage.setItem(ticket.clanId==='legacy'?'clanAccessKey':'clanAccessKey:'+ticket.clanId,result.entryAccessKey);
- const target='#clan='+encodeURIComponent(ticket.clanId);
+ if(result.adminTicket)sessionStorage.removeItem('clanAdminQrLoggedOut:'+ticket.clanId);
+ const target=(result.adminTicket?'#manage=':'#clan=')+encodeURIComponent(ticket.clanId);
  if(location.hash===target)location.reload();else location.hash=target;
 }
