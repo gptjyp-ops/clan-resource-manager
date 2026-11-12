@@ -204,7 +204,10 @@ export function ratioCandidates(region:LocatedRegion):LocatedRegion[]{
  const [x,y,w,h]=region.rect,top=Math.max(0,y-h*.28);
  const expanded:LocatedRegion={...region,rect:[Math.max(0,x-.01),top,Math.min(w+.02,1-Math.max(0,x-.01)),Math.min(h*1.3,1-top)]};
  const taller:LocatedRegion={...expanded,rect:[expanded.rect[0],Math.max(0,y-h*.55),expanded.rect[2],Math.min(h*1.7,1-Math.max(0,y-h*.55))]};
- const barCandidates:LocatedRegion[]=region.alternativeRect?[{...region,rect:region.alternativeRect,mode:'raw'},{...region,rect:region.alternativeRect}]:[];
+ // White progress digits sit above yellow stars on compact tablet captures.
+ // Read the complete bar in white-only mode before mixed/raw retries, so
+ // adjacent stars cannot reshape a 9 into a 3.
+ const barCandidates:LocatedRegion[]=region.alternativeRect?[{...region,rect:region.alternativeRect,mode:'white'},{...region,rect:region.alternativeRect,mode:'raw'},{...region,rect:region.alternativeRect}]:[];
  return [region,...barCandidates,{...expanded,mode:'raw'},expanded,{...taller,mode:'white'},{...taller,mode:'raw'}];
 }
 

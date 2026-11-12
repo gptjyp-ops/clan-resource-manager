@@ -13,7 +13,7 @@ export const regions:Record<PhotoKind,Region[]>={
  mountMerge:[{field:'selected',rect:[.105,.303,.034,.022],mode:'black'}],
  potion:[{field:'amount',rect:[.149,.133,.080,.021],mode:'yellow'}]
 };
-export function parseRead(field:Region['field'],text:string):Partial<Item>{let t=text.replace(/\s/g,'');if(field==='amount'&&/^\d+,\d{1,2}[kKmMbB]$/.test(t))t=t.replace(',','.');if(field==='ratio'){const m=t.match(/^(\d+)\/(\d+)$/);return m&&Number(m[1])<=Number(m[2])?{progress:m[1],target:m[2]}:{};}
+export function parseRead(field:Region['field'],text:string):Partial<Item>{let t=text.replace(/\s/g,'');if(field==='amount'&&/^\d+,\d{1,2}[kKmMbB]$/.test(t))t=t.replace(',','.');if(field==='ratio'){const m=t.match(/^(\d+)\/(\d+)$/);return m&&Number(m[2])>0&&Number(m[1])<=Number(m[2])?{progress:m[1],target:m[2]}:{};}
  if(field==='amount'){return parseNumber(t)!==null?{amount:t}:{};}
  return /^\d+$/.test(t)?{[field]:t}:{};
 }
@@ -60,6 +60,16 @@ export async function scanScreen(file:File,kind:PhotoKind,onProgress:(n:number)=
  for(const r of candidates){const canvas=document.createElement('canvas');const [x,y,w,h]=r.rect;const scale=Math.min(750/(bitmap.width*w),160/(bitmap.height*h));const cw=Math.round(bitmap.width*w*scale),ch=Math.round(bitmap.height*h*scale);canvas.width=cw;canvas.height=ch;const ctx=canvas.getContext('2d')!;ctx.drawImage(bitmap,bitmap.width*x,bitmap.height*y,bitmap.width*w,bitmap.height*h,0,0,cw,ch);
  const data=ctx.getImageData(0,0,canvas.width,canvas.height);for(let i=0;i<data.data.length;i+=4){if(r.mode==='raw')continue;const red=data.data[i],g=data.data[i+1],b=data.data[i+2];const ink=r.mode==='white'?Math.min(red,g,b)>180&&Math.max(red,g,b)-Math.min(red,g,b)<55:r.mode==='black'?Math.max(red,g,b)<100:r.mode==='mixed'?((Math.min(red,g,b)>180&&Math.max(red,g,b)-Math.min(red,g,b)<55)||(red>150&&g>150&&b<140)):red>150&&g>150&&b<140;const value=ink?0:255;data.data[i]=value;data.data[i+1]=value;data.data[i+2]=value;}if(r.field==='amount'&&r.mode!=='raw')data.data.set(cleanAmountPixels(data).data);ctx.putImageData(data,0,0);const padded=document.createElement('canvas');padded.width=canvas.width+40;padded.height=canvas.height+40;const paddedContext=padded.getContext('2d')!;paddedContext.fillStyle='white';paddedContext.fillRect(0,0,padded.width,padded.height);paddedContext.drawImage(canvas,20,20);
  await worker.setParameters({tessedit_char_whitelist:r.field==='ratio'?'0123456789/':r.field==='amount'?'0123456789.,kKmMbB':'0123456789',tessedit_pageseg_mode:PSM.SINGLE_LINE});const result=await worker.recognize(padded);original.push(result.data.text.trim());diagnostics.attempts.push({field:r.field,source:r===fallback?'fallback':'adaptive',text:result.data.text.trim()});let parsed=parseRead(r.field,result.data.text);
+ // A compressed single-line read can confuse adjacent 1s with M, or miss
+ // a lone zero. Retry the same pixels in independent segmentation modes;
+ // the decimal, digit-count and compact-unit checks below still apply.
+ if(r.field==='amount'&&!parsed.amount){
+  for(const mode of [PSM.SINGLE_WORD,PSM.SPARSE_TEXT]){
+   await worker.setParameters({tessedit_pageseg_mode:mode});
+   const retry=(await worker.recognize(padded)).data.text.trim();original.push(retry);diagnostics.attempts.push({field:'amount',source:r===fallback?'fallback':'adaptive',text:retry});
+   parsed=parseRead('amount',retry);if(parsed.amount)break;
+  }
+ }
  if(r.field==='amount'&&parsed.amount){
   let checked=amountDecimal(data,parsed.amount);
   // Retry a missing compact unit as its own glyph. Include digits in the

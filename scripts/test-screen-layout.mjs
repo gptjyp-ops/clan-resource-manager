@@ -300,3 +300,11 @@ for(const [height,top] of [[592,62],[870,220]]){
  assert.deepEqual(Array.from(p.data),before,'Landmark detection must not alter OCR image pixels');
 }
 console.log('Short mount modal and ordinary phone headers retain their full numeric resource bar.');
+
+// Compact tablet bars have white digits next to yellow stars. Prioritize the
+// full bar's white-only crop before raw/mixed retries that can turn 9 into 3.
+const completeBar={field:'ratio',rect:[.65,.78,.11,.016],mode:'mixed',alternativeRect:[.64,.78,.13,.025]};
+const completeCandidates=ratioCandidates(completeBar);
+assert.deepEqual(completeCandidates[1].rect,completeBar.alternativeRect);
+assert.equal(completeCandidates[1].mode,'white');
+assert.equal(completeCandidates[2].mode,'raw');

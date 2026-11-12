@@ -8,7 +8,15 @@ const dir=await mkdtemp(join(tmpdir(),'clan-scan-cancel-'));
 try{
  const output=join(dir,'scan.mjs');
  await build({entryPoints:['src/lib/screen-ocr.ts'],outfile:output,bundle:true,format:'esm',platform:'node',define:{'import.meta.env.BASE_URL':JSON.stringify('/')},plugins:[{name:'fake-ocr',setup(b){b.onResolve({filter:/^tesseract\.js$/},()=>({path:'fake-ocr',namespace:'fake'}));b.onLoad({filter:/.*/,namespace:'fake'},()=>({contents:'export const PSM={SINGLE_LINE:7,SINGLE_CHAR:10,SPARSE_TEXT:11};export async function createWorker(){return globalThis.testOcrWorker;}',loader:'js'}));}}]});
- const {scanScreen}=await import(pathToFileURL(output));
+ const {scanScreen,parseRead}=await import(pathToFileURL(output));
+ // A target of zero is never a valid summon progress bar. Do not stop retrying
+ // on a plausible-looking 0/0 after dropping the narrow 1s in 90/110.
+ for(const text of ['0/0','90/0','90/10'])assert.deepEqual(parseRead('ratio',text),{});
+ assert.deepEqual(parseRead('ratio','90/110'),{progress:'90',target:'110'});
+ assert.deepEqual(parseRead('ratio','0/110'),{progress:'0',target:'110'});
+ assert.deepEqual(parseRead('amount','1M.2k'),{});
+ assert.deepEqual(parseRead('amount','11.2k'),{amount:'11.2k'});
+ assert.deepEqual(parseRead('amount','0'),{amount:'0'});
  let closed=0,terminated=0,rejectRecognition,recognizing;
  const ready=new Promise(resolve=>{recognizing=resolve;});
  globalThis.createImageBitmap=async()=>({width:400,height:870,close(){closed++;}});
