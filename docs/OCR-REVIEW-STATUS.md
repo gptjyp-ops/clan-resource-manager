@@ -1,8 +1,10 @@
 # OCR review checkpoint
 
-Updated: 2026-11-13 02:04 KST. Latest deployed scanner: 2026-11-12.1.
+Updated: 2026-11-13 03:59 KST. Latest deployed scanner: 2026-11-12.1.
 
 ## Current scan
+
+- 2026-11-13 03:59 KST incremental review: fresh metadata ocr_errors667079903,1000x26; A523:J1000 read; only523–527 populated,528–1000 empty. Last527/next528 unchanged. Latest main143a1dd1dfb4642496b347efa8984616345942d8; Code checks43265586658 and Pages43265586279 completed successfully. No additional report/browser evidence to resolve523–526 worker-load failures or earlier open cases; prior classifications retained without inferred numeric correction.527 remains appropriate wrong-screen rejection. No application/backend modification or new application deployment required. Live member resources/passwords/tickets/clan settings untouched.
 
 - 2026-11-13 02:04 KST incremental review: fresh metadata ocr_errors667079903,1000x26; A523:J1000 read; only523–527 populated,528–1000 empty. Last527/next528 unchanged. Latest main d38cddf0d25d8cc0817dd7a463582e92822481f0; its Code checks43243685786 and Pages43243686304 succeeded. No new worker/browser evidence for523–526 or earlier unresolved cases; previous classifications retained without numeric guesses.527 remains correctly rejected ordinary pet summon in merge slot. No application/backend change or additional application deployment required; member resources/passwords/tickets/clan settings untouched.
 
