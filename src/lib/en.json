@@ -604,5 +604,18 @@
   "복사하지 못했습니다. 계좌번호를 길게 누르거나 선택해 복사해주세요.": "Could not copy. Press and hold or select the account number to copy it.",
   "재화 등록이 완료됐습니다.": "Your resources have been saved.",
   "저장된 내용을 클랜 현황에서 확인하세요.": "Check your saved resources in the clan overview.",
-  "내 재화 다시 수정": "Edit my resources again"
+  "내 재화 다시 수정": "Edit my resources again",
+  "클랜원 삭제": "Remove clan member",
+  "클랜을 만든 클랜장의 관리 로그인으로만 삭제할 수 있습니다. 삭제한 회원은 현황과 합계에서 제외되며 기존 개인 QR은 사용할 수 없습니다.": "Only the clan creator's administrator login can remove members. Removed members are excluded from the roster and totals, and their old personal QR tickets stop working.",
+  "클랜원 삭제는 구글 스크립트 업데이트 후 사용할 수 있습니다.": "Member removal requires a Google script update.",
+  "삭제할 클랜원 목록 불러오기": "Load members for removal",
+  "삭제할 클랜원": "Member to remove",
+  "대상 닉네임을 확인한 뒤 아래에 똑같이 입력해주세요. 실제 게임의 클랜에서는 탈퇴 처리되지 않습니다.": "Check the nickname and type it exactly below. This does not remove the member from the clan inside the game.",
+  "삭제 확인 닉네임": "Type nickname to confirm removal",
+  "선택한 클랜원 삭제": "Remove selected member",
+  "삭제할 등록 회원이 없습니다.": "There are no registered members to remove.",
+  "클랜원 목록에서 삭제했습니다. 기존 기록과 사진은 비공개 보관됩니다.": "Removed from the roster. Previous records and photos are archived privately.",
+  "클랜원 삭제 실패": "Member removal failed",
+  "삭제할 닉네임을 정확히 다시 입력해주세요.": "Type the member's exact nickname again to confirm removal.",
+  "회원 기록이 변경되었습니다. 목록을 새로 불러온 뒤 확인해주세요.": "The member's record has changed. Reload the list and check again."
 }

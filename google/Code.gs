@@ -152,7 +152,7 @@ function clanName_(name){if(typeof name!=='string'||!name.trim()||name.trim().le
 function clanPassword_(password){if(typeof password!=='string'||password.length<10||password.length>100)throw Error('클랜장 비밀번호는 10~100자로 정해주세요.');return password;}
 function clanOperation_(p){
  if(p.operation==='assistant')return assistant_(p,authorizeClan_(p));
- var op=p.operation;if(op==='ticketClanEnter'){var ticketClan=resolveClan_(p),ticketReply=ticketEnter_(p,ticketClan);ticketReply.entryAccessKey=ticketClan.key;return ticketReply;}if(op==='clanCodeResetMember')return clanCodeResetMember_(p);if(op==='ticketEnter')return ticketEnter_(p,authorizeClan_(p));if(op==='issueMemberTicket')return issueMemberTicket_(p,authorizeClan_(p));if(op==='issueMemberRecovery'||op==='recoverMemberPassword')return memberRecovery_(p,op);if(op==='memberLogin')return memberLogin_(p,authorizeClan_(p));if(op==='capabilities')return {ok:true,ticketClanEntry:true,multiClan:true,clanRecoveryCodes:true,ticketPasswordSave:true,photoRemoval:true,memberTickets:true,memberLogin:true,memberPasswordReset:true,memberSelfRecovery:true,operatorRecovery:true,entryPassword:true,preserveExisting:true,diagnosticReports:true,diagnosticPhotos:true,serverSelection:true,servers:Array.from(new Set(clanRows_(registry_()).map(function(r){return String(r[10]||'');}).filter(function(s){return /^\d{1,6}$/.test(s);}))).sort(function(a,b){return Number(a)-Number(b);})};
+ var op=p.operation;if(op==='ticketClanEnter'){var ticketClan=resolveClan_(p),ticketReply=ticketEnter_(p,ticketClan);ticketReply.entryAccessKey=ticketClan.key;return ticketReply;}if(op==='clanCodeResetMember')return clanCodeResetMember_(p);if(op==='ticketEnter')return ticketEnter_(p,authorizeClan_(p));if(op==='issueMemberTicket')return issueMemberTicket_(p,authorizeClan_(p));if(op==='issueMemberRecovery'||op==='recoverMemberPassword')return memberRecovery_(p,op);if(op==='memberLogin')return memberLogin_(p,authorizeClan_(p));if(op==='capabilities')return {ok:true,ticketClanEntry:true,multiClan:true,clanRecoveryCodes:true,ticketPasswordSave:true,photoRemoval:true,memberTickets:true,memberLogin:true,memberPasswordReset:true,memberRemoval:true,memberSelfRecovery:true,operatorRecovery:true,entryPassword:true,preserveExisting:true,diagnosticReports:true,diagnosticPhotos:true,serverSelection:true,servers:Array.from(new Set(clanRows_(registry_()).map(function(r){return String(r[10]||'');}).filter(function(s){return /^\d{1,6}$/.test(s);}))).sort(function(a,b){return Number(a)-Number(b);})};
  var lock=LockService.getScriptLock();if(!lock.tryLock(15000))throw Error('다른 요청을 처리 중입니다. 잠시 후 다시 시도해주세요.');
  try{
   if(op==='createClan'||op==='claimLegacy'){
@@ -193,7 +193,19 @@ function clanOperation_(p){
    return {ok:true,recoveryCode:'CLAN-'+code};
   }
   if(op==='adminInfo')return {ok:true,clan:publicClan_(found.row)};
-  if(op==='adminMembers')return {ok:true,members:rows_(sheet_(clanFrom_(found.row))).map(function(r){return JSON.parse(r[0]);}).sort()};
+  if(op==='adminMembers'){var memberRecords=rows_(sheet_(clanFrom_(found.row))).map(function(r){return {nickname:JSON.parse(r[0]),updated_at:String(r[5])};}).sort(function(a,b){return a.nickname.localeCompare(b.nickname);});return {ok:true,members:memberRecords.map(function(r){return r.nickname;}),memberRecords:memberRecords};}
+  if(op==='removeMember'){
+   if(typeof p.nickname!=='string'||!p.nickname.trim()||p.nickname.length>24||typeof p.confirmNickname!=='string'||p.confirmNickname!==p.nickname||typeof p.expectedUpdatedAt!=='string')throw Error('삭제할 닉네임을 정확히 다시 입력해주세요.');
+   var name=p.nickname.trim().normalize('NFKC'),members=sheet_(clanFrom_(found.row)),memberRows=rows_(members),index=memberRows.findIndex(function(r){return JSON.parse(r[0])===name;});
+   if(index<0)throw Error('등록된 회원 닉네임을 찾을 수 없습니다.');
+   var original=memberRows[index];if(String(original[5])!==p.expectedUpdatedAt)throw Error('회원 기록이 변경되었습니다. 목록을 새로 불러온 뒤 확인해주세요.');
+   // Preserve the complete row and photo references before removing it from the roster.
+   // This archive is never returned through public member or photo endpoints.
+   var book=SpreadsheetApp.openById(PropertiesService.getScriptProperties().getProperty('SHEET_ID')),archiveName='removed_'+found.row[0],archive=book.getSheetByName(archiveName);
+   if(!archive){archive=book.insertSheet(archiveName);archive.appendRow(['nickname_json','password_hash','salt','details_json','photos_json','updated_at','failed_attempts','lock_until','removed_at','clan_id']);archive.setFrozenRows(1);}
+   archive.hideSheet();if(!rows_(archive).some(function(r){return JSON.stringify(r)===JSON.stringify(original);}))archive.appendRow(original.concat([new Date().toISOString(),found.row[0]]));SpreadsheetApp.flush();
+   members.deleteRow(index+2);SpreadsheetApp.flush();return {ok:true,nickname:name};
+  }
   if(op==='setEntryPassword'){
    if(typeof p.entryPassword!=='string'||p.entryPassword.length<6||p.entryPassword.length>100||p.entryPassword.trim()!==p.entryPassword)throw Error('입장 비밀번호는 앞뒤 공백 없이 6~100자로 정해주세요.');
    var salt=Utilities.getUuid(),entry={hash:hash_(p.entryPassword,salt),salt:salt,fails:0,lockUntil:0};
