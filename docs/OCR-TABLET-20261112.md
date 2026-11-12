@@ -19,4 +19,4 @@ Verification: actual local Tesseract with original English/Korean language data,
 
 Existing original evidence cases 495, 503, 510 and 516 were replayed without new errors. Layout, cancel/maximum retry, diagnostics, i18n, worker, TypeScript and production build checks passed. Tests cover invalid zero targets, valid zero progress, invalid compact-unit text and white-only full-bar retry ordering. Images are transient test inputs only; no screenshot-specific numeric correction is encoded.
 
-Deployment: pending Code checks and GitHub Pages verification. Frontend only; no Google Apps Script change required. Password recovery remains a separate user-controlled workflow.
+Deployment verified: fix commit `0dcf1df91e61189c8297c69d50050d901455dd32`; Code checks run 43211234476 and Pages run 43211234484 succeeded, including the actual deploy-pages step. The public site returned bundle `index-CgC_2YwG.js`, fetched successfully and confirmed to contain diagnostic version 2026-11-12.1 and the new segmentation retry. Frontend only; no Google Apps Script change required. Password recovery remains a separate user-controlled workflow.
