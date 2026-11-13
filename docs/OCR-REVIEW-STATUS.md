@@ -1,8 +1,10 @@
 # OCR review checkpoint
 
-Updated: 2026-11-14 02:01 KST. Latest deployed scanner: 2026-11-12.1.
+Updated: 2026-11-14 04:04 KST. Latest deployed scanner: 2026-11-12.1.
 
 ## Current scan
+
+- 2026-11-14 04:04 KST incremental review: fresh metadata ocr_errors667079903,1000x26; A533:J1000 read; only previously reviewed533–536 populated,537–1000 empty. Last536/next537 unchanged. Latest maind20539eea7c1981d180d23574c000fb717679a18 Code43468588802/Pages43468588878 SUCCESS. No additional report/browser evidence for533/535/536,523–526 or earlier unresolved cases; retain prior original comparisons and classifications without guessed corrections. No application/backend modifications or additional deployment required. Member resources/passwords/tickets/clan settings untouched.
 
 - 2026-11-14 02:01 KST incremental review: fresh metadata ocr_errors667079903,1000x26; A533:J1000 read; only previously reviewed533–536 populated,537–1000 empty. Last536/next537 unchanged. Latest main7aa586fd336306d7240abc6c65dcabbec8842968 Code43448178248/Pages43448178471 SUCCESS. No new report/browser evidence for533/535/536,523–526 or earlier unresolved cases; preserve prior original comparisons and classifications without guessed corrections. No application/backend modifications or additional deployment required. Member resources/passwords/tickets/clan settings untouched.
 
