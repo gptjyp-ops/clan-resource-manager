@@ -1,8 +1,10 @@
 # OCR review checkpoint
 
-Updated: 2026-11-13 12:03 KST. Latest deployed scanner: 2026-11-12.1.
+Updated: 2026-11-13 14:02 KST. Latest deployed scanner: 2026-11-12.1.
 
 ## Current scan
+
+- 2026-11-13 14:02 KST review: fresh metadata ocr_errors667079903,1000x26; A523:J1000 read; new528–529, last529/next530;530–1000 empty. Both original stored photos independently inspected in the preceding interactive review:528 is an actual pet merge dialog1535 selected supplied to ordinary egg;529 is an actual mount merge dialog296 selected supplied to ordinary mount. OCR-06 rejection is appropriate; no decimal/k/leading-digit correction or inventory substitution. These are not the separately supplied PNG pet summon27.7k/max: that exact PNG was replayed twice using native Canvas/actual Tesseract and current scanScreen, returning27.7k/100/empty ratio/no issues. Screen-layout and worker tests passed. Original-browser failure on the user PNG remains unconfirmed, do not equate local replay with browser success. Latest main9b02caa388eb24c3b03294b3373dc57147c22c46 Code43356309776/Pages43356309800 SUCCESS. Prior523–526 worker loading failures and all earlier unresolved cases retained. No application/backend change or additional deployment required; live member resources/passwords/tickets/clan settings untouched.
 
 - 2026-11-13 12:03 KST incremental review: fresh metadata ocr_errors667079903,1000x26; A523:J1000 read; only previously reviewed523–527 populated,528–1000 empty. Last527/next528 unchanged. Latest main ecf40a4555491aa884caa99ff82da4dcf03f7442; Code checks43341894536 and Pages43341894556 completed successfully. No new report or browser/worker evidence for523–526 or earlier unresolved cases; retain classifications without guessed numeric corrections.527 remains appropriate ordinary pet summon rejection in merge slot. No application/backend change or additional application deployment required. Member resources/passwords/tickets/clan settings untouched.
 
