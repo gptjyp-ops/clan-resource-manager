@@ -1,8 +1,10 @@
 # OCR review checkpoint
 
-Updated: 2026-11-13 14:02 KST. Latest deployed scanner: 2026-11-12.1.
+Updated: 2026-11-13 15:58 KST. Latest deployed scanner: 2026-11-12.1.
 
 ## Current scan
+
+- 2026-11-13 15:58 KST review: metadata ocr_errors667079903,1000x26; A523:J1000 read; new530–532, last532/next533;533–1000 empty. Representative530 stored original viewed: actual pet merge dialog with6 selected, submitted to ordinary egg. OCR-06 wrong-screen rejection is correct; never substitute dimmed background29.3k as summon inventory or selected6 into ordinary amount. No decimal/k/leading-digit ambiguity requires correction.531–532 have repeated upload metadata; their pixels were not independently compared. Latest maine5008167a6339821729d708d659851c0dffc69a7 Code43369318653/Pages43369318679 SUCCESS. Prior523–526 worker-load failures and original-browser-only PNG failure plus all earlier unresolved cases retained without guessed values. No application/backend changes or additional deployment required; member resources/passwords/tickets/clan settings untouched.
 
 - 2026-11-13 14:02 KST review: fresh metadata ocr_errors667079903,1000x26; A523:J1000 read; new528–529, last529/next530;530–1000 empty. Both original stored photos independently inspected in the preceding interactive review:528 is an actual pet merge dialog1535 selected supplied to ordinary egg;529 is an actual mount merge dialog296 selected supplied to ordinary mount. OCR-06 rejection is appropriate; no decimal/k/leading-digit correction or inventory substitution. These are not the separately supplied PNG pet summon27.7k/max: that exact PNG was replayed twice using native Canvas/actual Tesseract and current scanScreen, returning27.7k/100/empty ratio/no issues. Screen-layout and worker tests passed. Original-browser failure on the user PNG remains unconfirmed, do not equate local replay with browser success. Latest main9b02caa388eb24c3b03294b3373dc57147c22c46 Code43356309776/Pages43356309800 SUCCESS. Prior523–526 worker loading failures and all earlier unresolved cases retained. No application/backend change or additional deployment required; live member resources/passwords/tickets/clan settings untouched.
 
