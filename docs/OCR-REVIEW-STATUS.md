@@ -1,8 +1,10 @@
 # OCR review checkpoint
 
-Updated: 2026-11-13 15:58 KST. Latest deployed scanner: 2026-11-12.1.
+Updated: 2026-11-13 18:04 KST. Latest deployed scanner: 2026-11-12.1.
 
 ## Current scan
+
+- 2026-11-13 18:04 KST review: metadata ocr_errors667079903,1000x26; A530:J1000 read; new533–535,last535/next536,536–1000 empty. All three stored originals viewed.533 actual skill4.51k/Lv65/70of110,535 actual mount7.92k/Lv74/14of20: reports OCR-05 during read, with empty amount attempts (535 also empty level). Native Canvas/actual Tesseract full scanScreen on stored compressed738x1600 JPEGs returns exact visible values/no issues for both. The original1290x2796 PNG/browser execution errors are not reproduced; do not infer their runtime cause from numeric success or substitute expected values.534 is ordinary pet summon12k/Lv83/16of23 submitted to eggMerge; OCR-06 is correct. No decimal/k/missing-leading-digit correction established. Latest main d2343042d949f0ec8e6be0f09eb46c6a69bcf695 Code43382333039/Pages43382332995 SUCCESS; current screen-ocr blob760892d69664e9cd86ccd4fecad6808557f526e5 inspected, unchanged from replay source. Keep533/535 unresolved original-browser errors plus523–526 and prior open cases. No validated new source fix or application/backend deployment; member resources/passwords/tickets/clan settings untouched.
 
 - 2026-11-13 15:58 KST review: metadata ocr_errors667079903,1000x26; A523:J1000 read; new530–532, last532/next533;533–1000 empty. Representative530 stored original viewed: actual pet merge dialog with6 selected, submitted to ordinary egg. OCR-06 wrong-screen rejection is correct; never substitute dimmed background29.3k as summon inventory or selected6 into ordinary amount. No decimal/k/leading-digit ambiguity requires correction.531–532 have repeated upload metadata; their pixels were not independently compared. Latest maine5008167a6339821729d708d659851c0dffc69a7 Code43369318653/Pages43369318679 SUCCESS. Prior523–526 worker-load failures and original-browser-only PNG failure plus all earlier unresolved cases retained without guessed values. No application/backend changes or additional deployment required; member resources/passwords/tickets/clan settings untouched.
 
