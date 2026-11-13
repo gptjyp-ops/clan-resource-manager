@@ -1,8 +1,10 @@
 # OCR review checkpoint
 
-Updated: 2026-11-13 19:58 KST. Latest deployed scanner: 2026-11-12.1.
+Updated: 2026-11-13 22:05 KST. Latest deployed scanner: 2026-11-12.1.
 
 ## Current scan
+
+- 2026-11-13 22:05 KST incremental review: fresh metadata ocr_errors667079903,1000x26; initial A533:J1000 read rate-limited429, single retry succeeded. Only previously reviewed533–536 populated,537–1000 empty; last536/next537 unchanged. Latest main d51aa8944fe116f0d9cb4d936a0eab487e858d55 Code43413145627/Pages43413145739 SUCCESS. No new report/browser evidence for533/535/536,523–526 or earlier unresolved cases; preserve prior image comparisons and classifications without guessed corrections. No application/backend change or additional deployment required. Transient rate limit recovered; monitoring remains active. Member resources/passwords/tickets/clan settings untouched.
 
 - 2026-11-13 19:58 KST review: metadata ocr_errors667079903,1000x26; A533:J1000 read; new536,last536/next537,537–1000 empty.536 actual skill4.51k/Lv65/70of110, correct slot, OCR-03 all fields with empty reads except final2. Stored original viewed and fetched533 again: complete saved JPEG base64 bytes identical to536 (536 SHA256fb97c5b52d2d0b7be47e14f85767b44879e4ad8e761c8ce1efa0ce77eb9da97e). Thus prior exact saved-image replay533 returning4.51k/65/70of110/no issues applies to the same stored bytes; do not claim original1290x2796 PNG/browser reproduction. New full replay attempt was blocked by missing transient local TypeScript dependency, not a production access error. Difference between533 runtime error and536 empty recognition remains unconfirmed; do not force digits or discard reported failure. Latest main3d5ed3e6b5cd5f70fbfff2d16ed4f93bd6efe89a Code43398227940/Pages43398228041 SUCCESS. Keep533/535/536 and523–526 plus earlier cases unresolved. No application/backend change or additional deployment; member resources/passwords/tickets/clan settings untouched.
 
