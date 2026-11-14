@@ -1,8 +1,10 @@
 # OCR review checkpoint
 
-Updated: 2026-11-14 09:56 KST. Latest deployed scanner: 2026-11-12.1.
+Updated: 2026-11-14 12:04 KST. Latest deployed scanner: 2026-11-12.1.
 
 ## Current scan
+
+- 2026-11-14 12:04 KST incremental review: fresh metadata confirms ocr_errors sheet 667079903, grid 1000x26. Read A533:J1000; only existing rows 533–536 populated and rows 537–1000 empty. Last reviewed row 536; next row 537 unchanged. Latest main 6e1dc7c8ddafb97fc0a801540bbb05e3f6c5b75a has successful Code checks 43538049992 and Pages 43538049950. No new report or original/browser evidence to change the existing classifications; unresolved 533/535/536 and earlier cases retain their prior image comparisons and reproduction limits. No guessed value correction, application/backend change, or additional deployment. Member resources, passwords, tickets, and clan settings untouched.
 
 - 2026-11-14 09:56 KST incremental review: fresh metadata ocr_errors667079903,1000x26; A533:J1000 read; only previously reviewed533–536 populated,537–1000 empty. Last536/next537 unchanged. Latest main41775f586ea48f8b7715d78c02b772502cdd7b53 Code43524478209/Pages43524478255 SUCCESS. No new report/browser evidence for533/535/536,523–526 or earlier unresolved cases; retain prior original comparisons and classifications without guessed corrections. No application/backend modifications or additional deployment required. Member resources/passwords/tickets/clan settings untouched.
 
