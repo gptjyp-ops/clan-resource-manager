@@ -1,8 +1,10 @@
 # OCR review checkpoint
 
-Updated: 2026-11-14 12:04 KST. Latest deployed scanner: 2026-11-12.1.
+Updated: 2026-11-14 14:03 KST. Latest deployed scanner: 2026-11-12.1.
 
 ## Current scan
+
+- 2026-11-14 14:03 KST incremental review: refreshed metadata confirms ocr_errors 667079903, grid 1000x26. Read A533:J1000; existing rows 533–536 unchanged, rows 537–1000 empty. Last reviewed 536 / next 537. Main 0c9cdcf24567f7b6a82b3f0e9f1e61a0dc4bc9fb: Code checks 43549685871 and Pages 43549685968 both completed successfully. Fetched screen-ocr.ts at this main; blob 760892d69664e9cd86ccd4fecad6808557f526e5 unchanged. Existing unresolved 533/535/536 and earlier cases have no new report/original/browser evidence; retain documented image comparisons, correct wrong-screen rejections, and reproduction limits without guessed digit corrections. No application/backend change or additional deployment required. Member resources/passwords/tickets/clan settings untouched.
 
 - 2026-11-14 12:04 KST incremental review: fresh metadata confirms ocr_errors sheet 667079903, grid 1000x26. Read A533:J1000; only existing rows 533–536 populated and rows 537–1000 empty. Last reviewed row 536; next row 537 unchanged. Latest main 6e1dc7c8ddafb97fc0a801540bbb05e3f6c5b75a has successful Code checks 43538049992 and Pages 43538049950. No new report or original/browser evidence to change the existing classifications; unresolved 533/535/536 and earlier cases retain their prior image comparisons and reproduction limits. No guessed value correction, application/backend change, or additional deployment. Member resources, passwords, tickets, and clan settings untouched.
 
