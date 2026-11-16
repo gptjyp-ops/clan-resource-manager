@@ -39,4 +39,18 @@ try{
  }
  console.log('Raw Korean maximum retry accepts only the exact label, never similar text or a digit.');
 
+
+ // Two syntactically valid but different fractions must remain unresolved,
+ // even if a later crop repeats the first (wrong) single-line reading.
+ for(const verification of ['70/110','20/110','']){
+  let whitelist='',mode=7;
+  globalThis.testOcrWorker={async setParameters(p){if(p.tessedit_char_whitelist!==undefined)whitelist=p.tessedit_char_whitelist;if(p.tessedit_pageseg_mode!==undefined)mode=p.tessedit_pageseg_mode;},async recognize(){return {data:{text:whitelist==='0123456789/'?(mode===11?verification:'20/110'):''}};},async terminate(){}};
+  const result=await scanScreen(file,'skill',()=>{});
+  const conflict=verification==='70/110';
+  assert.equal(result.item.progress,conflict?undefined:'20');
+  assert.equal(result.item.target,conflict?undefined:'110');
+  assert.equal(result.diagnostics.issues.some(i=>i.field==='ratio'&&i.code==='OCR-04'),conflict);
+ }
+ console.log('Conflicting valid progress reads cannot be accepted by a later crop; agreement and empty verification preserve valid reads.');
+
 }finally{await rm(dir,{recursive:true,force:true});}

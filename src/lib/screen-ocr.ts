@@ -54,6 +54,7 @@ export async function scanScreen(file:File,kind:PhotoKind,onProgress:(n:number)=
   }
  }
 
+ let ratioConflict=false;
  const adaptive:Partial<Record<Region['field'],Region>>={};for(const r of locateRegions(overviewPixels,kind))adaptive[r.field]=r;
  for(let k=0;k<regions[kind].length;k++){
  const fallback=regions[kind][k],candidates=fallback.field==='selected'?(adaptive.selected?[adaptive.selected]:[]):adaptive[fallback.field]?(fallback.field==='amount'?[adaptive.amount!]:[...ratioCandidates(adaptive[fallback.field]!),fallback]):[fallback];
@@ -93,6 +94,15 @@ export async function scanScreen(file:File,kind:PhotoKind,onProgress:(n:number)=
   }
   if(checked===null){parsed={};diagnostics.issues.push({code:'OCR-04',field:'amount',message:'수량의 숫자 자리수·소수점·단위(k 등)가 사진과 일치하지 않습니다. 사진을 확대해 확인하고 다시 인식해 주세요.'});}
   else {if(checked!==parsed.amount)diagnostics.attempts.push({field:'amount',source:r===fallback?'fallback':'adaptive',text:checked});parsed={amount:checked};}
+ }
+ // A small 7 can become a valid 2 in single-line OCR. Require an
+ // independent segmentation check. A conflicting valid fraction must not
+ // be replaced by a later crop that happens to repeat the first misread.
+ if(r.field==='ratio'&&parsed.progress!==undefined&&parsed.target!==undefined){
+  await worker.setParameters({tessedit_pageseg_mode:PSM.SPARSE_TEXT});
+  const verify=(await worker.recognize(padded)).data.text.trim();original.push(verify);diagnostics.attempts.push({field:'ratio',source:r===fallback?'fallback':'adaptive',text:verify});
+  const checked=parseRead('ratio',verify);
+  if(checked.progress!==undefined&&checked.target!==undefined&&(checked.progress!==parsed.progress||checked.target!==parsed.target)){ratioConflict=true;parsed={};}
  }
  if(r.field==='selected'){
   const bands=digitBands(data);
@@ -139,6 +149,7 @@ export async function scanScreen(file:File,kind:PhotoKind,onProgress:(n:number)=
  }
  if(kind==='skill'&&(item.target==='20'||item.target==='23')){diagnostics.issues=[{code:'OCR-06',message:'스킬 칸에 다른 종류의 사진이 감지되었습니다. 초록색 스킬 소환 재화와 소환 레벨이 함께 보이는 스킬 화면을 올려주세요.'}];onProgress(100);return {item:{},original,diagnostics};}
  if(mergeTextCount!==undefined&&item.selected!==undefined&&Number(mergeTextCount)!==Number(item.selected)){delete item.selected;diagnostics.issues.push({code:'OCR-04',field:'selected',message:'합성 수량 인식 결과가 서로 다릅니다. 사진을 확대해 숫자를 확인한 뒤 다시 인식해 주세요.'});}
+ if(ratioConflict){delete item.progress;delete item.target;diagnostics.issues.push({code:'OCR-04',field:'ratio',message:'진행 수량 인식 결과가 서로 다릅니다. 원본 사진으로 다시 인식하거나 숫자를 확인해 주세요.'});}
  diagnostics.issues.push(...missingIssues(kind,item,adaptive).filter(issue=>!diagnostics.issues.some(existing=>existing.field===issue.field)));onProgress(100);return {item,original,diagnostics};
  }catch{signal?.throwIfAborted();diagnostics.issues.push({code:phase==='load'?'OCR-01':'OCR-05',message:phase==='load'?'사진 인식 기능을 불러오지 못했습니다.':'사진 인식 처리 중 실행 오류가 발생했습니다.'});throw new ScanFailure(diagnostics);}finally{signal?.removeEventListener('abort',abort);bitmap.close();await worker?.terminate().catch(()=>{});await koreanWorker?.terminate().catch(()=>{});}
 }
