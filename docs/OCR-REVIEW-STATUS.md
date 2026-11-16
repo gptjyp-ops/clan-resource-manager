@@ -1,8 +1,10 @@
 # OCR review checkpoint
 
-Updated: 2026-11-17 00:03 KST. Latest deployed scanner: 2026-11-16.1.
+Updated: 2026-11-17 01:57 KST. Latest deployed scanner: 2026-11-16.1.
 
 ## Current scan
+
+- 2026-11-17 01:57 KST incremental review: refreshed metadata confirms ocr_errors sheet 667079903, grid 1000x26. Read A552:J1000; rows 552–554 unchanged, rows 555–1000 empty. Last reviewed 554 / next 555 retained. Latest main faaa84140560ebf98b958980220ad0d041e22781: Code checks 43892301845 and Pages 43892302043 completed successfully. Fetched scanner at this head; unchanged blob 00eb3913594799f8cfbbfa3cfcf4680cbcac2f90. No new original photo, report, or browser evidence changes the previously recorded unresolved ratio conflicts 552/554 or earlier unresolved cases. Prior stored-photo replay results and their exact-original/browser limitations remain applicable; row 553 remains wrong-photo rejection. No confirmed new OCR defect, guessed correction, application/backend edit, additional test run or deployment required. Member resources, passwords, tickets and clan settings untouched.
 
 - 2026-11-17 00:03 KST incremental review: refreshed ocr_errors metadata (sheet 667079903, 1000x26). Read A552:J1000; rows 552–554 unchanged and 555–1000 empty. Last reviewed 554; next 555. Main 80dda87ae37d11102aa7e405ced57d9218bec46c has successful Code checks 43883678963 and Pages 43883679231; scanner blob 00eb3913594799f8cfbbfa3cfcf4680cbcac2f90 unchanged. Separate user-authorized email recovery deployment d44463c987fa1fcca92a7372ea1588e598b5f702 has successful Google update 43881666123; it is not an OCR fix. No new report or original/browser evidence changes unresolved 552/554 or prior cases; preserve prior replay evidence and reproduction limits. Row 553 remains a wrong-photo rejection. No OCR source change, additional tests or deployment needed. No guessed corrections or member resources/passwords/tickets/clan settings changed in this review.
 
