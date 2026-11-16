@@ -1,8 +1,10 @@
 # OCR review checkpoint
 
-Updated: 2026-11-16 10:01 KST. Latest deployed scanner: 2026-11-12.1.
+Updated: 2026-11-16 12:01 KST. Latest deployed scanner: 2026-11-12.1.
 
 ## Current scan
+
+- 2026-11-16 12:01 KST incremental review: refreshed metadata confirms ocr_errors 667079903, grid 1000x26. Read A533:J1000: previously reviewed 533–538 unchanged; 539–1000 empty. Last reviewed 538 / next 539 unchanged. Main 0745698b1fa1425bbfd784daf63543377ac5c0a2 Code checks 43783725160 and Pages 43783725338 completed successfully. screen-ocr.ts fetched at main, unchanged blob 760892d69664e9cd86ccd4fecad6808557f526e5. Preserve confirmed wrong-screen classification of 537–538; no new report/original/browser evidence for unresolved 533/535/536 or earlier cases. Retain prior image comparisons and reproduction limits without guessed corrections. No application/backend modifications or additional deployment required. Member resources/passwords/tickets/clan settings untouched.
 
 - 2026-11-16 10:01 KST incremental review: fresh metadata confirms ocr_errors 667079903, grid 1000x26. Read A533:J1000: new rows 537–538 reviewed; 539–1000 empty. Last reviewed 538 / next 539. Both reports select mountMerge, scanner 2026-11-12.1, OCR-06 selected with no OCR attempts. Downloaded and visually compared both attached Drive JPEGs (stored copies 738x1600 and 686x1600; upload metadata 1080x2340 and 1080x2520). Row 537 is ordinary mount summon with 17k keys and max summon status; row 538 is ordinary mount summon with 5.92k keys, Lv64 and 13/20. Neither contains an upgrade/selection dialog or a selected count. Thus both are correct wrong-screen rejections, not confirmed OCR defects. Do not interpret summon currency, item levels or summon cost 40 as merge counts. No guessed decimal/k/leading-digit corrections or resource writes. Main c63c9f2c49b4ac9a584f7fbe0de84b1c2c1eb9d9 Code checks 43772501161 and Pages 43772501208 completed successfully; screen-ocr.ts blob 760892d69664e9cd86ccd4fecad6808557f526e5 unchanged. Its isSummonPhotoInMergeSlot guard explicitly returns OCR-06 selected before worker reads. Existing unresolved 533/535/536 and earlier cases retain prior reproduction limits; no new browser evidence. No application/backend change, additional tests or deployment required. Member resources/passwords/tickets/clan settings untouched.
 
