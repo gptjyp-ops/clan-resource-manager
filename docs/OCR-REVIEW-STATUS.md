@@ -1,8 +1,10 @@
 # OCR review checkpoint
 
-Updated: 2026-11-16 14:07 KST. Latest deployed scanner: 2026-11-12.1.
+Updated: 2026-11-16 14:07 KST. Latest deployed scanner: 2026-11-16.1.
 
 ## Current scan
+
+- Deployment verified for fix066cd74605dd72f3d6abb4bf308f1176970d55eb: GitHub Code checks43808122066 SUCCESS; Pages publish job43808122042 SUCCESS. Fetched live site HTML and its actual bundle /clan-resource-manager/assets/index-BKQ_k7uu.js; confirmed scanner2026-11-16.1 and the new ratio-disagreement message are present. Apps Script unchanged and not redeployed (frontend-only change).
 
 - 2026-11-16 14:07 KST review: metadata ocr_errors 667079903,1000x26; A533:J1000 read. New rows 539–545 reviewed;546–1000 empty. Last reviewed545/next546. All attached stored JPEGs downloaded; byte comparisons confirm539=540,541=542=543,544=545. Three distinct photos: eggMerge selected988 (logged988/088),skill12.7k/Lv65/70of110 (runtime/empty reads),green potion410 (empty/init failures; red78.4k is different). Stored resized JPEGs do not preserve original upload encoding/browser context. Actual Tesseract/native-canvas replay recognizes the three saved photos and upload-sized resamples. A reduced369x800 skill copy reproducibly returned incorrect20/110 while sparse segmentation read70/110. Fixed that related reproducible defect: independently verify valid ratios, retain valid disagreements across later crops, clear progress/target with OCR-04 instead of guessing. Empty verification alone preserves a valid read. Scanner2026-11-16.1. Added regression cases for conflicting fractions, later repeated wrong fractions, agreement and empty verification. Validation: typecheck/build; layout,worker,diagnostics,cancellation/ratio tests PASS; six prior photos at1/.75/.5 scale18/18 PASS. New replays recognize988,12.7k,410; reduced ambiguous skill now withholds ratio. Exact logged original/browser failures539–545 remain unresolved; keep533/535/536 and earlier unresolved cases. Baseline main791559b75238b795f5d81653c07cdc79107af9da Code43795666710/Pages43795666652 SUCCESS. Frontend-only change; no Apps Script deployment required. No member resources/passwords/tickets/clan settings changed. Deployment verification pending.
 
