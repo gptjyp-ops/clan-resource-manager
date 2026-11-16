@@ -1,8 +1,10 @@
 # OCR review checkpoint
 
-Updated: 2026-11-16 19:00 KST. Latest deployed scanner: 2026-11-16.1.
+Updated: 2026-11-16 20:17 KST. Latest deployed scanner: 2026-11-16.1.
 
 ## Current scan
+
+- 2026-11-16 20:17 KST incremental review: refreshed metadata confirms ocr_errors667079903,1000x26. A552:J1000 read: existing552–554 unchanged;555–1000 empty. Last reviewed554/next555 unchanged. Latest maine93a972f1bac383f10ddb43d9253633ad6b68a5d Code43844908332/Pages43844908082 SUCCESS; screen-ocr.ts fetched at main, unchanged blob00eb3913594799f8cfbbfa3cfcf4680cbcac2f90. No new report/original/browser evidence changes552/554 ratio conflicts or earlier unresolved cases; retain saved-photo replay results and their limits. Row553 remains a wrong-photo rejection. No guessed values, application/backend changes or additional deployment required. Member resources/passwords/tickets/clan settings untouched.
 
 - 2026-11-16 19:00 KST review: metadata ocr_errors667079903,1000x26 refreshed; A546:J1000 read. New552–554 reviewed;555–1000 empty. Last reviewed554/next555. Downloaded all three stored JPEG attachments;552=554 byte-identical, photo562x984. Visually verified mount43k,Lv24,7/20. Both logged scanner2026-11-16.1 modes report conflicting ratio7/720 versus7/20 and OCR-04: current safeguard correctly withholds the uncertain ratio. Actual current-source Tesseract/native-canvas replay of stored JPEG recognizes43k/24/7of20 with two agreeing reads and no issues. Exact original PNG/browser conflict is not reproduced; keep552/554 unresolved with this concrete evidence, not guessed correction or claimed resolution. Row553 is a mount summon-probability information dialog (Lv13,13/20,percentage table) placed in potion slot, not a green-potion quantity screen; classify wrong-photo rejection, never import probabilities or summon progress as resources. Latest main7806c357ef27901a4c14f24ec8d9039c97ddae0e Code43821208246/Pages43821208212 SUCCESS; screen-ocr.ts blob00eb3913594799f8cfbbfa3cfcf4680cbcac2f90 unchanged. Earlier unresolved539–545,547–551,533/535/536 retained with prior original/browser reproduction limits. No new confirmed source defect; no application/backend changes or additional deployment. Member resources/passwords/tickets/clan settings untouched.
 
