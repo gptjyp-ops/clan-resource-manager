@@ -30,6 +30,8 @@ jobs:
         run: |
           node scripts/test-google.mjs
           node scripts/test-clans.mjs
+          node scripts/test-email-recovery.mjs
+          node scripts/test-email-recovery.mjs
           node scripts/test-google-deploy.mjs
       - name: Check initial account connection
         id: connection

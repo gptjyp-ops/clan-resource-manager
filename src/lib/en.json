@@ -633,5 +633,18 @@
   "클랜장 QR로 관리 화면을 열었습니다.": "Opened clan management using your QR.",
   "클랜장 QR 로그인": "Administrator QR login",
   "연결한 본인 QR을 선택하세요. 처음 연결할 때만 아래 클랜장 비밀번호로 로그인해주세요.": "Choose your linked QR. Use the administrator password below only for the initial setup.",
-  "클랜장으로 연결된 개인 QR이 아닙니다. 처음 한 번 클랜장 로그인 후 본인 QR을 연결해주세요.": "This QR is not linked as the clan administrator. Log in with the administrator password once to link your own QR."
+  "클랜장으로 연결된 개인 QR이 아닙니다. 처음 한 번 클랜장 로그인 후 본인 QR을 연결해주세요.": "This QR is not linked as the clan administrator. Log in with the administrator password once to link your own QR.",
+  "인증 메일을 보냈습니다. 메일의 인증 버튼을 눌러야 복구 이메일 등록이 완료됩니다.": "Verification email sent. Click the confirmation button in the email to finish registering your recovery address.",
+  "닉네임과 인증된 이메일이 일치하면 재설정 링크가 발송됩니다. 스팸함도 확인해주세요. 메일이 오지 않으면 잠시 후 다시 요청하거나 운영자에게 문의해주세요.": "If the nickname and verified email match, a reset link will be sent. Check spam too. If no email arrives, try later or contact the operator.",
+  "이메일 요청 실패": "Email request failed",
+  "이메일로 비밀번호 찾기 · 복구 이메일 등록": "Reset by email · Register recovery email",
+  "재설정 메일 받기": "Send reset email",
+  "복구 이메일 등록·변경": "Register or change recovery email",
+  "본인 비밀번호 또는 QR로 확인 후 이메일을 인증합니다. 기존 회원도 등록할 수 있습니다.": "Verify your identity with your password or QR, then confirm your email. Existing members can register too.",
+  "미리 인증한 이메일로만 비밀번호를 재설정할 수 있습니다. 링크는 15분 동안 한 번만 사용할 수 있습니다.": "Only a previously verified email can reset your password. Links expire after 15 minutes and work once.",
+  "복구 이메일": "Recovery email",
+  "이메일 인증 메일 보내기": "Send verification email",
+  "신규 회원은 복구 이메일을 입력해주세요. 기존 회원은 비워두면 유지됩니다. 메일 인증 후 사용할 수 있습니다.": "New members: enter a recovery email. Existing members: leave blank to keep yours. Verify the email before using it.",
+  "재화는 저장됐지만 인증 메일을 보내지 못했습니다. 이메일 등록에서 다시 요청해주세요.": "Resources were saved, but the verification email could not be sent. Try again under recovery email registration.",
+  "이메일 복구 기능을 업데이트 중입니다. 잠시 후 다시 시도해주세요.": "Email recovery is being updated. Please try again later."
 }
