@@ -21,7 +21,7 @@ export let memberRemovalSupported=false;
 export let adminTicketSupported=false;
 export let entryPasswordSupported=false;
 export let serverOptions:string[]=[];
-type Reply={adminTicket?:boolean;adminTicketLogin?:boolean;adminTicketNickname?:string;memberRemoval?:boolean;memberRecords?:{nickname:string;updated_at:string}[];ticketClanEntry?:boolean;passwordUpdated?:boolean;ticketPasswordSave?:boolean;photoRemoval?:boolean;operatorRecovery?:boolean;expiresAt?:number;entryPassword?:boolean;entryAccessKey?:string;memberSelfRecovery?:boolean;recoveryCode?:string;members?:string[];memberPasswordReset?:boolean;clan?:ClanInfo;adminToken?:string;multiClan?:boolean;diagnosticPhotos?:boolean;diagnosticReports?:boolean;preserveExisting?:boolean;details?:Inventory;serverSelection?:boolean;servers?:string[];ok:boolean;error?:string;records?:any[];photos?:Partial<Record<PhotoKind,string>>;base64?:string;type?:string};
+type Reply={emailRecovery?:boolean;emailSent?:boolean;emailWarning?:string;adminTicket?:boolean;adminTicketLogin?:boolean;adminTicketNickname?:string;memberRemoval?:boolean;memberRecords?:{nickname:string;updated_at:string}[];ticketClanEntry?:boolean;passwordUpdated?:boolean;ticketPasswordSave?:boolean;photoRemoval?:boolean;operatorRecovery?:boolean;expiresAt?:number;entryPassword?:boolean;entryAccessKey?:string;memberSelfRecovery?:boolean;recoveryCode?:string;members?:string[];memberPasswordReset?:boolean;clan?:ClanInfo;adminToken?:string;multiClan?:boolean;diagnosticPhotos?:boolean;diagnosticReports?:boolean;preserveExisting?:boolean;details?:Inventory;serverSelection?:boolean;servers?:string[];ok:boolean;error?:string;records?:any[];photos?:Partial<Record<PhotoKind,string>>;base64?:string;type?:string};
 let bridgePromise:Promise<{source:Window;origin:string;channel:string}>|undefined;
 let bridgeCleanup:(()=>void)|undefined;
 const pending=new Map<string,{resolve:(r:Reply)=>void;reject:(e:Error)=>void;timer:ReturnType<typeof setTimeout>}>();
@@ -58,8 +58,8 @@ async function encodedPhoto(file:File,kind:PhotoKind){
   throw Error('사진을 저장 크기로 줄이지 못했습니다. 더 작은 사진을 선택해주세요.');
  }finally{image.close();}
 }
-export async function saveInventory(nickname:string,password:string,inventory:Inventory,files:Partial<Record<PhotoKind,File>>,changedFields?:ChangedFields,newPassword?:string,removedPhotos:PhotoKind[]=[]){
- if(googleUrl){const capability=await rpc('list',{operation:'capabilities'});if(removedPhotos.length&&!capability.photoRemoval)throw Error('사진 삭제 기능을 업데이트 중입니다. 잠시 후 다시 저장해주세요.');if(newPassword&&!capability.ticketPasswordSave)throw Error('비밀번호 전환 기능을 업데이트 중입니다. 잠시 후 다시 저장해주세요.');if(!capability.preserveExisting)throw Error('기존 재화 보호를 위해 저장을 중단했습니다. 운영자가 구글 스크립트를 업데이트해야 합니다.');const photos=[];for(const [kind,file] of Object.entries(files))if(file)photos.push(await encodedPhoto(file,kind as PhotoKind));return rpc('save',{nickname,password,inventory,photos,changedFields,...(newPassword?{newPassword}:{}),...(removedPhotos.length?{removedPhotos}:{})});}
+export async function saveInventory(nickname:string,password:string,inventory:Inventory,files:Partial<Record<PhotoKind,File>>,changedFields?:ChangedFields,newPassword?:string,removedPhotos:PhotoKind[]=[],recoveryEmail?:string){
+ if(googleUrl){const capability=await rpc('list',{operation:'capabilities'});if(recoveryEmail&&!capability.emailRecovery)throw Error('이메일 복구 기능을 업데이트 중입니다. 잠시 후 다시 시도해주세요.');if(removedPhotos.length&&!capability.photoRemoval)throw Error('사진 삭제 기능을 업데이트 중입니다. 잠시 후 다시 저장해주세요.');if(newPassword&&!capability.ticketPasswordSave)throw Error('비밀번호 전환 기능을 업데이트 중입니다. 잠시 후 다시 저장해주세요.');if(!capability.preserveExisting)throw Error('기존 재화 보호를 위해 저장을 중단했습니다. 운영자가 구글 스크립트를 업데이트해야 합니다.');const photos=[];for(const [kind,file] of Object.entries(files))if(file)photos.push(await encodedPhoto(file,kind as PhotoKind));return rpc('save',{nickname,password,inventory,photos,changedFields,...(recoveryEmail?{recoveryEmail}:{}),...(newPassword?{newPassword}:{}),...(removedPhotos.length?{removedPhotos}:{})});}
  if(removedPhotos.length)throw Error('사진 삭제는 구글 저장 연결에서 사용할 수 있습니다.');
  const form=new FormData();form.set('nickname',nickname);form.set('password',password);form.set('inventory',JSON.stringify(inventory));if(changedFields)form.set('changedFields',JSON.stringify(changedFields));for(const [kind,file] of Object.entries(files))if(file)form.set('photo_'+kind,file);const r=await fetch(apiUrl('/api/records'),{method:'POST',body:form});const d:any=await r.json();if(!r.ok)throw Error(d.error);return d as Reply;
 }
@@ -123,4 +123,11 @@ export async function enterClanTicket(input:MemberTicket):Promise<void>{
  if(result.adminTicket)sessionStorage.removeItem('clanAdminQrLoggedOut:'+ticket.clanId);
  const target=(result.adminTicket?'#manage=':'#clan=')+encodeURIComponent(ticket.clanId);
  if(location.hash===target)location.reload();else location.hash=target;
+}
+
+
+export async function emailRecovery(operation:'registerRecoveryEmail'|'requestEmailReset',payload:Record<string,string>){
+ const capability=await rpc('list',{operation:'capabilities'});
+ if(!capability.emailRecovery)throw Error('이메일 복구 기능을 업데이트 중입니다. 잠시 후 다시 시도해주세요.');
+ return rpc('list',{operation,...payload});
 }

@@ -18,6 +18,7 @@ function setup_() {
  }finally{lock.releaseLock();}
 }
 function doGet(e){
+ if(e&&e.parameter&&e.parameter.emailRecovery)return emailRecoveryPage_(e.parameter);
  if(e&&e.parameter&&e.parameter.adminRecovery==='1')return adminRecoveryPage_();
  var channel=String((e&&e.parameter&&e.parameter.channel)||'');
  if(!/^[a-zA-Z0-9-]{36}$/.test(channel))return HtmlService.createHtmlOutput('GitHub 클랜 재화관리 사이트에서 이용해주세요.');
@@ -77,6 +78,7 @@ function save_(p,clan){
  var nickname=p.nickname.trim().normalize('NFKC'),password=p.password;
  if(!nickname||nickname.length>24||password.length<6||password.length>100)throw Error('닉네임(24자 이하)과 수정 비밀번호(6자 이상)를 입력해주세요.');
  if(p.newPassword!==undefined&&(typeof p.newPassword!=='string'||p.newPassword.length<6||p.newPassword.length>100))throw Error('수정 비밀번호는 6자 이상 100자 이하로 입력해주세요.');
+ if(p.recoveryEmail!==undefined&&p.recoveryEmail!=='')recoveryEmailAddress_(p.recoveryEmail);
  var removed=p.removedPhotos||[];if(!Array.isArray(removed)||removed.length>6||removed.some(function(k){return KINDS_.indexOf(k)<0;}))throw Error('삭제할 사진 종류를 확인해주세요.');
  var incoming=validate_(p.inventory),uploads=p.photos||[];
  if(!Array.isArray(uploads)||uploads.length>6)throw Error('사진 수를 확인해주세요.');
@@ -97,7 +99,8 @@ function save_(p,clan){
   var row=[JSON.stringify(nickname),hash,salt,JSON.stringify(details),JSON.stringify(photos),new Date().toISOString(),0,0];
   if(old)s.getRange(index+2,1,1,8).setValues([row]);else s.appendRow(row);SpreadsheetApp.flush();committed=true;
   obsolete.forEach(function(id){try{DriveApp.getFileById(id).setTrashed(true);}catch(e){console.error('이전 사진 정리 실패');}});
-  var recoveryCode=old&&p.newPassword===undefined?undefined:issueRecovery_(clan.id,nickname,salt);return {ok:true,photos:photos,details:details,recoveryCode:recoveryCode,passwordUpdated:p.newPassword!==undefined};
+  var emailSent=false,emailWarning='';if(p.recoveryEmail){try{sendRecoveryEmail_(clan,s,index>=0?index+2:s.getLastRow(),row,p.recoveryEmail,'verify');emailSent=true;}catch(emailError){emailWarning='재화는 저장됐지만 인증 메일을 보내지 못했습니다. 이메일 등록에서 다시 요청해주세요.';}}
+  var recoveryCode=old&&p.newPassword===undefined?undefined:issueRecovery_(clan.id,nickname,salt);return {ok:true,photos:photos,details:details,recoveryCode:recoveryCode,passwordUpdated:p.newPassword!==undefined,emailSent:emailSent,emailWarning:emailWarning};
  }finally{
   if(!committed)fresh.forEach(function(id){try{DriveApp.getFileById(id).setTrashed(true);}catch(e){}});
   lock.releaseLock();
@@ -162,7 +165,7 @@ function clanName_(name){if(typeof name!=='string'||!name.trim()||name.trim().le
 function clanPassword_(password){if(typeof password!=='string'||password.length<10||password.length>100)throw Error('클랜장 비밀번호는 10~100자로 정해주세요.');return password;}
 function clanOperation_(p){
  if(p.operation==='assistant')return assistant_(p,authorizeClan_(p));
- var op=p.operation;if(op==='ticketClanEnter'){var ticketClan=resolveClan_(p),ticketReply=ticketEnter_(p,ticketClan);ticketReply.entryAccessKey=ticketClan.key;ticketReply.adminTicket=isAdminTicket_(ticketClan,p);return ticketReply;}if(op==='clanCodeResetMember')return clanCodeResetMember_(p);if(op==='ticketEnter')return ticketEnter_(p,authorizeClan_(p));if(op==='issueMemberTicket')return issueMemberTicket_(p,authorizeClan_(p));if(op==='issueMemberRecovery'||op==='recoverMemberPassword')return memberRecovery_(p,op);if(op==='memberLogin')return memberLogin_(p,authorizeClan_(p));if(op==='capabilities')return {ok:true,ticketClanEntry:true,multiClan:true,clanRecoveryCodes:true,ticketPasswordSave:true,photoRemoval:true,memberTickets:true,memberLogin:true,memberPasswordReset:true,memberRemoval:true,adminTicketLogin:true,memberSelfRecovery:true,operatorRecovery:true,entryPassword:true,preserveExisting:true,diagnosticReports:true,diagnosticPhotos:true,serverSelection:true,servers:Array.from(new Set(clanRows_(registry_()).map(function(r){return String(r[10]||'');}).filter(function(s){return /^\d{1,6}$/.test(s);}))).sort(function(a,b){return Number(a)-Number(b);})};
+ var op=p.operation;if(op==='registerRecoveryEmail'||op==='requestEmailReset')return emailRecoveryRequest_(p,authorizeClan_(p));if(op==='ticketClanEnter'){var ticketClan=resolveClan_(p),ticketReply=ticketEnter_(p,ticketClan);ticketReply.entryAccessKey=ticketClan.key;ticketReply.adminTicket=isAdminTicket_(ticketClan,p);return ticketReply;}if(op==='clanCodeResetMember')return clanCodeResetMember_(p);if(op==='ticketEnter')return ticketEnter_(p,authorizeClan_(p));if(op==='issueMemberTicket')return issueMemberTicket_(p,authorizeClan_(p));if(op==='issueMemberRecovery'||op==='recoverMemberPassword')return memberRecovery_(p,op);if(op==='memberLogin')return memberLogin_(p,authorizeClan_(p));if(op==='capabilities')return {ok:true,ticketClanEntry:true,multiClan:true,clanRecoveryCodes:true,ticketPasswordSave:true,photoRemoval:true,memberTickets:true,memberLogin:true,memberPasswordReset:true,memberRemoval:true,adminTicketLogin:true,memberSelfRecovery:true,emailRecovery:true,operatorRecovery:true,entryPassword:true,preserveExisting:true,diagnosticReports:true,diagnosticPhotos:true,serverSelection:true,servers:Array.from(new Set(clanRows_(registry_()).map(function(r){return String(r[10]||'');}).filter(function(s){return /^\d{1,6}$/.test(s);}))).sort(function(a,b){return Number(a)-Number(b);})};
  var lock=LockService.getScriptLock();if(!lock.tryLock(15000))throw Error('다른 요청을 처리 중입니다. 잠시 후 다시 시도해주세요.');
  try{
   if(op==='createClan'||op==='claimLegacy'){
@@ -469,3 +472,90 @@ function clanCodeResetMember_(p){
  }finally{lock.releaseLock();}
 }
 
+
+
+// Recovery email is private column I, never included in publicRow_ / rows_.
+// Tokens are HMAC-only, credential-bound, expiring, and consumed under the script lock.
+function recoveryEmailAddress_(value){
+ if(typeof value!=='string')throw Error('이메일 주소를 확인해주세요.');
+ var email=value.trim().toLowerCase();
+ if(email.length>254||!/^[a-z0-9.!#$%&'*+\-/=?^_`{|}~]+@[a-z0-9](?:[a-z0-9-]*[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)+$/.test(email))throw Error('이메일 주소를 확인해주세요.');
+ return email;
+}
+function emailState_(s,row){return JSON.parse(s.getRange(row,9,1,1).getValues()[0][0]||'{}');}
+function writeEmailState_(s,row,state){s.getRange(1,9,1,1).setValues([['recovery_email_json']]);s.getRange(row,9,1,1).setValues([[JSON.stringify(state)]]);SpreadsheetApp.flush();}
+function emailRate_(key,limit,interval){
+ var props=PropertiesService.getScriptProperties(),now=Date.now(),state=JSON.parse(props.getProperty(key)||'{}');
+ if(!state.start||now-state.start>=interval)state={start:now,count:0};
+ if(state.count>=limit)throw Error('메일 요청이 많습니다. 잠시 후 다시 시도해주세요.');
+ state.count++;props.setProperty(key,JSON.stringify(state));
+}
+function sendRecoveryEmail_(clan,s,row,member,address,kind){
+ var email=recoveryEmailAddress_(address),state=emailState_(s,row),now=Date.now();
+ if(kind==='reset'&&state.email!==email)return false;
+ if(state.lastSent&&now-state.lastSent<60000)throw Error('메일은 1분 뒤 다시 요청해주세요.');
+ emailRate_('EMAIL_MEMBER_'+clan.id+'_'+hash_(String(member[0]),'email-rate'),5,3600000);
+ emailRate_('EMAIL_GLOBAL',80,86400000);
+ var token=Utilities.getUuid().replace(/-/g,'')+Utilities.getUuid().replace(/-/g,''),slot=kind==='verify'?'pending':'reset';
+ var url=ScriptApp.getService().getUrl();if(!url)throw Error('메일 복구 웹 앱 배포를 확인해주세요.');
+ var next=JSON.parse(JSON.stringify(state));
+ next[slot]={hash:hash_(token,'email-token'),email:email,expires:now+900000,memberSalt:member[2]};next.lastSent=now;
+ // No raw token, email or password is logged or included in a public response.
+ writeEmailState_(s,row,next);
+ try{
+  if(MailApp.getRemainingDailyQuota()<1)throw Error('quota');
+  var link=url+'?emailRecovery='+kind+'&clan='+encodeURIComponent(clan.id)+'&nickname='+encodeURIComponent(JSON.parse(member[0]))+'&token='+token;
+  MailApp.sendEmail({to:email,subject:'클랜 재화관리 · '+(kind==='verify'?'복구 이메일 인증':'비밀번호 재설정'),body:'요청한 '+(kind==='verify'?'복구 이메일 인증':'비밀번호 재설정')+' 링크입니다. 15분 동안 한 번만 사용할 수 있습니다.\n\n'+link+'\n\n본인이 요청하지 않았다면 이 메일을 무시하세요. 기존 비밀번호와 재화는 변경되지 않습니다.',name:'클랜 재화관리'});
+ }catch(error){writeEmailState_(s,row,state);throw Error('인증 메일을 보내지 못했습니다. 잠시 후 다시 시도하거나 운영자에게 메일 발송 권한을 확인해주세요.');}
+ return true;
+}
+function emailRecoveryRequest_(p,clan){
+ if(typeof p.nickname!=='string'||!p.nickname.trim()||p.nickname.trim().normalize('NFKC').length>24)throw Error('게임 닉네임을 확인해주세요.');
+ var name=p.nickname.trim().normalize('NFKC'),email=recoveryEmailAddress_(p.email),lock=LockService.getScriptLock();
+ lock.waitLock(15000);
+ try{
+  // Bound unauthenticated reset probes per clan without storing arbitrary supplied addresses.
+  if(p.operation==='requestEmailReset')emailRate_('EMAIL_REQUEST_'+clan.id,120,3600000);
+  var s=sheet_(clan),members=rows_(s),index=members.findIndex(function(r){return JSON.parse(r[0])===name;}),r=index>=0?members[index]:null;
+  if(p.operation==='registerRecoveryEmail'){
+   if(typeof p.password!=='string'||p.password.length<6||p.password.length>100||!r)throw Error('닉네임 또는 비밀번호가 맞지 않습니다.');
+   if(Number(r[7])>Date.now())throw Error('비밀번호 확인 시도가 많습니다. 10분 뒤 다시 시도해주세요.');
+   if(!memberCredential_(clan,name,r,p.password)){var fails=Number(r[6]||0)+1;s.getRange(index+2,7,1,2).setValues([[fails,fails>=5?Date.now()+600000:0]]);SpreadsheetApp.flush();throw Error('닉네임 또는 비밀번호가 맞지 않습니다.');}
+   sendRecoveryEmail_(clan,s,index+2,r,email,'verify');return {ok:true};
+  }
+  if(r&&emailState_(s,index+2).email===email){try{sendRecoveryEmail_(clan,s,index+2,r,email,'reset');}catch(error){/* Same response for missing, mismatched, throttled or unavailable mail. */}}
+  return {ok:true};
+ }finally{lock.releaseLock();}
+}
+// This is intentionally callable from the email page; the token is the sole grant.
+function completeEmailRecovery(clanId,nickname,token,kind,password,confirmation){
+ if(typeof clanId!=='string'||!/^[a-f0-9]{24}$/.test(clanId)||typeof nickname!=='string'||!nickname.trim()||nickname.length>24||typeof token!=='string'||!/^[a-f0-9]{64}$/.test(token)||(kind!=='verify'&&kind!=='reset'))throw Error('링크가 만료되었거나 유효하지 않습니다. 다시 요청해주세요.');
+ if(kind==='reset'&&(typeof password!=='string'||password.length<6||password.length>100||password!==confirmation))throw Error('새 비밀번호 6~100자와 확인을 맞춰주세요.');
+ var lock=LockService.getScriptLock();lock.waitLock(15000);
+ try{
+  var clan=clanFrom_(findClan_(clanId).row),s=sheet_(clan),name=nickname.trim().normalize('NFKC'),members=rows_(s),index=members.findIndex(function(r){return JSON.parse(r[0])===name;}),r=index>=0?members[index]:null;
+  if(!r)throw Error('링크가 만료되었거나 유효하지 않습니다. 다시 요청해주세요.');
+  var state=emailState_(s,index+2),slot=kind==='verify'?'pending':'reset',grant=state[slot];
+  if(!grant||grant.expires<=Date.now()||grant.memberSalt!==r[2]||grant.hash!==hash_(token,'email-token')||kind==='reset'&&grant.email!==state.email)throw Error('링크가 만료되었거나 유효하지 않습니다. 다시 요청해주세요.');
+  // Consume before any credential write: concurrent/replayed links cannot succeed.
+  delete state[slot];delete state.reset;
+  if(kind==='verify')state.email=grant.email;
+  else delete state.pending;
+  writeEmailState_(s,index+2,state);
+  if(kind==='reset'){
+   var salt=Utilities.getUuid();s.getRange(index+2,2,1,2).setValues([[hash_(password,salt),salt]]);s.getRange(index+2,7,1,2).setValues([[0,0]]);SpreadsheetApp.flush();
+   PropertiesService.getScriptProperties().deleteProperty(recoverySlot_(clan.id,name));
+   PropertiesService.getScriptProperties().deleteProperty(passwordBackupKey_(clan,name));
+  }
+  return {ok:true};
+ }finally{lock.releaseLock();}
+}
+function emailRecoveryPage_(params){
+ var kind=params.emailRecovery==='verify'?'verify':'reset';
+ // Escape all caller-controlled data before embedding in a script element.
+ var args=JSON.stringify([String(params.clan||''),String(params.nickname||''),String(params.token||''),kind]).replace(/</g,'\\u003c').replace(/\u2028/g,'\\u2028').replace(/\u2029/g,'\\u2029');
+ return HtmlService.createHtmlOutput('<!doctype html><html lang="ko"><head><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="no-referrer"><title>클랜 재화관리 · 이메일 복구</title><style>body{font:18px system-ui;max-width:440px;margin:48px auto;padding:20px;color:#172d40}label,input,button{display:block;width:100%;box-sizing:border-box;margin:16px 0}input,button{font:inherit;padding:14px}button{cursor:pointer}</style></head><body><h1>'+(kind==='verify'?'복구 이메일 인증':'비밀번호 재설정')+'</h1><p>링크는 15분 동안 한 번만 사용할 수 있습니다.</p><form id="form">'+(kind==='reset'?'<label>새 비밀번호<input id="password" type="password" required minlength="6" maxlength="100" autocomplete="new-password"></label><label>새 비밀번호 확인<input id="confirmation" type="password" required minlength="6" maxlength="100" autocomplete="new-password"></label>':'<p>아래 버튼을 누르면 이 이메일을 복구 주소로 등록합니다.</p>')+'<button id="submit">'+(kind==='verify'?'이메일 인증 완료':'새 비밀번호 설정')+'</button></form><p id="status" role="status"></p><script>const args='+args+';const form=document.getElementById("form"),status=document.getElementById("status"),button=document.getElementById("submit");form.addEventListener("submit",function(e){e.preventDefault();const password=document.getElementById("password")?.value||"",confirmation=document.getElementById("confirmation")?.value||"";if(password!==confirmation){status.textContent="새 비밀번호가 서로 다릅니다.";return;}button.disabled=true;google.script.run.withSuccessHandler(function(){form.hidden=true;status.textContent=args[3]==="verify"?"이메일 인증을 완료했습니다. 이제 비밀번호를 잊으면 이 메일로 재설정할 수 있습니다.":"비밀번호를 변경했습니다. 기존 QR은 무효화되었습니다. 사이트에서 새 비밀번호로 로그인하세요.";}).withFailureHandler(function(error){button.disabled=false;status.textContent=error.message||"처리하지 못했습니다. 링크를 다시 요청해주세요.";}).completeEmailRecovery(...args,password,confirmation);});</script></body></html>').setTitle('클랜 재화관리 · 이메일 복구');
+}
+// Run once in the owner editor if Google asks for the new send-mail permission.
+// This only checks authorization/quota: it does not send mail or alter members.
+function enableRecoveryEmail(){console.log('메일 권한 확인 완료. 남은 발송 수: '+MailApp.getRemainingDailyQuota());}
