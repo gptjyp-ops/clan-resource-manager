@@ -1,8 +1,10 @@
 # OCR review checkpoint
 
-Updated: 2026-11-17 01:57 KST. Latest deployed scanner: 2026-11-16.1.
+Updated: 2026-11-17 04:01 KST. Latest deployed scanner: 2026-11-16.1.
 
 ## Current scan
+
+- 2026-11-17 04:01 KST incremental review: refreshed metadata confirms ocr_errors sheet 667079903, 1000x26. Read A552:J1000: existing rows 552–554 unchanged; 555–1000 empty. Last reviewed 554; next 555. Main 6cbcbea81a7f204af045c6c46498681f821b8b7e Code checks 43913184612 and Pages 43913183017 completed successfully. Scanner fetched at this head remains blob 00eb3913594799f8cfbbfa3cfcf4680cbcac2f90. No new report, original photo or browser evidence changes unresolved 552/554 or earlier cases; retain prior replay evidence and exact-original/browser reproduction limits. Row 553 remains wrong-photo rejection. No new confirmed OCR defect or source change; no additional tests or deployment required. No guessed values or changes to member resources, passwords, tickets or clan settings.
 
 - 2026-11-17 01:57 KST incremental review: refreshed metadata confirms ocr_errors sheet 667079903, grid 1000x26. Read A552:J1000; rows 552–554 unchanged, rows 555–1000 empty. Last reviewed 554 / next 555 retained. Latest main faaa84140560ebf98b958980220ad0d041e22781: Code checks 43892301845 and Pages 43892302043 completed successfully. Fetched scanner at this head; unchanged blob 00eb3913594799f8cfbbfa3cfcf4680cbcac2f90. No new original photo, report, or browser evidence changes the previously recorded unresolved ratio conflicts 552/554 or earlier unresolved cases. Prior stored-photo replay results and their exact-original/browser limitations remain applicable; row 553 remains wrong-photo rejection. No confirmed new OCR defect, guessed correction, application/backend edit, additional test run or deployment required. Member resources, passwords, tickets and clan settings untouched.
 
