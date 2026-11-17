@@ -44,6 +44,6 @@ console.log('Ticket-only entry switches clan, scopes storage and keeps credentia
 
 const ownerGate=setup('',{},true,true,false,true);
 await ownerGate.api.enterClanTicket(personal);
-assert.equal(ownerGate.location.hash,'#manage='+personal.clanId);
+assert.equal(ownerGate.location.hash,'#clan='+personal.clanId);
 assert.equal(ownerGate.location.hash.includes(personal.token),false);
-console.log('Server-confirmed administrator QRs open management directly without exposing the ticket in the URL.');
+console.log('Administrator-bound QRs enter member resources; management remains an explicit choice and tokens stay out of URLs.');

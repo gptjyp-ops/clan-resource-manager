@@ -121,7 +121,7 @@ export async function enterClanTicket(input:MemberTicket):Promise<void>{
  rememberTicket(ticket);
  sessionStorage.setItem(ticket.clanId==='legacy'?'clanAccessKey':'clanAccessKey:'+ticket.clanId,result.entryAccessKey);
  if(result.adminTicket)sessionStorage.removeItem('clanAdminQrLoggedOut:'+ticket.clanId);
- const target=(result.adminTicket?'#manage=':'#clan=')+encodeURIComponent(ticket.clanId);
+ const target='#clan='+encodeURIComponent(ticket.clanId);
  if(location.hash===target)location.reload();else location.hash=target;
 }
 
