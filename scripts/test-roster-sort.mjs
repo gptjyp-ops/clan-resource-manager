@@ -17,7 +17,7 @@ for(const group of groups){
  assert.deepEqual(nextResourceSort({group,direction:'asc'},group),{group,direction:'desc'});
 }
 assert.deepEqual(nextResourceSort({group:'skill',direction:'asc'},'egg'),{group:'egg',direction:'desc'});
-assert.equal(sortResources(rows,null),rows);
+assert.notEqual(sortResources(rows,null),rows);
 assert.equal(JSON.stringify(rows),before);
 const ties=rows.slice(2,4).map(r=>({...r,details:{...r.details,skill:{...r.details.skill,amount:'1k'}}}));
 assert.deepEqual(sortResources(ties,{group:'skill',direction:'asc'}).map(r=>r.id),[3,2]);
@@ -59,3 +59,16 @@ for(const group of ['registration','mergeRegistration']){
  assert.deepEqual(nextResourceSort({group,direction:'desc'},group),{group,direction:'asc'});
 }
 console.log('Weekly registration and missing-merge sorting pass cutoff, zero, extra, ties and rollover checks.');
+
+const ranked=[
+ {id:'stale-max',date:'2026-10-17T23:59:59Z',levels:['100','100','100']},
+ {id:'regular',date:'2026-10-23T05:00:00Z',levels:['99','20','0']},
+ {id:'one',date:'2026-10-23T03:00:00Z',levels:['100','20','0']},
+ {id:'two',date:'2026-10-23T01:00:00Z',levels:['100','100','0']},
+ {id:'one-new',date:'2026-10-23T04:00:00Z',levels:['100','20','0']}
+].map(r=>{const details=emptyInventory();details.skill.amount='0';['skill','egg','mount'].forEach((g,i)=>details[g].level=r.levels[i]);return {id:r.id,updated_at:r.date,details};});
+const rankedSnapshot=JSON.stringify(ranked);
+assert.deepEqual(sortResources(ranked,null,now).map(r=>r.id),['two','one-new','one','regular','stale-max']);
+assert.equal(JSON.stringify(ranked),rankedSnapshot);
+assert.deepEqual(sortResources(ranked,null,Date.parse('2026-10-25T00:00:00Z')).map(r=>r.id),['regular','one-new','one','two','stale-max']);
+console.log('Default ordering puts weekly registrations first, ascension-ready categories next, and preserves source records.');

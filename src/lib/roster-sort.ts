@@ -15,7 +15,15 @@ export function nextResourceSort(current:ResourceSort,group:SortGroup):ResourceS
  return {group,direction:current?.group===group&&current.direction==='desc'?'asc':'desc'};
 }
 export function sortResources<T extends {details:Inventory;updated_at:string}>(rows:T[],sort:ResourceSort,now=Date.now()):T[]{
- if(!sort)return rows;
+ if(!sort)return [...rows].sort((a,b)=>{
+  const registered=Number(registeredThisWeek(b,now))-Number(registeredThisWeek(a,now));
+  if(registered)return registered;
+  const waiting=(row:SortRow)=>['skill','egg','mount'].filter(g=>/^0*100$/.test(row.details[g as 'skill'|'egg'|'mount'].level)).length;
+  if(registeredThisWeek(a,now)){
+   const priority=waiting(b)-waiting(a);if(priority)return priority;
+  }
+  return (Date.parse(b.updated_at)||0)-(Date.parse(a.updated_at)||0);
+ });
  return [...rows].sort((a,b)=>{
   const left=sortValue(a,sort.group,now),right=sortValue(b,sort.group,now);
   // Missing/invalid values stay last in both directions; zero is a real amount.

@@ -646,5 +646,7 @@
   "이메일 인증 메일 보내기": "Send verification email",
   "신규 회원은 복구 이메일을 입력해주세요. 기존 회원은 비워두면 유지됩니다. 메일 인증 후 사용할 수 있습니다.": "New members: enter a recovery email. Existing members: leave blank to keep yours. Verify the email before using it.",
   "재화는 저장됐지만 인증 메일을 보내지 못했습니다. 이메일 등록에서 다시 요청해주세요.": "Resources were saved, but the verification email could not be sent. Try again under recovery email registration.",
-  "이메일 복구 기능을 업데이트 중입니다. 잠시 후 다시 시도해주세요.": "Email recovery is being updated. Please try again later."
+  "이메일 복구 기능을 업데이트 중입니다. 잠시 후 다시 시도해주세요.": "Email recovery is being updated. Please try again later.",
+  "등록 · 승천 우선순": "Registered · Ascension first",
+  "기본 순서는 이번 주 등록 회원 중 승천대기 항목이 많은 순이며, 미등록 회원은 아래에 표시합니다.": "Default order shows this week's registered members with more ascension-ready categories first, followed by unregistered members."
 }
