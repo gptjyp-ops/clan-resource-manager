@@ -1,8 +1,10 @@
 # OCR review checkpoint
 
-Updated: 2026-11-17 11:55 KST. Latest deployed scanner: 2026-11-16.1.
+Updated: 2026-11-17 13:59 KST. Latest deployed scanner: 2026-11-16.1.
 
 ## Current scan
+
+- 2026-11-17 13:59 KST incremental review: refreshed ocr_errors metadata (sheet 667079903,1000x26). Read A552:J1000: rows 552–556 unchanged; new 557 reviewed; 558–1000 empty. Last reviewed 557 / next 558. Report timestamp 2026-11-17T03:53:02.950Z, scanner 2026-11-16.1, egg slot, OCR-06 and no OCR attempts. Downloaded stored JPEG and visually verified pet merge/upgrade material-selection dialog with 533 selected (233+271+19+10), not ordinary egg/pet summon screen. Correct wrong-screen rejection: this photo belongs in eggMerge. Background 31k is summon currency, item Lv.50/Lv.65 are pet levels, and experience/combat numbers are not summon progress. No inferred correction or live resource update. No confirmed OCR source defect; no code changes, additional tests or deployment required. Main 38974b0a4c497e13c920755015908b6704bf6d4b: Pages 44006621524 and Code checks 44006621388 completed successfully; scanner unchanged blob 00eb3913594799f8cfbbfa3cfcf4680cbcac2f90. Existing wrong-photo cases 555/556 and unresolved 552/554/prior cases retain their documented classifications, evidence and exact-original/browser reproduction limits. Member resources, passwords, tickets and clan settings untouched.
 
 - 2026-11-17 11:55 KST incremental review: refreshed ocr_errors metadata (sheet 667079903, 1000x26). Read A552:J1000; rows 552–556 unchanged; 557–1000 empty. Last reviewed 556 / next 557 retained. Latest main 83918809c43e2d2e68d492f2d7d280f776e8b9fa: Pages 44004524211 and Code checks 44004524178 completed successfully. Scanner fetched at this head remains blob 00eb3913594799f8cfbbfa3cfcf4680cbcac2f90. Recent user-requested QR entry/roster sorting changes are separate from OCR; no new OCR source change or report evidence. Prior receipt rejection 555 and merge-photo-in-summon-slot rejection 556 remain classified; unresolved 552/554 and earlier cases retain recorded stored-photo replay evidence and exact-original/browser reproduction limits. No new confirmed defect, guessed correction, additional tests or deployment required. Member resources, passwords, tickets and clan settings untouched.
 
