@@ -1,8 +1,10 @@
 # OCR review checkpoint
 
-Updated: 2026-11-17 16:34 KST. Latest deployed scanner: 2026-11-16.1.
+Updated: 2026-11-17 18:01 KST. Latest deployed scanner: 2026-11-16.1.
 
 ## Current scan
+
+- 2026-11-17 18:01 KST incremental review: refreshed ocr_errors metadata confirms sheet 667079903,1000x26. Read A552:J1000: existing 552–557 unchanged; 558–1000 empty. Last reviewed 557 / next 558 retained. Main b86d3879d5d79fc9c66451e61b24630dfecbde45: Code checks 44039919054 and Pages 44039918984 completed successfully; scanner remains blob 00eb3913594799f8cfbbfa3cfcf4680cbcac2f90. No new report, original photo or browser evidence changes wrong-photo classifications 555–557 or unresolved 552/554 and earlier cases. Retain prior stored-photo replay results and exact-original/browser reproduction limits. No new confirmed defect, guessed correction, source change, additional test run or deployment required. Member resources, passwords, tickets and clan settings untouched.
 
 - 2026-11-17 16:34 KST incremental review: refreshed ocr_errors metadata confirms sheet 667079903,1000x26. Read A552:J1000: existing 552–557 unchanged; 558–1000 empty. Last reviewed 557 / next 558 retained. Main 2e5683c7592b02c362cbe27d1f13eaf6ab4358e0: Code checks 44036205936 and Pages 44036205985 completed successfully; scanner fetched at this head unchanged blob 00eb3913594799f8cfbbfa3cfcf4680cbcac2f90. No new report, original photo or browser evidence changes wrong-photo classifications 555–557 or unresolved 552/554 and earlier cases. Preserve prior stored-photo replay results and exact-original/browser reproduction limits. No new confirmed defect, guessed correction, source change, additional test run or deployment required. Member resources, passwords, tickets and clan settings untouched.
 
