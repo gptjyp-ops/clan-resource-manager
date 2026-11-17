@@ -72,3 +72,10 @@ assert.deepEqual(sortResources(ranked,null,now).map(r=>r.id),['two','one-new','o
 assert.equal(JSON.stringify(ranked),rankedSnapshot);
 assert.deepEqual(sortResources(ranked,null,Date.parse('2026-10-25T00:00:00Z')).map(r=>r.id),['regular','one-new','one','two','stale-max']);
 console.log('Default ordering puts weekly registrations first, ascension-ready categories next, and preserves source records.');
+
+for(const group of ['skill','egg','mount']){
+ const sample=[{id:'old',amount:'999k',level:'100',date:'2026-10-17T23:59:59Z'},{id:'normal',amount:'500k',level:'99',date:'2026-10-23T01:00:00Z'},{id:'ready-high',amount:'80k',level:'100',date:'2026-10-23T02:00:00Z'},{id:'ready-low',amount:'60k',level:'100',date:'2026-10-23T03:00:00Z'}].map(r=>{const details=emptyInventory();details[group].amount=r.amount;details[group].level=r.level;return {id:r.id,details,updated_at:r.date};});
+ assert.deepEqual(sortResources(sample,{group,direction:'desc'},now).map(r=>r.id),['ready-high','ready-low','normal','old']);
+ assert.deepEqual(sortResources(sample,{group,direction:'asc'},now).map(r=>r.id),['ready-low','ready-high','normal','old']);
+}
+console.log('Resource buttons retain unregistered-last and selected-resource ascension priority in both directions.');

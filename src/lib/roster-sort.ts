@@ -25,10 +25,16 @@ export function sortResources<T extends {details:Inventory;updated_at:string}>(r
   return (Date.parse(b.updated_at)||0)-(Date.parse(a.updated_at)||0);
  });
  return [...rows].sort((a,b)=>{
+  const resourceSort=sort.group!=='registration'&&sort.group!=='mergeRegistration';
+  if(resourceSort){const registered=Number(registeredThisWeek(b,now))-Number(registeredThisWeek(a,now));if(registered)return registered;}
   const left=sortValue(a,sort.group,now),right=sortValue(b,sort.group,now);
   // Missing/invalid values stay last in both directions; zero is a real amount.
   if(left===null&&right!==null)return 1;
   if(right===null&&left!==null)return -1;
+  if((sort.group==='skill'||sort.group==='egg'||sort.group==='mount')&&registeredThisWeek(a,now)&&registeredThisWeek(b,now)){
+   const waiting=(row:SortRow)=>/^0*100$/.test(row.details[sort.group as 'skill'|'egg'|'mount'].level);
+   const priority=Number(waiting(b))-Number(waiting(a));if(priority)return priority;
+  }
   if(left!==null&&right!==null&&left!==right)return sort.direction==='asc'?left-right:right-left;
   return (Date.parse(b.updated_at)||0)-(Date.parse(a.updated_at)||0);
  });
