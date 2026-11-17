@@ -1,8 +1,10 @@
 # OCR review checkpoint
 
-Updated: 2026-11-17 13:59 KST. Latest deployed scanner: 2026-11-16.1.
+Updated: 2026-11-17 16:00 KST. Latest deployed scanner: 2026-11-16.1.
 
 ## Current scan
+
+- 2026-11-17 16:00 KST incremental review: refreshed ocr_errors metadata confirms sheet 667079903,1000x26. Read A552:J1000: reviewed rows 552–557 unchanged; 558–1000 empty. Last reviewed 557 / next 558 retained. Main a2645184d9f5e0c700e20f7329670cb60780cae7: Pages 44021056661 and Code checks 44021056710 completed successfully. Scanner remains blob 00eb3913594799f8cfbbfa3cfcf4680cbcac2f90. No new original photo/report/browser evidence changes previously classified wrong-photo cases 555–557 or unresolved 552/554 and earlier cases; retain prior replay evidence and exact-original/browser reproduction limits. No new confirmed defect, guessed correction, source change, additional tests or deployment required. Member resources, passwords, tickets and clan settings untouched.
 
 - 2026-11-17 13:59 KST incremental review: refreshed ocr_errors metadata (sheet 667079903,1000x26). Read A552:J1000: rows 552–556 unchanged; new 557 reviewed; 558–1000 empty. Last reviewed 557 / next 558. Report timestamp 2026-11-17T03:53:02.950Z, scanner 2026-11-16.1, egg slot, OCR-06 and no OCR attempts. Downloaded stored JPEG and visually verified pet merge/upgrade material-selection dialog with 533 selected (233+271+19+10), not ordinary egg/pet summon screen. Correct wrong-screen rejection: this photo belongs in eggMerge. Background 31k is summon currency, item Lv.50/Lv.65 are pet levels, and experience/combat numbers are not summon progress. No inferred correction or live resource update. No confirmed OCR source defect; no code changes, additional tests or deployment required. Main 38974b0a4c497e13c920755015908b6704bf6d4b: Pages 44006621524 and Code checks 44006621388 completed successfully; scanner unchanged blob 00eb3913594799f8cfbbfa3cfcf4680cbcac2f90. Existing wrong-photo cases 555/556 and unresolved 552/554/prior cases retain their documented classifications, evidence and exact-original/browser reproduction limits. Member resources, passwords, tickets and clan settings untouched.
 
