@@ -1,8 +1,10 @@
 # OCR review checkpoint
 
-Updated: 2026-11-18 21:58 KST. Latest deployed scanner: 2026-11-16.1.
+Updated: 2026-11-18 23:59 KST. Latest deployed scanner: 2026-11-16.1.
 
 ## Current scan
+
+- 2026-11-18 23:59 KST incremental review: refreshed ocr_errors metadata confirms sheet 667079903,1000x26. Read A552:J1000: existing records 552–559 retain documented timestamps, scanner, OCR attempts and attachment references; 560–1000 empty. Last reviewed 559 / next 560 retained. Main 141db68d0afe22bb64a0cae2a6869036c7dfe7f9: Code checks 44309118915 and Pages 44309118969 completed successfully; scanner remains blob 00eb3913594799f8cfbbfa3cfcf4680cbcac2f90. No new report or original/browser evidence changes wrong-photo classifications 555–559 or unresolved 552/554 and earlier cases. Retain prior stored-photo comparisons/replay evidence and exact-original/browser reproduction limits. No guessed decimal, k-unit, leading-digit or summon/merge correction; no new confirmed defect, source change, additional test run or application/GAS deployment required. Member resources, passwords, tickets and clan settings untouched.
 
 - 2026-11-18 21:58 KST incremental review: refreshed ocr_errors metadata confirms sheet 667079903,1000x26. Read A552:J1000: existing records 552–559 retain documented timestamps, scanner, OCR attempts and attachment references; 560–1000 empty. Last reviewed 559 / next 560 retained. Main b1dc8bfdca9b8b6a22be9b030d4ba436b07ea3c4: Code checks 44290105830 and Pages 44290105825 completed successfully; scanner remains blob 00eb3913594799f8cfbbfa3cfcf4680cbcac2f90. No new report or original/browser evidence changes wrong-photo classifications 555–559 or unresolved 552/554 and earlier cases. Retain prior stored-photo comparisons/replay evidence and exact-original/browser reproduction limits. No guessed decimal, k-unit, leading-digit or summon/merge correction; no new confirmed defect, source change, additional test run or application/GAS deployment required. Member resources, passwords, tickets and clan settings untouched.
 
