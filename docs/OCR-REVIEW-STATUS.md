@@ -1,8 +1,10 @@
 # OCR review checkpoint
 
-Updated: 2026-11-20 13:57 KST. Latest deployed scanner: 2026-11-16.1.
+Updated: 2026-11-20 16:01 KST. Latest deployed scanner: 2026-11-16.1.
 
 ## Current scan
+
+- 2026-11-20 16:01 KST incremental review: refreshed ocr_errors metadata and read A561:J1000. Rows 561–563 still report egg amount OCR-03 and retain their photo references. Rows 564–1000 are empty. Last reviewed 563 / next 564. Main scanner blob 00eb3913594799f8cfbbfa3cfcf4680cbcac2f90 is unchanged. Prior stored-JPEG crop replay read 911, so the original upload/browser failure remains open. Retained 561–563, 552/554 and earlier unresolved cases. No application changes, tests or deployment required.
 
 - 2026-11-20 13:57 KST incremental review: verified ocr_errors metadata and A552:J1000. New rows 561–563, 13:11:28–13:13:12 KST, all report egg amount OCR-03 on scanner 2026-11-16.1. Each logged amount MM/mm/MM while level 53 and ratio 21/23 were read. All three stored JPEGs visually show the pet summon screen with 911 eggs, Lv. 53, progress 21/23, and summon cost 100. No visible decimal, k suffix, missing leading digit, or merge screen. Reports describe 1440×3200 uploads. The representative stored JPEG is 720×1600. A crop-level replay on that stored JPEG using native Tesseract returned 911 after preprocessing and did not reproduce MM. Exact upload pixels and browser OCR reproduction remain unverified. Keep 561–563 open. Retain 552/554 and earlier open cases. Rows 564–1000 are empty. Last reviewed 563 / next 564. Main scanner and layout source inspected. No application patch, test suite run, or application deployment. No member data changes.
 
