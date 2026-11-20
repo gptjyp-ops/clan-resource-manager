@@ -1,8 +1,10 @@
 # OCR review checkpoint
 
-Updated: 2026-11-21 03:55 KST. Latest deployed scanner: 2026-11-16.1.
+Updated: 2026-11-21 05:58 KST. Latest deployed scanner: 2026-11-16.1.
 
 ## Current scan
+
+- 2026-11-21 05:58 KST: checked sheet metadata and A561:J1000. Rows 561–568 match the previous review. Rows 569–1000 are empty. Last reviewed 568 / next 569. Main scanner blob 00eb3913594799f8cfbbfa3cfcf4680cbcac2f90 is unchanged. Open cases 561–563, 552/554 and earlier remain tracked. No application change or deployment.
 
 - 2026-11-21 03:55 KST: verified ocr_errors metadata and A561:J1000. Existing rows 561–568 retain prior findings. Rows 569–1000 are empty. Last reviewed 568 / next 569. Main scanner blob 00eb3913594799f8cfbbfa3cfcf4680cbcac2f90 is unchanged. Open rows 561–563, 552/554 and earlier cases remain tracked. No application change or deployment.
 
