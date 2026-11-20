@@ -1,8 +1,10 @@
 # OCR review checkpoint
 
-Updated: 2026-11-20 18:01 KST. Latest deployed scanner: 2026-11-16.1.
+Updated: 2026-11-20 20:01 KST. Latest deployed scanner: 2026-11-16.1.
 
 ## Current scan
+
+- 2026-11-20 20:01 KST: verified ocr_errors sheet metadata and A561:J1000. Rows 561–568 match the existing reviews and rows 569–1000 are empty. Last reviewed 568 / next 569. Main scanner blob 00eb3913594799f8cfbbfa3cfcf4680cbcac2f90 remains unchanged. Kept earlier wrong-screen findings and unresolved cases 561–563, 552/554 and earlier. No new evidence, application change, test or deployment required.
 
 - 2026-11-20 18:01 KST: checked sheet metadata and A561:J1000. Five new OCR-06 reports, rows 564–568 (17:16–17:17 KST). Compared all stored JPEGs. Rows 564–567 share identical bytes and are mount summon captures in the merge slot: balance 13k, price 48, maximum summon status. Row 568 is a mount merge selection screen in the summon slot; no selected count is displayed. The visible decimal, suffixes, equipment level and experience are not merge counts or summon balances. Main screen-ocr.ts blob 00eb3913594799f8cfbbfa3cfcf4680cbcac2f90 contains the corresponding wrong-screen rejection paths. No reproducible defect or code change. Retained 561–563, 552/554 and earlier unresolved cases. Rows 569–1000 empty; last reviewed 568 / next 569. No application deployment or member data change.
 
