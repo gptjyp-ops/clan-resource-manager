@@ -19,6 +19,14 @@ function displayAmount(key:string,value:string|undefined){
 const isWaiting=(row:Registration)=>summonGroups.some(group=>row.amounts[`${group}Waiting`]==='yes');
 type Registration={nickname:string;amounts:Partial<Record<typeof fields[number][0]|AscensionField,string>>;submittedAt:string};
 
+function RegistrationGem({amounts}:{amounts:Registration['amounts']}){
+ if(!fields.every(([key])=>amounts[key]?.trim()))return null;
+ return <details className="elite-registration-gem">
+  <summary aria-label="등록 보석">✦</summary>
+  <small>이번 주 재화 등록을 마쳤어요</small>
+ </details>;
+}
+
 export default function EliteManualRegistration(){
  const [search,setSearch]=useState('');
  const [rows,setRows]=useState<Registration[]>([]);
@@ -105,6 +113,10 @@ export default function EliteManualRegistration(){
   </section>
   <section className="panel elite-weekly-results">
    <style>{`
+    .elite-registration-gem { display: inline-block; margin-inline-start: 4px; }
+    .elite-registration-gem summary { display: inline-flex; justify-content: center; min-width: 24px; color: #6d28a8; cursor: pointer; list-style: none; }
+    .elite-registration-gem summary::-webkit-details-marker { display: none; }
+    .elite-registration-gem small { display: block; font-weight: normal; }
     .elite-weekly-results { padding: 16px; }
     .elite-resource-list { display: none; }
     @media (max-width: 720px) {
@@ -140,7 +152,7 @@ export default function EliteManualRegistration(){
       <table>
        <thead><tr><th>닉네임</th>{line.map(([key,label])=><th key={key}>{label}</th>)}</tr></thead>
        <tbody>{visibleRows.map(row=><tr key={row.nickname}>
-        <th scope="row">{row.nickname}
+        <th scope="row">{row.nickname}<RegistrationGem amounts={row.amounts}/>
          {adminToken&&<button type="button" disabled={busy} onClick={()=>setPending(row)}>등록 취소</button>}
         </th>
         {line.map(([key])=><td key={key}>
@@ -157,7 +169,7 @@ export default function EliteManualRegistration(){
    </div>
    <div className="elite-weekly-table" tabIndex={0} role="region" aria-label="클랜 재화 현황 표" style={{overflowX:'auto'}}><table>
     <thead><tr><th>닉네임</th>{fields.map(([key,label])=><th key={key}>{label}{usesK(key)&&' (K)'}</th>)}{adminToken&&<th>관리</th>}</tr></thead>
-    <tbody>{visibleRows.map(row=><tr key={row.nickname}><th scope="row">{row.nickname}{isWaiting(row)&&<div><small>승천대기</small></div>}</th>
+    <tbody>{visibleRows.map(row=><tr key={row.nickname}><th scope="row">{row.nickname}<RegistrationGem amounts={row.amounts}/>{isWaiting(row)&&<div><small>승천대기</small></div>}</th>
      {fields.map(([key])=><td key={key}>{displayAmount(key,row.amounts[key])}
       {summonGroups.map(group=>group===key&&<div key={group}>
        {row.amounts[`${group}Level`]&&<span>Lv. {row.amounts[`${group}Level`]} </span>}
