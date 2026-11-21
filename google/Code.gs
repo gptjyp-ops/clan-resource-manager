@@ -163,11 +163,59 @@ function isAdminTicket_(clan,p){
 function clanServer_(server){if(server===undefined||server==='')return '';if(typeof server!=='string'||!/^\d{1,6}$/.test(server.trim())||Number(server.trim())<1)throw Error('서버 번호는 1 이상의 숫자로 입력해주세요.');return String(Number(server.trim()));}
 function clanName_(name){if(typeof name!=='string'||!name.trim()||name.trim().length>40)throw Error('클랜 이름은 1~40자로 입력해주세요.');return name.trim().normalize('NFKC');}
 function clanPassword_(password){if(typeof password!=='string'||password.length<10||password.length>100)throw Error('클랜장 비밀번호는 10~100자로 정해주세요.');return password;}
+
+function weeklyManualClan_(id) {
+ return id==='f768d7c5332948cbb1f7ec5f';
+}
+function manualWeek_(now) {
+ var day=new Date(now);
+ return Date.UTC(day.getUTCFullYear(),day.getUTCMonth(),day.getUTCDate()-((day.getUTCDay()+6)%7));
+}
+function manualRegistration_(op,p,clanId) {
+ if(!weeklyManualClan_(clanId))throw Error('수기 등록을 지원하지 않는 클랜입니다.');
+ var week=manualWeek_(Date.now());
+ var book=SpreadsheetApp.openById(PropertiesService.getScriptProperties().getProperty('SHEET_ID'));
+ var name='weekly_manual_'+clanId;
+ var sheet=book.getSheetByName(name);
+ var rows=sheet&&sheet.getLastRow()>1?sheet.getRange(2,1,sheet.getLastRow()-1,5).getValues():[];
+ var active=rows.map(function(row,index){return {row:row,index:index};}).filter(function(entry){return Number(entry.row[0])===week&&!entry.row[4];});
+ if(op==='manualList')return {ok:true,manualRecords:active.map(function(entry){return {nickname:JSON.parse(entry.row[1]),amounts:JSON.parse(entry.row[2]),submittedAt:String(entry.row[3])};})};
+ if(typeof p.nickname!=='string')throw Error('게임 닉네임을 입력해주세요.');
+ var nickname=p.nickname.trim().normalize('NFKC');
+ if(!nickname||nickname.length>24)throw Error('게임 닉네임은 1~24자로 입력해주세요.');
+ var existing=active.find(function(entry){return JSON.parse(entry.row[1]).toLowerCase()===nickname.toLowerCase();});
+ if(op==='manualCancel'){
+  if(!existing||String(existing.row[3])!==p.submittedAt)throw Error('등록 내역이 변경되었습니다. 새로고침해주세요.');
+  sheet.getRange(existing.index+2,5).setValue(new Date().toISOString());
+  SpreadsheetApp.flush();
+  return {ok:true};
+ }
+ if(existing)throw Error('이 닉네임은 이번 주에 이미 등록됐습니다.');
+ var amounts={};
+ ['skill','egg','mount','potion'].forEach(function(kind){
+  var raw=p.amounts&&p.amounts[kind];
+  if(typeof raw!=='string'||raw.length>24||quantity_(raw.trim())===null)throw Error('재화 4종을 모두 입력해주세요. 없는 재화는 0을 입력해주세요.');
+  amounts[kind]=raw.trim();
+ });
+ if(!sheet){
+  sheet=book.insertSheet(name);
+  sheet.appendRow(['week_start','nickname_json','amounts_json','submitted_at','cancelled_at']);
+ }
+ sheet.appendRow([week,JSON.stringify(nickname),JSON.stringify(amounts),new Date().toISOString(),'']);
+ SpreadsheetApp.flush();
+ return {ok:true};
+}
+
 function clanOperation_(p){
  if(p.operation==='assistant')return assistant_(p,authorizeClan_(p));
  var op=p.operation;if(op==='registerRecoveryEmail'||op==='requestEmailReset')return emailRecoveryRequest_(p,authorizeClan_(p));if(op==='ticketClanEnter'){var ticketClan=resolveClan_(p),ticketReply=ticketEnter_(p,ticketClan);ticketReply.entryAccessKey=ticketClan.key;ticketReply.adminTicket=isAdminTicket_(ticketClan,p);return ticketReply;}if(op==='clanCodeResetMember')return clanCodeResetMember_(p);if(op==='ticketEnter')return ticketEnter_(p,authorizeClan_(p));if(op==='issueMemberTicket')return issueMemberTicket_(p,authorizeClan_(p));if(op==='issueMemberRecovery'||op==='recoverMemberPassword')return memberRecovery_(p,op);if(op==='memberLogin')return memberLogin_(p,authorizeClan_(p));if(op==='capabilities')return {ok:true,ticketClanEntry:true,multiClan:true,clanRecoveryCodes:true,ticketPasswordSave:true,photoRemoval:true,memberTickets:true,memberLogin:true,memberPasswordReset:true,memberRemoval:true,adminTicketLogin:true,memberSelfRecovery:true,emailRecovery:true,operatorRecovery:true,entryPassword:true,preserveExisting:true,diagnosticReports:true,diagnosticPhotos:true,serverSelection:true,servers:Array.from(new Set(clanRows_(registry_()).map(function(r){return String(r[10]||'');}).filter(function(s){return /^\d{1,6}$/.test(s);}))).sort(function(a,b){return Number(a)-Number(b);})};
  var lock=LockService.getScriptLock();if(!lock.tryLock(15000))throw Error('다른 요청을 처리 중입니다. 잠시 후 다시 시도해주세요.');
  try{
+  if(op==='manualList'||op==='manualSubmit'){
+   var manualClan=authorizeClan_(p);
+   if(!entrySettings_(manualClan.id))throw Error('클랜 입장 비밀번호 설정이 필요합니다.');
+   return manualRegistration_(op,p,manualClan.id);
+  }
   if(op==='createClan'||op==='claimLegacy'){
    var name=clanName_(p.name),server=clanServer_(p.server),password=clanPassword_(p.password),s=registry_(),rows=clanRows_(s);
    var id=op==='claimLegacy'?'legacy':Utilities.getUuid().replace(/-/g,'').slice(0,24),key,memberSheet,folderId;
@@ -206,6 +254,7 @@ function clanOperation_(p){
    return adminReply_(qrFound,hash_(JSON.stringify(binding),'admin-qr-binding'));
   }
   var found=clanAdmin_(p);
+  if(op==='manualCancel')return manualRegistration_(op,p,String(found.row[0]));
   if(op==='adminTicketInfo'){var binding=adminQrBinding_(found.row[0]);return {ok:true,adminTicketNickname:binding&&adminQrSessionValid_(found,hash_(JSON.stringify(binding),'admin-qr-binding'))?binding.nickname:''};}
   if(op==='bindAdminTicket'){
    var ticketClan=clanFrom_(found.row);ticketEnter_({nickname:p.nickname,token:p.ticketToken},ticketClan);
