@@ -1,4 +1,4 @@
-import {Fragment,useEffect,useState,type FormEvent} from 'react';
+import {useEffect,useState,type FormEvent} from 'react';
 import {clanAction} from './lib/api';
 import {quantity} from './lib/inventory';
 
@@ -14,6 +14,7 @@ function displayAmount(key:string,value:string|undefined){
  const count=quantity(value);
  return count===null?value:`${count/1000}K`;
 }
+const isWaiting=(row:Registration)=>summonGroups.some(group=>row.amounts[`${group}Waiting`]==='yes');
 type Registration={nickname:string;amounts:Partial<Record<typeof fields[number][0]|AscensionField,string>>;submittedAt:string};
 
 export default function EliteManualRegistration(){
@@ -29,7 +30,7 @@ export default function EliteManualRegistration(){
  const [pending,setPending]=useState<Registration|null>(null);
 
  const query=search.trim().normalize('NFKC').toLowerCase();
- const visibleRows=rows.filter(row=>row.nickname.normalize('NFKC').toLowerCase().includes(query));
+ const visibleRows=rows.filter(row=>row.nickname.normalize('NFKC').toLowerCase().includes(query)).sort((a,b)=>Number(isWaiting(b))-Number(isWaiting(a)));
 
  async function refresh(){
   const result=await clanAction('manualList');
@@ -103,39 +104,19 @@ export default function EliteManualRegistration(){
   <section className="panel elite-weekly-results">
    <style>{`
     .elite-weekly-results { padding: 16px; }
-    .elite-weekly-cards { display: none; }
     @media (max-width: 720px) {
-     .elite-weekly-table { display: none; }
-     .elite-weekly-cards { display: grid; gap: 12px; list-style: none; padding: 0; margin: 12px 0; }
-     .elite-weekly-card { padding: 12px; border: 1px solid currentColor; border-radius: 12px; }
-     .elite-weekly-card h3 { margin: 0; font-size: 1.15rem; overflow-wrap: anywhere; }
-     .elite-weekly-card dl { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 10px 0; }
-     .elite-weekly-card dl > div { padding: 8px; border-radius: 6px; background: rgb(100 150 200 / 12%); }
-     .elite-weekly-card dt { font-size: .85rem; }
-     .elite-weekly-card dd { margin: 0; font-size: 1.1rem; font-weight: 700; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
-     .elite-weekly-card small { display: block; font-size: .8rem; }
+     .elite-weekly-table table { width: max-content; min-width: 100%; }
+     .elite-weekly-table th, .elite-weekly-table td { white-space: nowrap; padding: 8px; }
+     .elite-weekly-table tr > :first-child { position: sticky; left: 0; background: var(--background, #eaf4ff); z-index: 1; }
     }
    `}</style>
    <h2>이번 주 등록 현황</h2>
    {rows.length>0&&<label className="number-field"><span>닉네임 검색</span><input type="search" value={search} onChange={e=>setSearch(e.target.value)} placeholder="닉네임 일부 입력"/></label>}
    <button type="button" disabled={busy} onClick={()=>void run(refresh)}>새로고침</button>
    {rows.length===0?<p>표시할 등록 내역이 없습니다.</p>:visibleRows.length===0?<p role="status">일치하는 닉네임이 없습니다.</p>:<>
-   <ul className="elite-weekly-cards">{visibleRows.map(row=><li key={row.nickname} className="elite-weekly-card">
-    <h3>{row.nickname}</h3>
-    <dl>{fields.map(([key,label])=><div key={key}>
-     <dt>{label}</dt>
-     <dd>{displayAmount(key,row.amounts[key])}
-      {summonGroups.map(group=>group===key&&<Fragment key={group}>
-       {row.amounts[`${group}Level`]&&<small>Lv. {row.amounts[`${group}Level`]}</small>}
-       {row.amounts[`${group}Waiting`]==='yes'&&<small>승천대기</small>}
-      </Fragment>)}
-     </dd>
-    </div>)}</dl>
-    {adminToken&&<button type="button" disabled={busy} onClick={()=>setPending(row)}>등록 취소</button>}
-   </li>)}</ul>
-   <div className="elite-weekly-table" style={{overflowX:'auto'}}><table>
+   <div className="elite-weekly-table" tabIndex={0} role="region" aria-label="클랜 재화 현황 표" style={{overflowX:'auto'}}><table>
     <thead><tr><th>닉네임</th>{fields.map(([key,label])=><th key={key}>{label}{!key.endsWith('Merge')&&' (K)'}</th>)}{adminToken&&<th>관리</th>}</tr></thead>
-    <tbody>{visibleRows.map(row=><tr key={row.nickname}><th scope="row">{row.nickname}</th>
+    <tbody>{visibleRows.map(row=><tr key={row.nickname}><th scope="row">{row.nickname}{isWaiting(row)&&<div><small>승천대기</small></div>}</th>
      {fields.map(([key])=><td key={key}>{displayAmount(key,row.amounts[key])}
       {summonGroups.map(group=>group===key&&<div key={group}>
        {row.amounts[`${group}Level`]&&<span>Lv. {row.amounts[`${group}Level`]} </span>}
