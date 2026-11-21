@@ -179,7 +179,7 @@ function manualRegistration_(op,p,clanId) {
  var sheet=book.getSheetByName(name);
  var rows=sheet&&sheet.getLastRow()>1?sheet.getRange(2,1,sheet.getLastRow()-1,5).getValues():[];
  var active=rows.map(function(row,index){return {row:row,index:index};}).filter(function(entry){return Number(entry.row[0])===week&&!entry.row[4];});
- if(op==='manualList')return {ok:true,manualMergeCounts:true,manualRecords:active.map(function(entry){return {nickname:JSON.parse(entry.row[1]),amounts:JSON.parse(entry.row[2]),submittedAt:String(entry.row[3])};})};
+ if(op==='manualList')return {ok:true,manualMergeCounts:true,manualAscension:true,manualRecords:active.map(function(entry){return {nickname:JSON.parse(entry.row[1]),amounts:JSON.parse(entry.row[2]),submittedAt:String(entry.row[3])};})};
  if(typeof p.nickname!=='string')throw Error('게임 닉네임을 입력해주세요.');
  var nickname=p.nickname.trim().normalize('NFKC');
  if(!nickname||nickname.length>24)throw Error('게임 닉네임은 1~24자로 입력해주세요.');
@@ -204,6 +204,17 @@ function manualRegistration_(op,p,clanId) {
    amounts[kind]=raw.trim();
   });
  }
+ ['skill','egg','mount'].forEach(function(kind){
+  var level=p.amounts[kind+'Level'],waiting=p.amounts[kind+'Waiting'];
+  if(level!==undefined){
+   if(typeof level!=='string'||(level!==''&&(!/^\d{1,3}$/.test(level)||Number(level)<1||Number(level)>100)))throw Error('소환 레벨은 1~100 사이로 입력해주세요.');
+   if(level)amounts[kind+'Level']=String(Number(level));
+  }
+  if(waiting!==undefined){
+   if(waiting!=='yes'&&waiting!=='no')throw Error('승천대기 여부를 확인해주세요.');
+   amounts[kind+'Waiting']=waiting;
+  }
+ });
  if(!sheet){
   sheet=book.insertSheet(name);
   sheet.appendRow(['week_start','nickname_json','amounts_json','submitted_at','cancelled_at']);
