@@ -2,22 +2,25 @@ import {useEffect,useState,type FormEvent} from 'react';
 import {clanAction} from './lib/api';
 
 export const eliteManualClanId='f768d7c5332948cbb1f7ec5f';
-const fields=[['skill','스킬'],['egg','알·펫'],['mount','탈것'],['potion','녹색 물약']] as const;
-type Registration={nickname:string;amounts:Record<typeof fields[number][0],string>;submittedAt:string};
+const fields=[['skill','스킬'],['egg','알 개수'],['eggMerge','알 합성'],['mount','탈것 소환수'],['mountMerge','탈것 합성수'],['potion','녹색 물약']] as const;
+type Registration={nickname:string;amounts:Partial<Record<typeof fields[number][0],string>>;submittedAt:string};
 
 export default function EliteManualRegistration(){
  const [rows,setRows]=useState<Registration[]>([]);
  const [nickname,setNickname]=useState('');
  const [password,setPassword]=useState('');
  const [adminToken,setAdminToken]=useState('');
+ const [available,setAvailable]=useState(false);
  const [busy,setBusy]=useState(true);
  const [error,setError]=useState('');
  const [notice,setNotice]=useState('');
  const [pending,setPending]=useState<Registration|null>(null);
 
  async function refresh(){
-  const result=await clanAction('manualList') as {manualRecords:Registration[]};
+  const result=await clanAction('manualList');
+  if(!result.manualMergeCounts||!result.manualRecords)throw Error('수기 등록을 업데이트 중입니다. 잠시 후 새로고침해주세요.');
   setRows(result.manualRecords);
+  setAvailable(true);
  }
  async function run(action:()=>Promise<void>){
   setBusy(true);setError('');setNotice('');
@@ -56,9 +59,9 @@ export default function EliteManualRegistration(){
    <form onSubmit={submit}>
     <label>게임 닉네임 <input required maxLength={24} value={nickname} onChange={e=>setNickname(e.target.value)}/></label>
     {fields.map(([key,label])=><label key={key} className="number-field">
-     <span>{label}</span><input name={key} required maxLength={24} inputMode="decimal" placeholder="없으면 0"/>
+     <span>{label}</span><input name={key} required maxLength={24} inputMode={key.endsWith("Merge")?"numeric":"decimal"} placeholder="없으면 0"/>
     </label>)}
-    <button className="submit" disabled={busy}>이번 주 재화 등록</button>
+    <button className="submit" disabled={busy||!available}>이번 주 재화 등록</button>
    </form>
    {error&&<p role="alert">{error}</p>}{notice&&<p role="status">{notice}</p>}
   </section>
@@ -68,7 +71,7 @@ export default function EliteManualRegistration(){
    {rows.length===0?<p>표시할 등록 내역이 없습니다.</p>:<div style={{overflowX:'auto'}}><table>
     <thead><tr><th>닉네임</th>{fields.map(([key,label])=><th key={key}>{label}</th>)}{adminToken&&<th>관리</th>}</tr></thead>
     <tbody>{rows.map(row=><tr key={row.nickname}><th scope="row">{row.nickname}</th>
-     {fields.map(([key])=><td key={key}>{row.amounts[key]}</td>)}
+     {fields.map(([key])=><td key={key}>{row.amounts[key]??'미입력'}</td>)}
      {adminToken&&<td><button type="button" disabled={busy} onClick={()=>setPending(row)}>등록 취소</button></td>}
     </tr>)}</tbody>
    </table></div>}
