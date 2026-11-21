@@ -17,6 +17,7 @@ function displayAmount(key:string,value:string|undefined){
 type Registration={nickname:string;amounts:Partial<Record<typeof fields[number][0]|AscensionField,string>>;submittedAt:string};
 
 export default function EliteManualRegistration(){
+ const [search,setSearch]=useState('');
  const [rows,setRows]=useState<Registration[]>([]);
  const [nickname,setNickname]=useState('');
  const [password,setPassword]=useState('');
@@ -26,6 +27,9 @@ export default function EliteManualRegistration(){
  const [error,setError]=useState('');
  const [notice,setNotice]=useState('');
  const [pending,setPending]=useState<Registration|null>(null);
+
+ const query=search.trim().normalize('NFKC').toLowerCase();
+ const visibleRows=rows.filter(row=>row.nickname.normalize('NFKC').toLowerCase().includes(query));
 
  async function refresh(){
   const result=await clanAction('manualList');
@@ -113,9 +117,10 @@ export default function EliteManualRegistration(){
     }
    `}</style>
    <h2>이번 주 등록 현황</h2>
+   {rows.length>0&&<label className="number-field"><span>닉네임 검색</span><input type="search" value={search} onChange={e=>setSearch(e.target.value)} placeholder="닉네임 일부 입력"/></label>}
    <button type="button" disabled={busy} onClick={()=>void run(refresh)}>새로고침</button>
-   {rows.length===0?<p>표시할 등록 내역이 없습니다.</p>:<>
-   <ul className="elite-weekly-cards">{rows.map(row=><li key={row.nickname} className="elite-weekly-card">
+   {rows.length===0?<p>표시할 등록 내역이 없습니다.</p>:visibleRows.length===0?<p role="status">일치하는 닉네임이 없습니다.</p>:<>
+   <ul className="elite-weekly-cards">{visibleRows.map(row=><li key={row.nickname} className="elite-weekly-card">
     <h3>{row.nickname}</h3>
     <dl>{fields.map(([key,label])=><div key={key}>
      <dt>{label}</dt>
@@ -130,7 +135,7 @@ export default function EliteManualRegistration(){
    </li>)}</ul>
    <div className="elite-weekly-table" style={{overflowX:'auto'}}><table>
     <thead><tr><th>닉네임</th>{fields.map(([key,label])=><th key={key}>{label}{!key.endsWith('Merge')&&' (K)'}</th>)}{adminToken&&<th>관리</th>}</tr></thead>
-    <tbody>{rows.map(row=><tr key={row.nickname}><th scope="row">{row.nickname}</th>
+    <tbody>{visibleRows.map(row=><tr key={row.nickname}><th scope="row">{row.nickname}</th>
      {fields.map(([key])=><td key={key}>{displayAmount(key,row.amounts[key])}
       {summonGroups.map(group=>group===key&&<div key={group}>
        {row.amounts[`${group}Level`]&&<span>Lv. {row.amounts[`${group}Level`]} </span>}
