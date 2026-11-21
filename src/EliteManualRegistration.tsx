@@ -1,4 +1,4 @@
-import {useEffect,useState,type FormEvent} from 'react';
+import {Fragment,useEffect,useState,type FormEvent} from 'react';
 import {clanAction} from './lib/api';
 import {quantity} from './lib/inventory';
 
@@ -96,10 +96,39 @@ export default function EliteManualRegistration(){
    </form>
    {error&&<p role="alert">{error}</p>}{notice&&<p role="status">{notice}</p>}
   </section>
-  <section className="panel">
+  <section className="panel elite-weekly-results">
+   <style>{`
+    .elite-weekly-results { padding: 16px; }
+    .elite-weekly-cards { display: none; }
+    @media (max-width: 720px) {
+     .elite-weekly-table { display: none; }
+     .elite-weekly-cards { display: grid; gap: 12px; list-style: none; padding: 0; margin: 12px 0; }
+     .elite-weekly-card { padding: 12px; border: 1px solid currentColor; border-radius: 12px; }
+     .elite-weekly-card h3 { margin: 0; font-size: 1.15rem; overflow-wrap: anywhere; }
+     .elite-weekly-card dl { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 10px 0; }
+     .elite-weekly-card dl > div { padding: 8px; border-radius: 6px; background: rgb(100 150 200 / 12%); }
+     .elite-weekly-card dt { font-size: .85rem; }
+     .elite-weekly-card dd { margin: 0; font-size: 1.1rem; font-weight: 700; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+     .elite-weekly-card small { display: block; font-size: .8rem; }
+    }
+   `}</style>
    <h2>이번 주 등록 현황</h2>
    <button type="button" disabled={busy} onClick={()=>void run(refresh)}>새로고침</button>
-   {rows.length===0?<p>표시할 등록 내역이 없습니다.</p>:<div style={{overflowX:'auto'}}><table>
+   {rows.length===0?<p>표시할 등록 내역이 없습니다.</p>:<>
+   <ul className="elite-weekly-cards">{rows.map(row=><li key={row.nickname} className="elite-weekly-card">
+    <h3>{row.nickname}</h3>
+    <dl>{fields.map(([key,label])=><div key={key}>
+     <dt>{label}</dt>
+     <dd>{displayAmount(key,row.amounts[key])}
+      {summonGroups.map(group=>group===key&&<Fragment key={group}>
+       {row.amounts[`${group}Level`]&&<small>Lv. {row.amounts[`${group}Level`]}</small>}
+       {row.amounts[`${group}Waiting`]==='yes'&&<small>승천대기</small>}
+      </Fragment>)}
+     </dd>
+    </div>)}</dl>
+    {adminToken&&<button type="button" disabled={busy} onClick={()=>setPending(row)}>등록 취소</button>}
+   </li>)}</ul>
+   <div className="elite-weekly-table" style={{overflowX:'auto'}}><table>
     <thead><tr><th>닉네임</th>{fields.map(([key,label])=><th key={key}>{label}{!key.endsWith('Merge')&&' (K)'}</th>)}{adminToken&&<th>관리</th>}</tr></thead>
     <tbody>{rows.map(row=><tr key={row.nickname}><th scope="row">{row.nickname}</th>
      {fields.map(([key])=><td key={key}>{displayAmount(key,row.amounts[key])}
@@ -110,7 +139,7 @@ export default function EliteManualRegistration(){
      </td>)}
      {adminToken&&<td><button type="button" disabled={busy} onClick={()=>setPending(row)}>등록 취소</button></td>}
     </tr>)}</tbody>
-   </table></div>}
+   </table></div></>}
    {pending&&<div role="group" aria-label="등록 취소 확인"><p>{pending.nickname}님의 이번 주 등록을 취소할까요?</p>
     <button type="button" disabled={busy} onClick={()=>void cancel(pending)}>등록 취소 확인</button>
     <button type="button" disabled={busy} onClick={()=>setPending(null)}>닫기</button>
