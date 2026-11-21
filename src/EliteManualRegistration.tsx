@@ -3,7 +3,11 @@ import {clanAction} from './lib/api';
 
 export const eliteManualClanId='f768d7c5332948cbb1f7ec5f';
 const fields=[['skill','스킬'],['egg','알 개수'],['eggMerge','알 합성'],['mount','탈것 개수'],['mountMerge','탈것 합성수'],['potion','녹색 물약']] as const;
-type Registration={nickname:string;amounts:Partial<Record<typeof fields[number][0],string>>;submittedAt:string};
+const summonGroups=['skill','egg','mount'] as const;
+type SummonGroup=typeof summonGroups[number];
+type AscensionField=`${SummonGroup}${'Level'|'Waiting'}`;
+const summonNames={skill:'스킬',egg:'알',mount:'탈것'};
+type Registration={nickname:string;amounts:Partial<Record<typeof fields[number][0]|AscensionField,string>>;submittedAt:string};
 
 export default function EliteManualRegistration(){
  const [rows,setRows]=useState<Registration[]>([]);
@@ -18,7 +22,7 @@ export default function EliteManualRegistration(){
 
  async function refresh(){
   const result=await clanAction('manualList');
-  if(!result.manualMergeCounts||!result.manualRecords)throw Error('수기 등록을 업데이트 중입니다. 잠시 후 새로고침해주세요.');
+  if(!result.manualAscension||!result.manualMergeCounts||!result.manualRecords)throw Error('수기 등록을 업데이트 중입니다. 잠시 후 새로고침해주세요.');
   setRows(result.manualRecords);
   setAvailable(true);
  }
@@ -32,7 +36,13 @@ export default function EliteManualRegistration(){
   event.preventDefault();
   const form=event.currentTarget,data=new FormData(form);
   await run(async()=>{
-   await clanAction('manualSubmit',{nickname,amounts:Object.fromEntries(fields.map(([key])=>[key,data.get(key)]))});
+   await clanAction('manualSubmit',{nickname,amounts:{
+    ...Object.fromEntries(fields.map(([key])=>[key,data.get(key)])),
+    ...Object.fromEntries(summonGroups.flatMap(key=>[
+     [key+'Level',data.get(key+'Level')],
+     [key+'Waiting',data.has(key+'Waiting')?'yes':'no']
+    ]))
+   }});
    form.reset();setNickname('');setNotice('이번 주 재화를 등록했습니다.');
    await refresh();
   });
@@ -59,11 +69,20 @@ export default function EliteManualRegistration(){
    <form onSubmit={submit}>
     <label>게임 닉네임 <input required maxLength={24} value={nickname} onChange={e=>setNickname(e.target.value)}/></label>
     {[[fields[0]],fields.slice(1,3),fields.slice(3,5),[fields[5]]].map(row=>
-     <div key={row[0][0]} style={{display:'grid',gridTemplateColumns:row.length===2?'repeat(2,minmax(0,1fr))':'minmax(0,1fr)',gap:12}}>
+     <div key={row[0][0]}>
+     <div style={{display:'grid',gridTemplateColumns:row.length===2?'repeat(2,minmax(0,1fr))':'minmax(0,1fr)',gap:12}}>
       {row.map(([key,label])=><label key={key} className="number-field" style={{minWidth:0}}>
        <span>{label}</span>
        <input name={key} required maxLength={24} inputMode={key.endsWith("Merge")?"numeric":"decimal"} placeholder="없으면 0" style={{width:'100%',minWidth:0}}/>
       </label>)}
+     </div>
+     {summonGroups.map(group=>group===row[0][0]&&<div key={group} style={{display:'grid',gridTemplateColumns:'repeat(2,minmax(0,1fr))',gap:12,alignItems:'end'}}>
+      <label className="number-field" style={{minWidth:0}}>
+       <span>{summonNames[group]} 소환 레벨</span>
+       <input name={group+'Level'} type="number" min={1} max={100} step={1} inputMode="numeric" placeholder="선택 입력" style={{width:'100%',minWidth:0}}/>
+      </label>
+      <label><input type="checkbox" name={group+'Waiting'} style={{width:'auto'}} aria-label={summonNames[group]+' 승천대기'}/> 승천대기</label>
+     </div>)}
      </div>
     )}
     <button className="submit" disabled={busy||!available}>이번 주 재화 등록</button>
@@ -76,7 +95,12 @@ export default function EliteManualRegistration(){
    {rows.length===0?<p>표시할 등록 내역이 없습니다.</p>:<div style={{overflowX:'auto'}}><table>
     <thead><tr><th>닉네임</th>{fields.map(([key,label])=><th key={key}>{label}</th>)}{adminToken&&<th>관리</th>}</tr></thead>
     <tbody>{rows.map(row=><tr key={row.nickname}><th scope="row">{row.nickname}</th>
-     {fields.map(([key])=><td key={key}>{row.amounts[key]??'미입력'}</td>)}
+     {fields.map(([key])=><td key={key}>{row.amounts[key]??'미입력'}
+      {summonGroups.map(group=>group===key&&<div key={group}>
+       {row.amounts[group+'Level']&&<span>Lv. {row.amounts[group+'Level']} </span>}
+       {row.amounts[group+'Waiting']==='yes'&&<strong>승천대기</strong>}
+      </div>)}
+     </td>)}
      {adminToken&&<td><button type="button" disabled={busy} onClick={()=>setPending(row)}>등록 취소</button></td>}
     </tr>)}</tbody>
    </table></div>}
