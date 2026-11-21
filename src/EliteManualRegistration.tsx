@@ -58,9 +58,14 @@ export default function EliteManualRegistration(){
    <p>닉네임당 주 1회 등록 · 매주 월요일 오전 9시 초기화</p>
    <form onSubmit={submit}>
     <label>게임 닉네임 <input required maxLength={24} value={nickname} onChange={e=>setNickname(e.target.value)}/></label>
-    {fields.map(([key,label])=><label key={key} className="number-field">
-     <span>{label}</span><input name={key} required maxLength={24} inputMode={key.endsWith("Merge")?"numeric":"decimal"} placeholder="없으면 0"/>
-    </label>)}
+    {[[fields[0]],fields.slice(1,3),fields.slice(3,5),[fields[5]]].map(row=>
+     <div key={row[0][0]} style={{display:'grid',gridTemplateColumns:row.length===2?'repeat(2,minmax(0,1fr))':'minmax(0,1fr)',gap:12}}>
+      {row.map(([key,label])=><label key={key} className="number-field" style={{minWidth:0}}>
+       <span>{label}</span>
+       <input name={key} required maxLength={24} inputMode={key.endsWith("Merge")?"numeric":"decimal"} placeholder="없으면 0" style={{width:'100%',minWidth:0}}/>
+      </label>)}
+     </div>
+    )}
     <button className="submit" disabled={busy||!available}>이번 주 재화 등록</button>
    </form>
    {error&&<p role="alert">{error}</p>}{notice&&<p role="status">{notice}</p>}
