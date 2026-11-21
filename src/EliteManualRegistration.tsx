@@ -107,35 +107,43 @@ export default function EliteManualRegistration(){
     .elite-resource-list { display: none; }
     @media (max-width: 720px) {
      .elite-weekly-table { display: none; }
-     .elite-resource-list { display: block; list-style: none; margin: 12px 0; padding: 0; }
-     .elite-resource-list > li { padding: 10px 0; border-bottom: 1px solid #7592aa; }
-     .elite-resource-name { display: flex; align-items: baseline; flex-wrap: wrap; gap: 6px; overflow-wrap: anywhere; }
-     .elite-resource-list dl { margin: 4px 0; }
-     .elite-resource-line { display: grid; grid-auto-columns: minmax(0,1fr); grid-auto-flow: column; gap: 8px; padding: 4px 0; }
-     .elite-resource-line dt { font-size: .85rem; }
-     .elite-resource-line dd { margin: 0; font-weight: 700; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
-     .elite-resource-line small:empty { display: none; }
+     .elite-resource-list { display: grid; grid-auto-flow: column; grid-auto-columns: 100%; overflow-x: auto; scroll-snap-type: x mandatory; margin: 12px 0; }
+     .elite-resource-page { min-width: 0; scroll-snap-align: start; scroll-snap-stop: always; }
+     .elite-resource-page h3 { margin: 0 0 8px; }
+     .elite-resource-page h3 small { font-size: .75em; }
+     .elite-resource-page table { width: 100%; table-layout: fixed; }
+     .elite-resource-page th, .elite-resource-page td { padding: 6px 4px; overflow-wrap: anywhere; vertical-align: top; }
+     .elite-resource-page th:first-child { width: 39%; }
+     .elite-resource-page td small, .elite-resource-page th button { display: block; }
+     .elite-resource-page td strong { font-variant-numeric: tabular-nums; }
     }
    `}</style>
    <h2>이번 주 등록 현황</h2>
    {rows.length>0&&<label className="number-field"><span>닉네임 검색</span><input type="search" value={search} onChange={e=>setSearch(e.target.value)} placeholder="닉네임 일부 입력"/></label>}
    <button type="button" disabled={busy} onClick={()=>void run(refresh)}>새로고침</button>
    {rows.length===0?<p>표시할 등록 내역이 없습니다.</p>:visibleRows.length===0?<p role="status">일치하는 닉네임이 없습니다.</p>:<>
-   <ul className="elite-resource-list">{visibleRows.map(row=><li key={row.nickname}>
-    <div className="elite-resource-name"><strong>{row.nickname}</strong>{isWaiting(row)&&<small>승천대기</small>}</div>
-    <dl>{[[fields[0]],fields.slice(1,3),fields.slice(3,5),[fields[5]]].map(line=>
-     <div className="elite-resource-line" key={line[0][0]}>
-      {line.map(([key,label])=><div key={key}>
-       <dt>{label}</dt><dd>{displayAmount(key,row.amounts[key])}</dd>
-       {summonGroups.map(group=>group===key&&<small key={group}>
-        {row.amounts[`${group}Level`]&&'Lv. '+row.amounts[`${group}Level`]}
-        {row.amounts[`${group}Waiting`]==='yes'&&' 승천대기'}
-       </small>)}
-      </div>)}
-     </div>
-    )}</dl>
-    {adminToken&&<button type="button" disabled={busy} onClick={()=>setPending(row)}>등록 취소</button>}
-   </li>)}</ul>
+   <div className="elite-resource-list" tabIndex={0} role="region" aria-label="재화별 현황 · 좌우로 이동">
+    {[[fields[0]],fields.slice(1,3),fields.slice(3,5),[fields[5]]].map((line,index)=>
+     <section className="elite-resource-page" key={line[0][0]} aria-label={['스킬','알','탈것','녹색 물약'][index]}>
+      <h3>{['스킬','알','탈것','녹색 물약'][index]} <small>{index+1} / 4</small></h3>
+      <table>
+       <thead><tr><th>닉네임</th>{line.map(([key,label])=><th key={key}>{label}</th>)}</tr></thead>
+       <tbody>{visibleRows.map(row=><tr key={row.nickname}>
+        <th scope="row">{row.nickname}
+         {adminToken&&<button type="button" disabled={busy} onClick={()=>setPending(row)}>등록 취소</button>}
+        </th>
+        {line.map(([key])=><td key={key}>
+         <strong>{displayAmount(key,row.amounts[key])}</strong>
+         {summonGroups.map(group=>group===key&&<div key={group}>
+          {row.amounts[`${group}Level`]&&<small>Lv. {row.amounts[`${group}Level`]}</small>}
+          {row.amounts[`${group}Waiting`]==='yes'&&<small>승천대기</small>}
+         </div>)}
+        </td>)}
+       </tr>)}</tbody>
+      </table>
+     </section>
+    )}
+   </div>
    <div className="elite-weekly-table" tabIndex={0} role="region" aria-label="클랜 재화 현황 표" style={{overflowX:'auto'}}><table>
     <thead><tr><th>닉네임</th>{fields.map(([key,label])=><th key={key}>{label}{!key.endsWith('Merge')&&' (K)'}</th>)}{adminToken&&<th>관리</th>}</tr></thead>
     <tbody>{visibleRows.map(row=><tr key={row.nickname}><th scope="row">{row.nickname}{isWaiting(row)&&<div><small>승천대기</small></div>}</th>
