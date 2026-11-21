@@ -115,7 +115,16 @@ export default function EliteManualRegistration(){
      .elite-resource-page th, .elite-resource-page td { padding: 6px 4px; overflow-wrap: anywhere; vertical-align: top; }
      .elite-resource-page th:first-child { width: 39%; }
      .elite-resource-page td small, .elite-resource-page th button { display: block; }
-     .elite-resource-page td strong { font-variant-numeric: tabular-nums; }
+     .elite-resource-page { color: #142e43; }
+     .elite-resource-page h3 { padding: 8px 10px; background: #173d5b; color: white; border-radius: 8px; font-size: 1.2rem; font-weight: 800; }
+     .elite-resource-page h3 small { color: #dbeeff; }
+     .elite-resource-page thead th { background: #dcecf8; font-weight: 800; }
+     .elite-resource-page tbody tr { background: #fff; }
+     .elite-resource-page tbody tr:nth-child(even) { background: #eef6fc; }
+     .elite-resource-page tbody th, .elite-resource-page tbody td { padding-block: 10px; border-bottom: 1px solid #c2d7e7; }
+     .elite-resource-page td strong { font-size: 1.15rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+     .elite-resource-page td small { font-size: .85rem; color: #35516b; }
+     .elite-resource-page .elite-waiting { width: fit-content; padding: 1px 4px; border-radius: 4px; background: #ffe4a1; color: #5b3700; font-weight: 800; }
     }
    `}</style>
    <h2>이번 주 등록 현황</h2>
@@ -136,7 +145,7 @@ export default function EliteManualRegistration(){
          <strong>{displayAmount(key,row.amounts[key])}</strong>
          {summonGroups.map(group=>group===key&&<div key={group}>
           {row.amounts[`${group}Level`]&&<small>Lv. {row.amounts[`${group}Level`]}</small>}
-          {row.amounts[`${group}Waiting`]==='yes'&&<small>승천대기</small>}
+          {row.amounts[`${group}Waiting`]==='yes'&&<small className="elite-waiting">승천대기</small>}
          </div>)}
         </td>)}
        </tr>)}</tbody>
