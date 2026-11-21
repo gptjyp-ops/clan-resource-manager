@@ -97,8 +97,8 @@ export default function EliteManualRegistration(){
     <tbody>{rows.map(row=><tr key={row.nickname}><th scope="row">{row.nickname}</th>
      {fields.map(([key])=><td key={key}>{row.amounts[key]??'미입력'}
       {summonGroups.map(group=>group===key&&<div key={group}>
-       {row.amounts[group+'Level']&&<span>Lv. {row.amounts[group+'Level']} </span>}
-       {row.amounts[group+'Waiting']==='yes'&&<strong>승천대기</strong>}
+       {row.amounts[`${group}Level`]&&<span>Lv. {row.amounts[`${group}Level`]} </span>}
+       {row.amounts[`${group}Waiting`]==='yes'&&<strong>승천대기</strong>}
       </div>)}
      </td>)}
      {adminToken&&<td><button type="button" disabled={busy} onClick={()=>setPending(row)}>등록 취소</button></td>}
