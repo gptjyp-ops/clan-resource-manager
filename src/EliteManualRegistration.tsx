@@ -2,7 +2,7 @@ import {useEffect,useState,type FormEvent} from 'react';
 import {clanAction} from './lib/api';
 
 export const eliteManualClanId='f768d7c5332948cbb1f7ec5f';
-const fields=[['skill','스킬'],['egg','알 개수'],['eggMerge','알 합성'],['mount','탈것 소환수'],['mountMerge','탈것 합성수'],['potion','녹색 물약']] as const;
+const fields=[['skill','스킬'],['egg','알 개수'],['eggMerge','알 합성'],['mount','탈것 개수'],['mountMerge','탈것 합성수'],['potion','녹색 물약']] as const;
 type Registration={nickname:string;amounts:Partial<Record<typeof fields[number][0],string>>;submittedAt:string};
 
 export default function EliteManualRegistration(){
