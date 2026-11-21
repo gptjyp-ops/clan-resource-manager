@@ -179,7 +179,7 @@ function manualRegistration_(op,p,clanId) {
  var sheet=book.getSheetByName(name);
  var rows=sheet&&sheet.getLastRow()>1?sheet.getRange(2,1,sheet.getLastRow()-1,5).getValues():[];
  var active=rows.map(function(row,index){return {row:row,index:index};}).filter(function(entry){return Number(entry.row[0])===week&&!entry.row[4];});
- if(op==='manualList')return {ok:true,manualRecords:active.map(function(entry){return {nickname:JSON.parse(entry.row[1]),amounts:JSON.parse(entry.row[2]),submittedAt:String(entry.row[3])};})};
+ if(op==='manualList')return {ok:true,manualMergeCounts:true,manualRecords:active.map(function(entry){return {nickname:JSON.parse(entry.row[1]),amounts:JSON.parse(entry.row[2]),submittedAt:String(entry.row[3])};})};
  if(typeof p.nickname!=='string')throw Error('게임 닉네임을 입력해주세요.');
  var nickname=p.nickname.trim().normalize('NFKC');
  if(!nickname||nickname.length>24)throw Error('게임 닉네임은 1~24자로 입력해주세요.');
@@ -197,6 +197,13 @@ function manualRegistration_(op,p,clanId) {
   if(typeof raw!=='string'||raw.length>24||quantity_(raw.trim())===null)throw Error('재화 4종을 모두 입력해주세요. 없는 재화는 0을 입력해주세요.');
   amounts[kind]=raw.trim();
  });
+ if(p.amounts.eggMerge!==undefined||p.amounts.mountMerge!==undefined){
+  ['eggMerge','mountMerge'].forEach(function(kind){
+   var raw=p.amounts[kind];
+   if(typeof raw!=='string'||raw.length>24||!/^\d+$/.test(raw.trim())||Number(raw)>1e12)throw Error('알 합성과 탈것 합성수는 0 이상의 정수로 입력해주세요.');
+   amounts[kind]=raw.trim();
+  });
+ }
  if(!sheet){
   sheet=book.insertSheet(name);
   sheet.appendRow(['week_start','nickname_json','amounts_json','submitted_at','cancelled_at']);
