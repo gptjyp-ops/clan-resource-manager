@@ -8,11 +8,13 @@ const summonGroups=['skill','egg','mount'] as const;
 type SummonGroup=typeof summonGroups[number];
 type AscensionField=`${SummonGroup}${'Level'|'Waiting'}`;
 const summonNames={skill:'스킬',egg:'알',mount:'탈것'};
+const usesK=(key:string)=>key==='skill'||key==='egg'||key==='mount';
 function displayAmount(key:string,value:string|undefined){
  if(value===undefined)return '미입력';
  if(key.endsWith('Merge'))return value;
  const count=quantity(value);
- return count===null?value:`${count/1000}K`;
+ if(count===null)return value;
+ return usesK(key)?`${count/1000}K`:count.toLocaleString('ko-KR');
 }
 const isWaiting=(row:Registration)=>summonGroups.some(group=>row.amounts[`${group}Waiting`]==='yes');
 type Registration={nickname:string;amounts:Partial<Record<typeof fields[number][0]|AscensionField,string>>;submittedAt:string};
@@ -49,7 +51,7 @@ export default function EliteManualRegistration(){
   const form=event.currentTarget,data=new FormData(form);
   await run(async()=>{
    await clanAction('manualSubmit',{nickname,amounts:{
-    ...Object.fromEntries(fields.map(([key])=>[key,key.endsWith('Merge')?data.get(key):String(data.get(key)).trim().replace(/k$/i,'')+'k'])),
+    ...Object.fromEntries(fields.map(([key])=>[key,usesK(key)?String(data.get(key)).trim().replace(/k$/i,'')+'k':data.get(key)])),
     ...Object.fromEntries(summonGroups.flatMap(key=>[
      [key+'Level',data.get(key+'Level')],
      [key+'Waiting',data.has(key+'Waiting')?'yes':'no']
@@ -84,8 +86,8 @@ export default function EliteManualRegistration(){
      <div key={row[0][0]}>
      <div style={{display:'grid',gridTemplateColumns:row.length===2?'repeat(2,minmax(0,1fr))':'minmax(0,1fr)',gap:12}}>
       {row.map(([key,label])=><label key={key} className="number-field" style={{minWidth:0}}>
-       <span>{label}{!key.endsWith('Merge')&&' (K)'}</span>
-       <input name={key} required maxLength={24} inputMode={key.endsWith("Merge")?"numeric":"decimal"} pattern={key.endsWith("Merge")?"[0-9]+":"[0-9]+([.][0-9]{1,3})?[kK]?"} placeholder={key.endsWith("Merge")?"없으면 0":"예: 12.5"} style={{width:'100%',minWidth:0}}/>
+       <span>{label}{usesK(key)&&' (K)'}</span>
+       <input name={key} required maxLength={24} inputMode={!usesK(key)?"numeric":"decimal"} pattern={!usesK(key)?"[0-9]+":"[0-9]+([.][0-9]{1,3})?[kK]?"} placeholder={!usesK(key)?"없으면 0":"예: 12.5"} style={{width:'100%',minWidth:0}}/>
       </label>)}
      </div>
      {summonGroups.map(group=>group===row[0][0]&&<div key={group} style={{display:'grid',gridTemplateColumns:'repeat(2,minmax(0,1fr))',gap:12,alignItems:'end'}}>
@@ -154,7 +156,7 @@ export default function EliteManualRegistration(){
     )}
    </div>
    <div className="elite-weekly-table" tabIndex={0} role="region" aria-label="클랜 재화 현황 표" style={{overflowX:'auto'}}><table>
-    <thead><tr><th>닉네임</th>{fields.map(([key,label])=><th key={key}>{label}{!key.endsWith('Merge')&&' (K)'}</th>)}{adminToken&&<th>관리</th>}</tr></thead>
+    <thead><tr><th>닉네임</th>{fields.map(([key,label])=><th key={key}>{label}{usesK(key)&&' (K)'}</th>)}{adminToken&&<th>관리</th>}</tr></thead>
     <tbody>{visibleRows.map(row=><tr key={row.nickname}><th scope="row">{row.nickname}{isWaiting(row)&&<div><small>승천대기</small></div>}</th>
      {fields.map(([key])=><td key={key}>{displayAmount(key,row.amounts[key])}
       {summonGroups.map(group=>group===key&&<div key={group}>
