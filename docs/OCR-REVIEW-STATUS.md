@@ -1,8 +1,12 @@
 # OCR review checkpoint
 
-Updated: 2026-11-23 21:56 KST. Latest deployed scanner: 2026-11-16.1.
+Updated: 2026-11-23 22:58 KST. Latest deployed scanner: 2026-11-16.1.
 
 ## Current scan
+
+- 2026-11-23 22:58 KST: verified both 1000×26 tabs against main 35825fc. OCR A603:J1000, new 606–620, next 621. All 15 log OCR-01 with no recognition attempts (scanner 2026-11-16.1). Stored representative JPEGs: 606 skill summon 19.1k/Lv49/60 of 110; 610 pet summon 18.4k/maximum; 611 pet merge 56 selected. All three match their submitted slots. Remaining skill photos share upload metadata, without independent pixel comparison. No evidence of a decimal, unit or leading-digit error. The live page, OCR worker, fallback core and both languages returned HTTP 200 and worker tests passed. Device-side initialization cause not reproduced; retain 606–620 and prior unresolved cases, including 604.
+  - Client A1:H1000, new rows 7–12, next 13. Six distinct reports, all Android Samsung Internet. Build 97af545: AUTH-002 (resource registration), AUTH-001 (invite entry), GEN-001 (resource registration and clan management). Build 35825fc: AUTH-001 and GEN-001 (clan management). No CON-001 through CON-004 or GEN-002. The anonymous metadata cannot distinguish repeated reports from multiple devices. Timing overlap with OCR startup reports does not establish a common cause for GEN-001.
+  - Pages run 45179434675 and production Apps Script update 45171688317 successful. Live doPost collection verified by the new stored reports. Email delivery unverified. No application code, member data or clan settings changed.
 
 - 2026-11-23 21:56 KST: reviewed main 97af545 and both 1000×26 tabs. OCR range A598:J1000, new 603–605, next 606. Compared all three stored JPEGs.
   - 603 egg slot: mount summon 46.4k/max. Previous layout did not reject it. The new guard detects this centered header and summon info without a left egg header and gives OCR-06. No quantity substitution.
