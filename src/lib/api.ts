@@ -12,6 +12,13 @@ export const invitedKey=route.get('code')||'';
 export let activeClanName='우리 클랜';
 export const savedAccessKey=()=>accessKey;
 export async function unlockGoogle(key:string){const capability=await rpc('list',{operation:'capabilities'});const candidate=key.trim();const reply=capability.entryPassword?await rpc('list',{operation:'enterClan',entryPassword:candidate,accessKey:candidate}):undefined;accessKey=reply?.entryAccessKey||candidate;await rpc('list');sessionStorage.setItem(keySlot,accessKey);}
+export async function unlockNamedClan(name:string,password:string){
+ const reply=await rpc('list',{operation:'enterNamedClan',name,entryPassword:password.trim()});
+ const id=reply.clan?.id;
+ if(!id||!/^(legacy|[a-f0-9]{24})$/.test(id)||!reply.entryAccessKey)throw Error('클랜 입장 정보를 확인하지 못했습니다.');
+ sessionStorage.setItem(id==='legacy'?'clanAccessKey':'clanAccessKey:'+id,reply.entryAccessKey);
+ location.hash=new URLSearchParams({clan:id}).toString();
+}
 export function leaveClan(){accessKey='';sessionStorage.removeItem(keySlot);location.href=import.meta.env.BASE_URL;}
 const googleUrl=googleScriptUrl;
 export type ClanInfo={id:string;name:string;server?:string;inviteKey?:string;entryPasswordRequired?:boolean};

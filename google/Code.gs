@@ -250,6 +250,32 @@ function clanOperation_(p){
    var salt=Utilities.getUuid();s.appendRow([id,JSON.stringify(name),key,hash_(password,salt),salt,memberSheet,folderId,new Date().toISOString(),0,0,server]);SpreadsheetApp.flush();return adminReply_({row:clanRows_(s).find(function(r){return r[0]===id;})});
   }
   if(op==='issueOperatorRecoveryCode')return operatorRecoveryCode_(p);
+  if(op==='enterNamedClan'){
+   var name=String(p.name||'').trim().normalize('NFKC').toLowerCase(),password=p.entryPassword;
+   if(!name||name.length>100||typeof password!=='string'||!password||password.length>100)throw Error('클랜 이름과 입장 비밀번호를 확인해주세요.');
+   var candidates=clanRows_(registry_()).filter(function(r){
+    return String(JSON.parse(r[1])).trim().normalize('NFKC').toLowerCase()===name;
+   }).map(function(r){return {row:r,entry:entrySettings_(r[0])};});
+   var matches=candidates.filter(function(c){
+    return c.entry?hash_(password,c.entry.salt)===c.entry.hash:
+     !!c.row[2]&&hash_(password,'clan-access')===hash_(String(c.row[2]),'clan-access');
+   });
+   var props=PropertiesService.getScriptProperties();
+   if(matches.length===1){
+    var match=matches[0],entry=match.entry;
+    if(entry&&Number(entry.lockUntil)>Date.now())throw Error('입장 비밀번호 확인 시도가 많습니다. 10분 뒤 다시 시도해주세요.');
+    if(entry){entry.fails=0;entry.lockUntil=0;props.setProperty('CLAN_ENTRY_'+match.row[0],JSON.stringify(entry));}
+    return {ok:true,clan:{id:String(match.row[0]),name:JSON.parse(match.row[1])},entryAccessKey:String(match.row[2])};
+   }
+   if(!matches.length)candidates.forEach(function(c){
+    var entry=c.entry;
+    if(!entry||Number(entry.lockUntil)>Date.now())return;
+    entry.fails=(Number(entry.fails||0)%10)+1;
+    entry.lockUntil=entry.fails>=10?Date.now()+600000:0;
+    props.setProperty('CLAN_ENTRY_'+c.row[0],JSON.stringify(entry));
+   });
+   throw Error('클랜 이름과 입장 비밀번호를 확인해주세요.');
+  }
   if(op==='enterClan'){
    var id=String(p.clanId||'legacy'),entry=entrySettings_(id);
    if(!entry){authorizeClan_(p);return {ok:true,entryAccessKey:p.accessKey};}
