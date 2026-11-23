@@ -1,4 +1,5 @@
-import {useState} from 'react';
+import {useEffect,useState} from 'react';
+import {reportClientError,type ErrorReportStatus} from './lib/client-error-report';
 
 type ErrorKind='connection'|'credentials'|'invite'|'ticket'|'save'|'version'|'admin'|'other';
 type Diagnosis={code:string;kind:ErrorKind;title:string;description:string;steps:string[];retry:boolean};
@@ -34,7 +35,14 @@ function environment(){
 }
 export default function ConnectionHelp({error,onRetry,busy=false,screen='화면 미지정'}:{error:string;onRetry?:()=>void;busy?:boolean;screen?:string}){
  const [copyStatus,setCopyStatus]=useState('');
+ const [reportStatus,setReportStatus]=useState<ErrorReportStatus|'sending'>('sending');
  const details=diagnoseError(error);
+ useEffect(()=>{
+  let live=true;
+  setReportStatus('sending');
+  void reportClientError(details.code,screen).then(status=>{if(live)setReportStatus(status);}).catch(()=>{if(live)setReportStatus('queued');});
+  return()=>{live=false;};
+ },[details.code,screen]);
  const {os,browser}=environment();
  const connection=details.kind==='connection';
  const report=[
@@ -60,16 +68,23 @@ export default function ConnectionHelp({error,onRetry,busy=false,screen='화면 
    <strong style={{fontSize:18,color:'#fff'}}>{details.title}</strong>
   </div>
   <p style={{margin:'0 0 12px'}}>{details.description}</p>
+  <div role="status" style={{padding:'10px 12px',margin:'0 0 12px',borderRadius:9,background:'rgba(255,255,255,.09)',fontSize:13}}>
+   <strong>오류 자동 보고</strong> · {reportStatus==='sending'?'오류 정보를 전송하고 있어요.':reportStatus==='attempted'?'자동 전송을 시도했어요. 접수 확인이 어려우면 다시 시도합니다.':'네트워크 연결이 가능해지면 자동 재시도합니다.'}
+  </div>
   {connection&&/카카오톡|인스타그램|네이버 내부/.test(browser)&&<p style={{margin:'0 0 10px',fontWeight:700,color:'#ffdf8b'}}>현재 앱 내부 브라우저로 보입니다. 일반 크롬이나 사파리에서 다시 열어주세요.</p>}
   <strong style={{display:'block',margin:'0 0 6px'}}>해결 순서</strong>
   <ol style={{margin:'0 0 14px',paddingLeft:23}}>{details.steps.map((step,i)=><li key={i}>{step}</li>)}</ol>
   <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
    {onRetry&&details.retry&&<button type="button" disabled={busy} onClick={onRetry} style={{flex:'1 1 120px',minHeight:44,border:0,borderRadius:9,background:'#356a14',color:'white',fontWeight:700,fontSize:14,cursor:busy?'wait':'pointer'}}>{busy?'확인 중…':'연결 다시 시도'}</button>}
    {connection&&<button type="button" onClick={()=>void copyText(location.href,'접속 주소를 복사했습니다. 크롬 또는 사파리 주소창에 붙여넣으세요.')} style={{flex:'1 1 120px',minHeight:44,border:'1px solid #9985a9',borderRadius:9,background:'#352444',color:'white',fontWeight:700,fontSize:14}}>접속 주소 복사</button>}
-   <button type="button" onClick={()=>void copyText(report,'오류 정보를 복사했습니다. 클랜장에게 붙여넣어 주세요.')} style={{flex:'1 1 120px',minHeight:44,border:'1px solid #9985a9',borderRadius:9,background:'#352444',color:'white',fontWeight:700,fontSize:14}}>오류 정보 복사</button>
+
   </div>
   {copyStatus&&<p role="status" style={{margin:'8px 0 0',fontSize:13}}>{copyStatus}</p>}
-  <p style={{fontSize:12,opacity:.85,margin:'12px 0 0'}}>오류 정보에는 비밀번호·초대 코드·QR 티켓 정보가 포함되지 않습니다. 복사 후 클랜장에게 보내주세요.</p>
+  <p style={{fontSize:12,opacity:.85,margin:'12px 0 0'}}>오류 코드는 자동으로 보고됩니다. 비밀번호·초대 코드·QR 티켓·닉네임·사진은 전송하지 않습니다.</p>
+  <details style={{marginTop:8,fontSize:12}}>
+   <summary style={{cursor:'pointer'}}>자동 보고가 안 될 때만 수동으로 전달</summary>
+   <button type="button" onClick={()=>void copyText(report,'오류 정보를 복사했습니다. 클랜장에게 전달해주세요.')} style={{marginTop:7,padding:'8px 12px',border:'1px solid #9985a9',borderRadius:8,background:'#352444',color:'#fff'}}>오류 정보 복사</button>
+  </details>
   <details style={{marginTop:10,fontSize:12}}>
    <summary style={{cursor:'pointer'}}>오류 원문 보기 (비밀번호가 표시되면 공유하지 마세요)</summary>
    <p style={{margin:'6px 0 0',overflowWrap:'anywhere'}}>{error}</p>
