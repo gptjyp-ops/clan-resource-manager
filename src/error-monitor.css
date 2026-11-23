@@ -1,0 +1,18 @@
+.crm-coded-error::after {
+  content: "오류 코드: " attr(data-crm-error-code) " · 운영자에게 자동 보고";
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  box-sizing: border-box;
+  margin-top: .55rem;
+  padding: .35rem .6rem;
+  border-radius: .45rem;
+  border: 1px solid rgba(171, 121, 187, .6);
+  background: rgba(99, 56, 108, .14);
+  color: inherit;
+  font-size: .84rem;
+  font-weight: 700;
+  letter-spacing: .01em;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
