@@ -17,6 +17,70 @@ function setup_() {
   console.log('준비 완료. 구글 드라이브에 클랜 재화관리 시트와 사진 폴더가 생성되었습니다.');
  }finally{lock.releaseLock();}
 }
+// Anonymous client-side error reports. This route is deliberately independent
+// of the embedded Google iframe and of clan/member authentication. It accepts
+// only a short allowlisted diagnostic record, never secrets or raw exception text.
+function doPost(e){
+ var response;
+ try{
+  var body=e&&e.postData&&String(e.postData.contents||'');
+  if(!body||body.length>1800)throw Error('invalid_length');
+  var report=JSON.parse(body);
+  if(report.kind!=='client-error')throw Error('unsupported_kind');
+  response={ok:true,status:receiveClientError_(report)};
+ }catch(error){
+  console.error('Client error report rejected: '+String(error&&error.message||'invalid'));
+  response={ok:false,error:'invalid_report'};
+ }
+ return ContentService.createTextOutput(JSON.stringify(response)).setMimeType(ContentService.MimeType.JSON);
+}
+function receiveClientError_(entry){
+ function clean(x,max){return String(x||'').replace(/[^a-zA-Z0-9가-힣 _().-]/g,'').slice(0,max);}
+ var id=String(entry.id||''),code=String(entry.code||'');
+ if(!/^[a-f0-9-]{36}$/i.test(id)||!/^CRM-(CON|VER|AUTH|INV|QR|PHOTO|SAVE|ADM|REC|GEN)-\d{3}$/.test(code))throw Error('invalid_id_or_code');
+ var screen=clean(entry.screen,45),os=clean(entry.os,18),browser=clean(entry.browser,26),version=clean(entry.version,40);
+ var occurred=String(entry.occurredAt||'');
+ if(!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(occurred)||!isFinite(Date.parse(occurred)))throw Error('invalid_date');
+ var lock=LockService.getScriptLock();
+ if(!lock.tryLock(5000))throw Error('busy');
+ try{
+  var cache=CacheService.getScriptCache(),cacheId='CRM_CLIENT_'+id;
+  if(cache.get(cacheId))return 'duplicate';
+  var props=PropertiesService.getScriptProperties(),now=Date.now(),day=new Date(now).toISOString().slice(0,10);
+  var daily=JSON.parse(props.getProperty('CRM_CLIENT_DAILY')||'{}');
+  if(daily.day!==day)daily={day:day,count:0,mailCount:0};
+  if(daily.count>=300)throw Error('limit_reached');
+  var spreadsheetId=props.getProperty('SHEET_ID');
+  if(!spreadsheetId)throw Error('sheet_missing');
+  var book=SpreadsheetApp.openById(spreadsheetId),sheet=book.getSheetByName('client_errors');
+  if(!sheet){
+   sheet=book.insertSheet('client_errors');
+   sheet.appendRow(['received_at','occurred_at','error_code','screen','os','browser','version','report_id']);
+   sheet.setFrozenRows(1);
+  }
+  sheet.appendRow([new Date().toISOString(),occurred,code,screen,os,browser,version,id]);
+  if(sheet.getLastRow()>1001)sheet.deleteRows(2,sheet.getLastRow()-1001);
+  daily.count++;
+  cache.put(cacheId,'1',21600);
+  // Notify the Apps Script operator, never a visitor-supplied address.
+  // Send at most one mail per code per 15 minutes and 20 mails per day.
+  try{
+   var recipient=props.getProperty('ERROR_ALERT_EMAIL')||Session.getEffectiveUser().getEmail();
+   var previous=Number(props.getProperty('CRM_CLIENT_MAIL_'+code)||'0');
+   if(recipient&&/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(recipient)&&daily.mailCount<20&&now-previous>15*60*1000&&MailApp.getRemainingDailyQuota()>0){
+    MailApp.sendEmail({
+     to:recipient,
+     subject:'[클랜 재화관리 오류] '+code,
+     body:'자동 접수된 클랜 프로그램 오류입니다.\n\n코드: '+code+'\n화면: '+screen+'\n발생 시각(UTC): '+occurred+'\n운영체제: '+os+'\n브라우저: '+browser+'\n버전: '+version+'\n진단 ID: '+id+'\n\n구글 시트 client_errors 탭을 확인하세요. 인증정보·닉네임·사진은 수집하지 않습니다.',
+     name:'클랜 재화관리 오류 알림'
+    });
+    daily.mailCount++;props.setProperty('CRM_CLIENT_MAIL_'+code,String(now));
+   }
+  }catch(mailError){console.error('Client report saved, email notification failed');}
+  props.setProperty('CRM_CLIENT_DAILY',JSON.stringify(daily));
+  return 'saved';
+ }finally{lock.releaseLock();}
+}
 function doGet(e){
  if(e&&e.parameter&&e.parameter.emailRecovery)return emailRecoveryPage_(e.parameter);
  if(e&&e.parameter&&e.parameter.adminRecovery==='1')return adminRecoveryPage_();
