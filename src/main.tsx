@@ -3,10 +3,12 @@ import './elite.css';
 import EliteTheme from './EliteTheme';
 import MatrixBackground from './MatrixBackground';
 import {flushClientErrorReports,reportClientError} from './lib/client-error-report';
+import {GlobalErrorMonitor,AppErrorBoundary} from './GlobalErrorMonitor';
+import './error-monitor.css';
 import React from 'react';import {createRoot} from 'react-dom/client';import App from './App';import './style.css';
 import HelpSupport from './HelpSupport';
 import LanguageSwitch from './LanguageSwitch';
-createRoot(document.getElementById('root')!).render(<React.StrictMode><EliteTheme/><ClanThemes/><MatrixBackground/><LanguageSwitch/><App/><HelpSupport/></React.StrictMode>);
+createRoot(document.getElementById('root')!).render(<React.StrictMode><AppErrorBoundary><GlobalErrorMonitor/><EliteTheme/><ClanThemes/><MatrixBackground/><LanguageSwitch/><App/><HelpSupport/></AppErrorBoundary></React.StrictMode>);
 
 
 import './clan-bot.css';
