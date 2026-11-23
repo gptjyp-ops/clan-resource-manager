@@ -12,8 +12,8 @@ export const invitedKey=route.get('code')||'';
 export let activeClanName='우리 클랜';
 export const savedAccessKey=()=>accessKey;
 export async function unlockGoogle(key:string){const capability=await rpc('list',{operation:'capabilities'});const candidate=key.trim();const reply=capability.entryPassword?await rpc('list',{operation:'enterClan',entryPassword:candidate,accessKey:candidate}):undefined;accessKey=reply?.entryAccessKey||candidate;await rpc('list');sessionStorage.setItem(keySlot,accessKey);}
-export async function unlockNamedClan(name:string,password:string){
- const reply=await rpc('list',{operation:'enterNamedClan',name,entryPassword:password.trim()});
+export async function unlockNamedClan(name:string,password:string,slug?:string){
+ const reply=await rpc('list',{operation:'enterNamedClan',name,slug,entryPassword:password.trim()});
  const id=reply.clan?.id;
  if(!id||!/^(legacy|[a-f0-9]{24})$/.test(id)||!reply.entryAccessKey)throw Error('클랜 입장 정보를 확인하지 못했습니다.');
  sessionStorage.setItem(id==='legacy'?'clanAccessKey':'clanAccessKey:'+id,reply.entryAccessKey);
@@ -21,7 +21,7 @@ export async function unlockNamedClan(name:string,password:string){
 }
 export function leaveClan(){accessKey='';sessionStorage.removeItem(keySlot);location.href=import.meta.env.BASE_URL;}
 const googleUrl=googleScriptUrl;
-export type ClanInfo={id:string;name:string;server?:string;inviteKey?:string;entryPasswordRequired?:boolean};
+export type ClanInfo={id:string;name:string;server?:string;inviteKey?:string;entryPasswordRequired?:boolean;slug?:string};
 export let serverSelectionSupported=false;
 export let memberPasswordResetSupported=false;
 export let memberRemovalSupported=false;
@@ -72,7 +72,7 @@ export async function saveInventory(nickname:string,password:string,inventory:In
 }
 export async function supportsClans(){try{const reply=await rpc('list',{operation:'capabilities'});serverSelectionSupported=!!reply.serverSelection;memberPasswordResetSupported=!!reply.memberPasswordReset;memberRemovalSupported=!!reply.memberRemoval;adminTicketSupported=!!reply.adminTicketLogin;entryPasswordSupported=!!reply.entryPassword;serverOptions=(reply.servers||[]).filter(s=>/^\d{1,6}$/.test(s));return !!reply.multiClan;}catch(e){if(e instanceof Error&&e.message.includes('클랜 입장 코드가 맞지 않습니다'))return false;throw e;}}
 export async function clanAction(operation:string,payload:Record<string,unknown>={}){return rpc('list',{operation,...payload});}
-export function invitationLink(clan:ClanInfo){return location.origin+import.meta.env.BASE_URL+'#'+new URLSearchParams(clan.entryPasswordRequired?{clan:clan.id}:{clan:clan.id,code:clan.inviteKey||''}).toString();}
+export function invitationLink(clan:ClanInfo){return location.origin+import.meta.env.BASE_URL+'#'+new URLSearchParams(clan.slug?{join:clan.slug}:clan.entryPasswordRequired?{clan:clan.id}:{clan:clan.id,code:clan.inviteKey||''}).toString();}
 const photoCache=new Map<string,Promise<string>>();
 export function photoUrl(id:string):Promise<string>{if(!googleUrl)return Promise.resolve(apiUrl('/api/photos/'+id));let p=photoCache.get(id);if(!p){p=rpc('photo',{id}).then(d=>{if(!/^image\/(jpeg|png|webp)$/.test(d.type||'')||!d.base64)throw Error('사진을 읽지 못했습니다.');return 'data:'+d.type+';base64,'+d.base64;}).catch(e=>{photoCache.delete(id);throw e;});photoCache.set(id,p);}return p;}
 

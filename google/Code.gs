@@ -128,7 +128,8 @@ function registry_(){
 function clanRows_(s){return s.getLastRow()<2?[]:s.getRange(2,1,s.getLastRow()-1,11).getValues();}
 function clanFrom_(r){return {id:String(r[0]),name:JSON.parse(r[1]),key:String(r[2]),sheetName:String(r[5]),folderId:String(r[6]),server:String(r[10]||'')};}
 function entrySettings_(id){return JSON.parse(PropertiesService.getScriptProperties().getProperty('CLAN_ENTRY_'+id)||'null');}
-function publicClan_(r){var entry=entrySettings_(r[0]);return {id:r[0],name:JSON.parse(r[1]),inviteKey:entry?undefined:r[2],entryPasswordRequired:!!entry,server:String(r[10]||'')};}
+function clanSlug_(id){return PropertiesService.getScriptProperties().getProperty("CLAN_SLUG_"+id)||"";}
+function publicClan_(r){var entry=entrySettings_(r[0]);return {id:r[0],name:JSON.parse(r[1]),inviteKey:entry?undefined:r[2],entryPasswordRequired:!!entry,slug:clanSlug_(r[0]),server:String(r[10]||'')};}
 function findClan_(id){var s=registry_(),rows=clanRows_(s),index=rows.findIndex(function(r){return r[0]===id;});if(index<0)throw Error('클랜을 찾을 수 없습니다. 클랜 주소를 확인해주세요.');return {sheet:s,row:rows[index],index:index};}
 function resolveClan_(p){
  var id=String(p.clanId||'legacy');if(!/^(legacy|[a-f0-9]{24})$/.test(id))throw Error('클랜 주소를 확인해주세요.');
@@ -252,8 +253,10 @@ function clanOperation_(p){
   if(op==='issueOperatorRecoveryCode')return operatorRecoveryCode_(p);
   if(op==='enterNamedClan'){
    var name=String(p.name||'').trim().normalize('NFKC').toLowerCase(),password=p.entryPassword;
-   if(!name||name.length>100||typeof password!=='string'||!password||password.length>100)throw Error('클랜 이름과 입장 비밀번호를 확인해주세요.');
+   var slug=p.slug;
+   if((slug!==undefined&&!/^[a-z0-9][a-z0-9-]{2,39}$/.test(String(slug)))||(!slug&&(!name||name.length>100))||typeof password!=='string'||!password||password.length>100)throw Error('클랜 이름과 입장 비밀번호를 확인해주세요.');
    var candidates=clanRows_(registry_()).filter(function(r){
+    if(slug)return clanSlug_(r[0])===slug;
     return String(JSON.parse(r[1])).trim().normalize('NFKC').toLowerCase()===name;
    }).map(function(r){return {row:r,entry:entrySettings_(r[0])};});
    var matches=candidates.filter(function(c){
@@ -326,6 +329,15 @@ function clanOperation_(p){
    if(!archive){archive=book.insertSheet(archiveName);archive.appendRow(['nickname_json','password_hash','salt','details_json','photos_json','updated_at','failed_attempts','lock_until','removed_at','clan_id']);archive.setFrozenRows(1);}
    archive.hideSheet();if(!rows_(archive).some(function(r){return JSON.stringify(r)===JSON.stringify(original);}))archive.appendRow(original.concat([new Date().toISOString(),found.row[0]]));SpreadsheetApp.flush();
    members.deleteRow(index+2);SpreadsheetApp.flush();return {ok:true,nickname:name};
+  }
+  if(op==='setClanSlug'){
+   var slug=String(p.slug||'').trim().toLowerCase();
+   if(slug&&!/^[a-z0-9][a-z0-9-]{2,39}$/.test(slug))throw Error('링크 이름은 영문 소문자, 숫자, 하이픈으로 3~40자를 입력해주세요.');
+   if(slug&&!entrySettings_(found.row[0]))throw Error('입장 비밀번호를 먼저 설정해주세요.');
+   if(slug&&clanRows_(found.sheet).some(function(r){return r[0]!==found.row[0]&&clanSlug_(r[0])===slug;}))throw Error('이미 사용 중인 링크 이름입니다.');
+   var props=PropertiesService.getScriptProperties(),prop='CLAN_SLUG_'+found.row[0];
+   if(slug)props.setProperty(prop,slug);else props.deleteProperty(prop);
+   return {ok:true,clan:publicClan_(found.row)};
   }
   if(op==='setEntryPassword'){
    if(typeof p.entryPassword!=='string'||p.entryPassword.length<6||p.entryPassword.length>100||p.entryPassword.trim()!==p.entryPassword)throw Error('입장 비밀번호는 앞뒤 공백 없이 6~100자로 정해주세요.');

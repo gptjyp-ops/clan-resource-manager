@@ -180,21 +180,21 @@ function Home(){
 }
 
 export default function App(){useLanguage();useEffect(()=>{const navigate=()=>location.reload();window.addEventListener('hashchange',navigate);return()=>window.removeEventListener('hashchange',navigate);},[]);const [ready,setReady]=useState(!googleEnabled),[key,setKey]=useState(()=>invitedKey||savedAccessKey()),[checking,setChecking]=useState(false),[error,setError]=useState('');
- useEffect(()=>{if(ready||!googleEnabled||!location.hash||activeClanId===eliteManualClanId||new URLSearchParams(location.hash.slice(1)).has('manage')||location.hash==='#clans')return;const stored=savedTicket(activeClanId);if(!stored)return;let live=true;setChecking(true);(savedAccessKey()?getRecords():enterClanTicket(stored)).then(()=>{if(live)setReady(true);}).catch(e=>{if(live)setError(e instanceof Error?e.message:t('티켓 로그인 실패'));}).finally(()=>{if(live)setChecking(false);});return()=>{live=false;};},[ready]);
- const [clanName,setClanName]=useState('');const commonEntry=!location.hash;
+ useEffect(()=>{if(ready||!googleEnabled||!location.hash||new URLSearchParams(location.hash.slice(1)).has('join')||activeClanId===eliteManualClanId||new URLSearchParams(location.hash.slice(1)).has('manage')||location.hash==='#clans')return;const stored=savedTicket(activeClanId);if(!stored)return;let live=true;setChecking(true);(savedAccessKey()?getRecords():enterClanTicket(stored)).then(()=>{if(live)setReady(true);}).catch(e=>{if(live)setError(e instanceof Error?e.message:t('티켓 로그인 실패'));}).finally(()=>{if(live)setChecking(false);});return()=>{live=false;};},[ready]);
+ const [clanName,setClanName]=useState('');const joinSlug=new URLSearchParams(location.hash.slice(1)).get('join');const commonEntry=!location.hash||joinSlug!==null;
  useEffect(()=>{
   if(commonEntry||ready||!new URLSearchParams(location.hash.slice(1)).has('clan')||!savedAccessKey()||savedTicket(activeClanId))return;
   let live=true;
   getRecords().then(()=>{if(live)setReady(true);}).catch(()=>{});
   return()=>{live=false;};
  },[commonEntry,ready]);
- async function enter(e?:React.FormEvent){e?.preventDefault();setChecking(true);setError('');try{if(commonEntry){await unlockNamedClan(clanName,key);return;}await unlockGoogle(key);setReady(true);}catch(e){setError(e instanceof Error?e.message:t("연결 실패"));}finally{setChecking(false);}}if(location.hash==='#operator-recovery')return <OperatorRecovery/>;if(location.hash==='#ocr-check')return <OcrCheck/>;if(location.hash==='#clans'||new URLSearchParams(location.hash.slice(1)).has('manage'))return <ClanPortal/>;if(ready)return activeClanId===eliteManualClanId?<EliteManualRegistration/>:<Home/>;if(commonEntry)return <main><div className="workspace" style={{maxWidth:500,paddingTop:48}}><section className="panel registration">
+ async function enter(e?:React.FormEvent){e?.preventDefault();setChecking(true);setError('');try{if(commonEntry){await unlockNamedClan(clanName,key,joinSlug??undefined);return;}await unlockGoogle(key);setReady(true);}catch(e){setError(e instanceof Error?e.message:t("연결 실패"));}finally{setChecking(false);}}if(location.hash==='#operator-recovery')return <OperatorRecovery/>;if(location.hash==='#ocr-check')return <OcrCheck/>;if(location.hash==='#clans'||new URLSearchParams(location.hash.slice(1)).has('manage'))return <ClanPortal/>;if(ready)return activeClanId===eliteManualClanId?<EliteManualRegistration/>:<Home/>;if(commonEntry)return <main><div className="workspace" style={{maxWidth:500,paddingTop:48}}><section className="panel registration">
  <h1>클랜 재화관리</h1>
  <form onSubmit={enter}>
-  <label className="number-field"><span>클랜 이름</span><input value={clanName} onChange={e=>setClanName(e.target.value)} required maxLength={100} autoComplete="off" disabled={checking}/></label>
+  {joinSlug?<p>클랜 입장 링크 · {joinSlug}</p>:<label className="number-field"><span>클랜 이름</span><input value={clanName} onChange={e=>setClanName(e.target.value)} required maxLength={100} autoComplete="off" disabled={checking}/></label>}
   <label className="field-label" htmlFor="clan-key">클랜 입장 비밀번호</label>
   <AccessCodeInput value={key} onChange={setKey} disabled={checking}/>
-  <button className="submit" disabled={checking||!clanName.trim()||!key.trim()}>{checking?'입장 확인 중…':'클랜 입장'}</button>
+  <button className="submit" disabled={checking||(!joinSlug&&!clanName.trim())||!key.trim()}>{checking?'입장 확인 중…':'클랜 입장'}</button>
   {error&&<p role="alert">{error}</p>}
  </form>
  <details className="ticket-import" style={{marginBlock:16}}>
