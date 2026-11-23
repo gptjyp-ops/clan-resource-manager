@@ -137,7 +137,6 @@ export default function EliteManualRegistration(){
     .elite-registration-gem summary::-webkit-details-marker { display: none; }
     .elite-registration-gem small { display: block; font-weight: normal; }
     .elite-weekly-results { padding: 16px; }
-    .elite-resource-list, .elite-resource-navigation { display: none; }
     .elite-sort-direction { display: flex; gap: 6px; margin-block: 10px; }
     .elite-sort-direction button { min-height: 44px; }
     .elite-results-tools .elite-sort-direction button[aria-pressed="true"] { background: #54372a; color: #fff8ed; }
@@ -153,19 +152,10 @@ export default function EliteManualRegistration(){
      .elite-results-tools .number-field { flex: 1 1 180px; margin: 0; }
      .elite-results-tools :is(input, select, button) { min-height: 44px; border: 1px solid #95684b; border-radius: 8px; background: #fffdf8; color: #33241d; padding: 8px 12px; }
      .elite-results-tools select { width: 100%; }
-     .elite-weekly-table { border: 1px solid #c8a88a; border-radius: 12px; margin-bottom: 22px; }
-     .elite-weekly-table table { width: 100%; min-width: 680px; border-collapse: collapse; color: #33241d; }
-     .elite-weekly-table :is(th, td) { padding: 13px 10px; text-align: right; border-bottom: 1px solid #dfc9b4; }
-     .elite-weekly-table th:first-child { text-align: left; overflow-wrap: anywhere; }
-     .elite-weekly-table thead th { background: #54372a; color: #fff8ed; font-size: .88rem; }
-     .elite-weekly-table tbody tr { background: #fffdf8; }
-     .elite-weekly-table tbody tr:nth-child(even) { background: #f8ebda; }
-     .elite-weekly-table tbody tr:hover { background: #f8dfbd; }
-     .elite-weekly-table td[data-sorted="true"] { background: #d5933929; }
-     .elite-weekly-table th[aria-sort] { background: #754b2c; }
-     .elite-amount { font-size: clamp(1.04rem, 1.5vw, 1.35rem); font-weight: 800; font-variant-numeric: tabular-nums; white-space: nowrap; }
-     .elite-weekly-table td div { font-size: .8rem; color: #634634; }
-     .elite-weekly-table .elite-waiting { display: inline-block; padding: 1px 6px; border-radius: 12px; background: #f4dba1; color: #573819; }
+     .elite-weekly-results .elite-resource-navigation { gap: 10px; }
+     .elite-resource-list .elite-resource-page tbody :is(th, td) { padding: 14px 16px; }
+     .elite-resource-list .elite-resource-page td strong { font-size: 1.35rem; }
+     .elite-resource-page tbody tr:hover { background: #f8dfbd; }
     }
     @media (max-width: 720px) {
      .elite-results-tools { display: grid; gap: 8px; margin-block: 12px; }
@@ -173,24 +163,20 @@ export default function EliteManualRegistration(){
      .elite-results-tools select { width: 100%; padding-inline: 10px; }
      .elite-sort-direction { margin: 0; }
      .elite-sort-direction button { flex: 1; }
+    }
      .elite-resource-page th[aria-sort] { background: #e9c38f; }
      .elite-resource-page td[data-sorted="true"] { background: #dfaa5e30; }
-     .elite-weekly-table { display: none; }
      .elite-resource-navigation { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 4px; }
      .elite-resource-navigation button, .elite-resource-page th button.elite-sort-header { min-height: 44px; padding: 4px; border: 1px solid #95684b; border-radius: 6px; background: #fff8ed; color: #33241d; }
      .elite-resource-navigation button[aria-pressed="true"] { background: #54372a; color: #fff8ed; }
      .elite-resource-page th button.elite-sort-header { width: 100%; font: inherit; }
      .elite-resource-list { display: grid; grid-auto-flow: column; grid-auto-columns: 100%; overflow-x: auto; scroll-snap-type: x mandatory; margin: 12px 0; }
      .elite-resource-page { min-width: 0; scroll-snap-align: start; scroll-snap-stop: always; }
-     .elite-resource-page h3 { margin: 0 0 8px; }
-     .elite-resource-page h3 small { font-size: .75em; }
      .elite-resource-page table { width: 100%; table-layout: fixed; }
      .elite-resource-page th, .elite-resource-page td { padding: 6px 4px; overflow-wrap: anywhere; vertical-align: top; }
      .elite-resource-page th:first-child { width: 39%; }
      .elite-resource-page td small, .elite-resource-page th button { display: block; }
      .elite-resource-page { color: #33241d; }
-     .elite-resource-page h3 { padding: 8px 10px; background: #54372a; color: white; border-radius: 8px; font-size: 1.2rem; font-weight: 800; }
-     .elite-resource-page h3 small { color: #fae5c9; }
      .elite-resource-page thead th { background: #f2d9b8; font-weight: 800; }
      .elite-resource-page tbody tr { background: #fff; }
      .elite-resource-page tbody tr:nth-child(even) { background: #f8ebda; }
@@ -198,7 +184,6 @@ export default function EliteManualRegistration(){
      .elite-resource-page td strong { font-size: 1.15rem; font-weight: 800; font-variant-numeric: tabular-nums; }
      .elite-resource-page td small { font-size: .85rem; color: #634634; }
      .elite-resource-page .elite-waiting { width: fit-content; padding: 1px 4px; border-radius: 4px; background: #ffe4a1; color: #5b3700; font-weight: 800; }
-    }
    `}</style>
    <h2>이번 주 등록 현황</h2>
    <div className="elite-results-tools">
@@ -212,7 +197,7 @@ export default function EliteManualRegistration(){
    {rows.length>0&&<div className="elite-sort-direction" role="group" aria-label="정렬 방향">
     {([['descending','↓ 내림차순'],['ascending','↑ 오름차순']] as const).map(([direction,label])=>
      <button key={direction} type="button" aria-pressed={sortBy!=='waiting'&&sortDirection===direction} onClick={()=>{
-      if(sortBy==='waiting')setSortBy((resourceList.current?.clientWidth?resourcePages[resourcePage]:resourcePages[0]).fields[0][0]);
+      if(sortBy==='waiting')setSortBy(resourcePages[resourcePage].fields[0][0]);
       setSortDirection(direction);
      }}>{label}</button>
     )}
@@ -256,18 +241,7 @@ export default function EliteManualRegistration(){
      </section>
     )}
    </div>
-   <div className="elite-weekly-table" tabIndex={0} role="region" aria-label="클랜 재화 현황 표" style={{overflowX:'auto'}}><table>
-    <thead><tr><th>닉네임</th>{fields.map(([key,label])=><th key={key} aria-sort={sortBy===key?sortDirection:undefined}>{label}{usesK(key)&&' (K)'}</th>)}{adminToken&&<th>관리</th>}</tr></thead>
-    <tbody>{visibleRows.map(row=><tr key={row.nickname}><th scope="row">{row.nickname}<RegistrationGem amounts={row.amounts}/>{isWaiting(row)&&<div><small>승천대기</small></div>}</th>
-     {fields.map(([key])=><td key={key} data-sorted={sortBy===key}><strong className="elite-amount">{displayAmount(key,row.amounts[key])}</strong>
-      {summonGroups.map(group=>group===key&&<div key={group}>
-       {row.amounts[`${group}Level`]&&<span>Lv. {row.amounts[`${group}Level`]} </span>}
-       {row.amounts[`${group}Waiting`]==='yes'&&<strong className="elite-waiting">승천대기</strong>}
-      </div>)}
-     </td>)}
-     {adminToken&&<td><button type="button" disabled={busy} onClick={()=>setPending(row)}>등록 취소</button></td>}
-    </tr>)}</tbody>
-   </table></div></>}
+   </>}
    {pending&&<div role="group" aria-label="등록 취소 확인"><p>{pending.nickname}님의 이번 주 등록을 취소할까요?</p>
     <button type="button" disabled={busy} onClick={()=>void cancel(pending)}>등록 취소 확인</button>
     <button type="button" disabled={busy} onClick={()=>setPending(null)}>닫기</button>
