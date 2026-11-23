@@ -197,6 +197,13 @@ export default function App(){useLanguage();useEffect(()=>{const navigate=()=>lo
   <button className="submit" disabled={checking||!clanName.trim()||!key.trim()}>{checking?'입장 확인 중…':'클랜 입장'}</button>
   {error&&<p role="alert">{error}</p>}
  </form>
+ <details className="ticket-import" style={{marginBlock:16}}>
+  <summary>개인 QR로 로그인</summary>
+  <TicketImport disabled={checking} onImport={async ticket=>{
+   setChecking(true);setError('');
+   try{await enterClanTicket(ticket);}finally{setChecking(false);}
+  }}/>
+ </details>
  <p><a href={import.meta.env.BASE_URL+'#clans'}>클랜장 관리</a></p>
  </section></div></main>;
  return <main><div className="workspace" style={{maxWidth:500,paddingTop:64}}><section className="panel registration"><EliteBanner compact/><div className="panel-heading"><h1>{t("클랜 재화관리")}</h1></div><p>{invitedKey?t("초대 링크의 입장 코드가 입력되었습니다. 아래 버튼을 눌러 클랜에 들어가세요."):t("클랜장이 알려준 입장 비밀번호 또는 기존 입장 코드를 입력해주세요.")}</p>{activeClanId!==eliteManualClanId&&<div style={{marginBlock:24}}><TicketImport disabled={checking} onImport={async ticket=>{setChecking(true);setError('');try{await enterClanTicket(ticket);}finally{setChecking(false);}}}/><p>{t("저장한 개인 티켓 사진으로 클랜 입장과 내 재화 로그인을 한 번에 할 수 있습니다.")}</p></div>}<form onSubmit={enter}><label className="field-label" htmlFor="clan-key">{t("입장 비밀번호 / 기존 입장 코드")}</label><AccessCodeInput value={key} onChange={setKey} disabled={checking}/><button className="submit" disabled={checking}>{checking?t("연결 확인 중…"):t("클랜 현황 열기")}</button>{error&&<p role="alert">{t(error)}</p>}</form><p><a href={import.meta.env.BASE_URL+'#clans'}>{t("새 클랜 만들기 · 클랜장 관리")}</a></p></section></div></main>;}
