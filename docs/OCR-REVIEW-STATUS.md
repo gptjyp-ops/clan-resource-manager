@@ -1,8 +1,15 @@
 # OCR review checkpoint
 
-Updated: 2026-11-23 09:58 KST. Latest deployed scanner: 2026-11-16.1.
+Updated: 2026-11-23 11:58 KST. Latest deployed scanner: 2026-11-16.1.
 
 ## Current scan
+
+- 2026-11-23 11:58 KST: verified OCR tab metadata and A552:J1000. Compared originals for new rows 570–575. Last reviewed 575 / next 576; rows 576–1000 empty. Main scanner blob 00eb3913594799f8cfbbfa3cfcf4680cbcac2f90.
+  - 570 and 572: matching mount merge images show 41 selected; OCR candidates conflict (41 and 11). Latest layout finds the selected region. Recognition cause remains open.
+  - 571: summon screen in merge slot. The 6.97k is the summon balance. Latest layout identifies the wrong slot.
+  - 573 and 574: merge screens in summon slot. The first displays 1737 selected, and the second has an empty material list with no printed selection count. Latest layout detects both as merge dialogs. No first-digit or unit correction applies.
+  - 575: original potion balance is 984, while the log shows 2984. Latest layout locates the right bar, and standalone Tesseract reads the extracted crop as 984. Production OCR discrepancy remains open. No assumed digit removal.
+  - Rows 569, 561–563, 552/554 and prior unresolved cases remain tracked. No code change or software deployment.
 
 - 2026-11-23 09:58 KST: verified ocr_errors metadata and A552:J1000. Reviewed new row 569; next 570, with rows 570–1000 empty. Original shows the pet summon screen and 59.5k in its upper-left resource bar. It was submitted to the mount summon slot and logged OCR-04 (amount). The mount amount is absent, so no numeric correction is warranted. Keep wrong-slot guidance open until the classifier can be replayed with this example. Prior open cases remain tracked. No OCR code change or deployment.
 
