@@ -16,6 +16,7 @@ import './clan-bot.css';
 /** Retry pending diagnostics automatically; never transmit passwords, URLs or raw exceptions. */
 void flushClientErrorReports();
 window.addEventListener('online',()=>{void flushClientErrorReports();});
+window.setInterval(()=>{void flushClientErrorReports();},60000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)void flushClientErrorReports();});
 window.addEventListener('error',event=>{
  if(event.filename&&!(event.filename.startsWith(location.origin)||event.filename.startsWith('/')))return;
