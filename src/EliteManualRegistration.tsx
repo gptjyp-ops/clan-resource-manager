@@ -92,7 +92,7 @@ export default function EliteManualRegistration(){
    await refresh();
   });
  }
- return <main><div className="workspace">
+ return <main className="elite-manual"><div className="workspace">
   <section className="panel registration">
    <h1>ELITE KOR 재화 등록</h1>
    <p>닉네임당 주 1회 등록 · 매주 월요일 오전 9시 초기화</p>
@@ -127,6 +127,32 @@ export default function EliteManualRegistration(){
     .elite-registration-gem small { display: block; font-weight: normal; }
     .elite-weekly-results { padding: 16px; }
     .elite-resource-list { display: none; }
+    @media (min-width: 721px) {
+     .elite-manual { background: radial-gradient(ellipse at 25% 0, #e7a75d40, transparent 48%); }
+     .elite-manual .workspace { max-width: 1280px; }
+     .elite-manual .panel { background: #fff8ed; color: #33241d; border-color: #a87850; }
+     .elite-manual .number-field span { color: #654633; }
+     .elite-weekly-results { padding: clamp(20px, 3vw, 36px); }
+     .elite-results-tools { display: flex; flex-wrap: wrap; align-items: end; gap: 16px; margin-block: 16px 22px; }
+     .elite-results-tools .number-field { flex: 1 1 180px; margin: 0; }
+     .elite-results-tools :is(input, select, button) { min-height: 44px; border: 1px solid #95684b; border-radius: 8px; background: #fffdf8; color: #33241d; padding: 8px 12px; }
+     .elite-results-tools select { width: 100%; }
+     .elite-weekly-table { border: 1px solid #c8a88a; border-radius: 12px; margin-bottom: 22px; }
+     .elite-weekly-table table { width: 100%; min-width: 680px; border-collapse: collapse; color: #33241d; }
+     .elite-weekly-table :is(th, td) { padding: 13px 10px; text-align: right; border-bottom: 1px solid #dfc9b4; }
+     .elite-weekly-table th:first-child { text-align: left; overflow-wrap: anywhere; }
+     .elite-weekly-table thead th { background: #54372a; color: #fff8ed; font-size: .88rem; }
+     .elite-weekly-table tbody tr { background: #fffdf8; }
+     .elite-weekly-table tbody tr:nth-child(even) { background: #f8ebda; }
+     .elite-weekly-table tbody tr:hover { background: #f8dfbd; }
+     .elite-weekly-table td[data-sorted="true"] { background: #d5933929; }
+     .elite-weekly-table th[aria-sort="descending"] { background: #754b2c; }
+     .elite-amount { font-size: clamp(1.04rem, 1.5vw, 1.35rem); font-weight: 800; font-variant-numeric: tabular-nums; white-space: nowrap; }
+     .elite-weekly-table td div { font-size: .8rem; color: #634634; }
+     .elite-weekly-table .elite-waiting { display: inline-block; padding: 1px 6px; border-radius: 12px; background: #f4dba1; color: #573819; }
+     .elite-snow { z-index: 0; opacity: .55; }
+     .elite-manual { position: relative; z-index: 1; }
+    }
     @media (max-width: 720px) {
      .elite-weekly-table { display: none; }
      .elite-resource-list { display: grid; grid-auto-flow: column; grid-auto-columns: 100%; overflow-x: auto; scroll-snap-type: x mandatory; margin: 12px 0; }
@@ -150,6 +176,7 @@ export default function EliteManualRegistration(){
     }
    `}</style>
    <h2>이번 주 등록 현황</h2>
+   <div className="elite-results-tools">
    {rows.length>0&&<label className="number-field"><span>닉네임 검색</span><input type="search" value={search} onChange={e=>setSearch(e.target.value)} placeholder="닉네임 일부 입력"/></label>}
    {rows.length>0&&<label className="number-field"><span>등록 재화 정렬</span>
     <select value={sortBy} onChange={e=>setSortBy(e.target.value)}>
@@ -158,6 +185,7 @@ export default function EliteManualRegistration(){
     </select>
    </label>}
    <button type="button" disabled={busy} onClick={()=>void run(refresh)}>새로고침</button>
+   </div>
    {rows.length===0?<p>표시할 등록 내역이 없습니다.</p>:visibleRows.length===0?<p role="status">일치하는 닉네임이 없습니다.</p>:<>
    <div className="elite-resource-list" tabIndex={0} role="region" aria-label="재화별 현황 · 좌우로 이동">
     {[[fields[0]],fields.slice(1,3),fields.slice(3,5),[fields[5]]].map((line,index)=>
@@ -182,12 +210,12 @@ export default function EliteManualRegistration(){
     )}
    </div>
    <div className="elite-weekly-table" tabIndex={0} role="region" aria-label="클랜 재화 현황 표" style={{overflowX:'auto'}}><table>
-    <thead><tr><th>닉네임</th>{fields.map(([key,label])=><th key={key}>{label}{usesK(key)&&' (K)'}</th>)}{adminToken&&<th>관리</th>}</tr></thead>
+    <thead><tr><th>닉네임</th>{fields.map(([key,label])=><th key={key} aria-sort={sortBy===key?'descending':undefined}>{label}{usesK(key)&&' (K)'}</th>)}{adminToken&&<th>관리</th>}</tr></thead>
     <tbody>{visibleRows.map(row=><tr key={row.nickname}><th scope="row">{row.nickname}<RegistrationGem amounts={row.amounts}/>{isWaiting(row)&&<div><small>승천대기</small></div>}</th>
-     {fields.map(([key])=><td key={key}>{displayAmount(key,row.amounts[key])}
+     {fields.map(([key])=><td key={key} data-sorted={sortBy===key}><strong className="elite-amount">{displayAmount(key,row.amounts[key])}</strong>
       {summonGroups.map(group=>group===key&&<div key={group}>
        {row.amounts[`${group}Level`]&&<span>Lv. {row.amounts[`${group}Level`]} </span>}
-       {row.amounts[`${group}Waiting`]==='yes'&&<strong>승천대기</strong>}
+       {row.amounts[`${group}Waiting`]==='yes'&&<strong className="elite-waiting">승천대기</strong>}
       </div>)}
      </td>)}
      {adminToken&&<td><button type="button" disabled={busy} onClick={()=>setPending(row)}>등록 취소</button></td>}
