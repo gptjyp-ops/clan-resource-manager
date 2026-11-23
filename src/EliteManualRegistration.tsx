@@ -133,11 +133,13 @@ export default function EliteManualRegistration(){
     .elite-sort-direction { display: flex; gap: 6px; margin-block: 10px; }
     .elite-sort-direction button { min-height: 44px; }
     .elite-results-tools .elite-sort-direction button[aria-pressed="true"] { background: #54372a; color: #fff8ed; }
+   .elite-manual { background: radial-gradient(ellipse at 25% 0, #e7a75d40, transparent 48%); }
+   .elite-manual .panel { background: #fff8ed; color: #33241d; border-color: #a87850; }
+   .elite-manual .number-field span { color: #654633; }
+   .elite-snow { z-index: 0; opacity: .55; }
+   .elite-manual { position: relative; z-index: 1; }
     @media (min-width: 721px) {
-     .elite-manual { background: radial-gradient(ellipse at 25% 0, #e7a75d40, transparent 48%); }
      .elite-manual .workspace { max-width: 1280px; }
-     .elite-manual .panel { background: #fff8ed; color: #33241d; border-color: #a87850; }
-     .elite-manual .number-field span { color: #654633; }
      .elite-weekly-results { padding: clamp(20px, 3vw, 36px); }
      .elite-results-tools { display: flex; flex-wrap: wrap; align-items: end; gap: 16px; margin-block: 16px 22px; }
      .elite-results-tools .number-field { flex: 1 1 180px; margin: 0; }
@@ -156,10 +158,15 @@ export default function EliteManualRegistration(){
      .elite-amount { font-size: clamp(1.04rem, 1.5vw, 1.35rem); font-weight: 800; font-variant-numeric: tabular-nums; white-space: nowrap; }
      .elite-weekly-table td div { font-size: .8rem; color: #634634; }
      .elite-weekly-table .elite-waiting { display: inline-block; padding: 1px 6px; border-radius: 12px; background: #f4dba1; color: #573819; }
-     .elite-snow { z-index: 0; opacity: .55; }
-     .elite-manual { position: relative; z-index: 1; }
     }
     @media (max-width: 720px) {
+     .elite-results-tools { display: grid; gap: 8px; margin-block: 12px; }
+     .elite-results-tools :is(input, select, button) { min-height: 44px; border: 1px solid #95684b; border-radius: 8px; background: #fffdf8; color: #33241d; }
+     .elite-results-tools select { width: 100%; padding-inline: 10px; }
+     .elite-sort-direction { margin: 0; }
+     .elite-sort-direction button { flex: 1; }
+     .elite-resource-page th[aria-sort] { background: #e9c38f; }
+     .elite-resource-page td[data-sorted="true"] { background: #dfaa5e30; }
      .elite-weekly-table { display: none; }
      .elite-resource-list { display: grid; grid-auto-flow: column; grid-auto-columns: 100%; overflow-x: auto; scroll-snap-type: x mandatory; margin: 12px 0; }
      .elite-resource-page { min-width: 0; scroll-snap-align: start; scroll-snap-stop: always; }
@@ -169,15 +176,15 @@ export default function EliteManualRegistration(){
      .elite-resource-page th, .elite-resource-page td { padding: 6px 4px; overflow-wrap: anywhere; vertical-align: top; }
      .elite-resource-page th:first-child { width: 39%; }
      .elite-resource-page td small, .elite-resource-page th button { display: block; }
-     .elite-resource-page { color: #142e43; }
-     .elite-resource-page h3 { padding: 8px 10px; background: #173d5b; color: white; border-radius: 8px; font-size: 1.2rem; font-weight: 800; }
-     .elite-resource-page h3 small { color: #dbeeff; }
-     .elite-resource-page thead th { background: #dcecf8; font-weight: 800; }
+     .elite-resource-page { color: #33241d; }
+     .elite-resource-page h3 { padding: 8px 10px; background: #54372a; color: white; border-radius: 8px; font-size: 1.2rem; font-weight: 800; }
+     .elite-resource-page h3 small { color: #fae5c9; }
+     .elite-resource-page thead th { background: #f2d9b8; font-weight: 800; }
      .elite-resource-page tbody tr { background: #fff; }
-     .elite-resource-page tbody tr:nth-child(even) { background: #eef6fc; }
-     .elite-resource-page tbody th, .elite-resource-page tbody td { padding-block: 10px; border-bottom: 1px solid #c2d7e7; }
+     .elite-resource-page tbody tr:nth-child(even) { background: #f8ebda; }
+     .elite-resource-page tbody th, .elite-resource-page tbody td { padding-block: 10px; border-bottom: 1px solid #dfc9b4; }
      .elite-resource-page td strong { font-size: 1.15rem; font-weight: 800; font-variant-numeric: tabular-nums; }
-     .elite-resource-page td small { font-size: .85rem; color: #35516b; }
+     .elite-resource-page td small { font-size: .85rem; color: #634634; }
      .elite-resource-page .elite-waiting { width: fit-content; padding: 1px 4px; border-radius: 4px; background: #ffe4a1; color: #5b3700; font-weight: 800; }
     }
    `}</style>
@@ -206,12 +213,12 @@ export default function EliteManualRegistration(){
      <section className="elite-resource-page" key={line[0][0]} aria-label={['스킬','알','탈것','녹색 물약'][index]}>
       <h3>{['스킬','알','탈것','녹색 물약'][index]} <small>{index+1} / 4</small></h3>
       <table>
-       <thead><tr><th>닉네임</th>{line.map(([key,label])=><th key={key}>{label}</th>)}</tr></thead>
+       <thead><tr><th>닉네임</th>{line.map(([key,label])=><th key={key} aria-sort={sortBy===key?sortDirection:undefined}>{label}</th>)}</tr></thead>
        <tbody>{visibleRows.map(row=><tr key={row.nickname}>
         <th scope="row">{row.nickname}<RegistrationGem amounts={row.amounts}/>
          {adminToken&&<button type="button" disabled={busy} onClick={()=>setPending(row)}>등록 취소</button>}
         </th>
-        {line.map(([key])=><td key={key}>
+        {line.map(([key])=><td key={key} data-sorted={sortBy===key}>
          <strong>{displayAmount(key,row.amounts[key])}</strong>
          {summonGroups.map(group=>group===key&&<div key={group}>
           {row.amounts[`${group}Level`]&&<small>Lv. {row.amounts[`${group}Level`]}</small>}
