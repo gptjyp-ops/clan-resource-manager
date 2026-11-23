@@ -1,8 +1,12 @@
 # OCR review checkpoint
 
-Updated: 2026-11-24 00:57 KST. Latest deployed scanner: 2026-11-16.1.
+Updated: 2026-11-24 05:00 KST. Latest deployed scanner: 2026-11-16.1.
 
 ## Current scan
+
+- 2026-11-24 05:00 KST: main 297af1d, both error tabs 1000×26. OCR A626:J1000, new rows 627–629, next 630. Three byte-identical stored JPEGs show real mount summon 11.7k/maximum, correctly submitted to mount. All three OCR-04 logs read 1.7k. The decimal point and k unit are visible, with a leading 1 omitted in the logged read. Latest layout locates the amount area on the stored JPEG. A standalone Tesseract thresholded crop returned no usable value, so the reported recognition failure mechanism was not reproduced. Keep unresolved and never insert a digit by assumption.
+  - Client A22:H1000, new rows 23–24, next 25. Two GEN-001 reports, iOS KakaoTalk build 297af1d, clan management and resource registration within 39 seconds. No new CON-001/002/003/004 or GEN-002. Anonymous events cannot establish whether multiple devices were affected. Proximity to the OCR report does not establish a shared cause. Previous unresolved cases remain open.
+  - Live site HTTP 200. Code.gs still ff1afc9, production Apps Script deployment 45171688317 and new persisted records confirm doPost intake. No application change or software fix applied. No member data or settings modified.
 
 - 2026-11-24 00:57 KST: main 98ba2d1, both error tabs 1000×26. OCR A626:J1000, no new rows, next 627. Prior OCR startup failures and photo-classification cases remain open with no new evidence.
   - Client A20:H1000, two distinct new reports (21–22), next 23. AUTH-002 at 00:23 and AUTH-003 at 00:25 KST, both resource registration on Android Samsung Internet build 98ba2d1. AUTH-003 repeats a prior code. Anonymous event IDs cannot link devices or users. No new CON-001/002/003/004 or GEN-002, and no evidence of a simultaneous connection incident. Prior CON-001 and GEN-001 remain open.
