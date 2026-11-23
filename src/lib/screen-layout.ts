@@ -208,6 +208,14 @@ export function ratioCandidates(region:LocatedRegion):LocatedRegion[]{
  // Read the complete bar in white-only mode before mixed/raw retries, so
  // adjacent stars cannot reshape a 9 into a 3.
  const barCandidates:LocatedRegion[]=region.alternativeRect?[{...region,rect:region.alternativeRect,mode:'white'},{...region,rect:region.alternativeRect,mode:'raw'},{...region,rect:region.alternativeRect}]:[];
+ // A narrow progress label can lose its slash when the crop includes
+ // the bar outline and the stars beneath it. Retry with just the interior.
+ if(region.alternativeRect){
+  const [barX,barY,barWidth,barHeight]=region.alternativeRect;
+  barCandidates.push({...region,mode:'white',rect:[
+   barX+barWidth*.14,barY+barHeight*.14,barWidth*.72,barHeight*.60,
+  ]});
+ }
  return [region,...barCandidates,{...expanded,mode:'raw'},expanded,{...taller,mode:'white'},{...taller,mode:'raw'}];
 }
 
