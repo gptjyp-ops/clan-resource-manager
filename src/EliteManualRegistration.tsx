@@ -29,6 +29,7 @@ function RegistrationGem({amounts}:{amounts:Registration['amounts']}){
 
 export default function EliteManualRegistration(){
  const [search,setSearch]=useState('');
+ const [sortBy,setSortBy]=useState('waiting');
  const [rows,setRows]=useState<Registration[]>([]);
  const [nickname,setNickname]=useState('');
  const [password,setPassword]=useState('');
@@ -40,7 +41,14 @@ export default function EliteManualRegistration(){
  const [pending,setPending]=useState<Registration|null>(null);
 
  const query=search.trim().normalize('NFKC').toLowerCase();
- const visibleRows=rows.filter(row=>row.nickname.normalize('NFKC').toLowerCase().includes(query)).sort((a,b)=>Number(isWaiting(b))-Number(isWaiting(a)));
+ const sortAmount=(row:Registration)=>{
+  const value=row.amounts[sortBy as typeof fields[number][0]];
+  return value?.trim()?quantity(value):null;
+ };
+ const visibleRows=rows.filter(row=>row.nickname.normalize('NFKC').toLowerCase().includes(query)).sort((a,b)=>{
+  if(sortBy==='waiting')return Number(isWaiting(b))-Number(isWaiting(a));
+  return (sortAmount(b)??-1)-(sortAmount(a)??-1);
+ });
 
  async function refresh(){
   const result=await clanAction('manualList');
@@ -143,6 +151,12 @@ export default function EliteManualRegistration(){
    `}</style>
    <h2>이번 주 등록 현황</h2>
    {rows.length>0&&<label className="number-field"><span>닉네임 검색</span><input type="search" value={search} onChange={e=>setSearch(e.target.value)} placeholder="닉네임 일부 입력"/></label>}
+   {rows.length>0&&<label className="number-field"><span>등록 재화 정렬</span>
+    <select value={sortBy} onChange={e=>setSortBy(e.target.value)}>
+     <option value="waiting">승천대기 우선</option>
+     {fields.map(([key,label])=><option key={key} value={key}>{label} 많은 순</option>)}
+    </select>
+   </label>}
    <button type="button" disabled={busy} onClick={()=>void run(refresh)}>새로고침</button>
    {rows.length===0?<p>표시할 등록 내역이 없습니다.</p>:visibleRows.length===0?<p role="status">일치하는 닉네임이 없습니다.</p>:<>
    <div className="elite-resource-list" tabIndex={0} role="region" aria-label="재화별 현황 · 좌우로 이동">
