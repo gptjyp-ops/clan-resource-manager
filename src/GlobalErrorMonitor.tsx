@@ -27,6 +27,7 @@ export function GlobalErrorMonitor(){
     if(element.closest('.scan-diagnostics'))return; // Already renders OCR-/IMG- codes.
     const message=(element.textContent||'').trim();
     if(!message)return;
+    if(/\b(?:OCR|IMG)-\d{2}\b/.test(message))return; // Existing image diagnostics show their own precise code.
     const codeMatch=message.match(/\bCRM-[A-Z]+-\d{3}\b/);
     const code=codeMatch?codeMatch[0]:diagnoseError(message).code;
     if(element.dataset.crmErrorCode===code)return;
