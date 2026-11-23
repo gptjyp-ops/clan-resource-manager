@@ -5,8 +5,22 @@ type Pending={report:ClientReport;attempts:number;nextAttempt:number};
 export type ErrorReportStatus='queued'|'attempted';
 const slot='crm-client-errors-v1',cooldownMs=10*60*1000,maximum=20;
 let running:Promise<void>|undefined;
-function read():Pending[]{try{const parsed=JSON.parse(localStorage.getItem(slot)||'[]');return Array.isArray(parsed)?parsed.filter(x=>x&&x.report&&typeof x.report.id==='string').slice(-maximum):[];}catch{return [];}}
-function save(items:Pending[]){try{localStorage.setItem(slot,JSON.stringify(items.slice(-maximum)));}catch{/* Restricted browser storage: still attempt network delivery. */}}
+let memoryQueue:Pending[]=[];
+let storageAvailable=true;
+function read():Pending[]{
+ if(!storageAvailable)return memoryQueue;
+ try{
+  const parsed=JSON.parse(localStorage.getItem(slot)||'[]');
+  if(Array.isArray(parsed)){memoryQueue=parsed.filter(x=>x&&x.report&&typeof x.report.id==='string').slice(-maximum);return memoryQueue;}
+ }catch{storageAvailable=false;}
+ return memoryQueue;
+}
+function save(items:Pending[]){
+ memoryQueue=items.slice(-maximum);
+ if(!storageAvailable)return;
+ try{localStorage.setItem(slot,JSON.stringify(memoryQueue));}
+ catch{storageAvailable=false;} // Private browsing: continue network attempts using in-memory queue.
+}
 function device(){
  const ua=navigator.userAgent;
  const os=/Android/i.test(ua)?'Android':/iPhone|iPad|iPod/i.test(ua)?'iOS':/Windows/i.test(ua)?'Windows':/Macintosh|Mac OS X/i.test(ua)?'macOS':'Other';
