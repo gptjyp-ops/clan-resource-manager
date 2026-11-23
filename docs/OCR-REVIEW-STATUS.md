@@ -1,8 +1,12 @@
 # OCR review checkpoint
 
-Updated: 2026-11-24 07:00 KST. Latest deployed scanner: 2026-11-16.1.
+Updated: 2026-11-24 08:04 KST. Latest deployed scanner: 2026-11-16.1.
 
 ## Current scan
+
+- 2026-11-24 08:04 KST: main 78cfd47, both tabs 1000×26. OCR A629:J1000: no new reports, next 630. Prior OCR cases remain open.
+  - Client A25:H1000: new row 26, next 27. One recurring CRM-AUTH-001 code at 07:09 KST, invite/legacy code entry, Android KakaoTalk, build b46d130. No new CRM-CON-001/002/003/004 or CRM-GEN-002. One anonymous event does not establish a shared device or simultaneous outage. Earlier CON-001 and GEN-001 remain open.
+  - Live Pages HTTP 200, and the incoming event identifies a served build. Code.gs remains ff1afc9 (production deployment 45171688317), with continued doPost intake shown by the persisted report. No reproducible application defect confirmed. Checkpoint only.
 
 - 2026-11-24 07:00 KST: main b46d130, both tabs 1000×26. OCR A629:J1000: no new reports, next 630. Prior 627–629 leading digit, startup and wrong-screen issues remain open.
   - Client A24:H1000: new row 25, next 26. One CRM-GEN-001 at 06:42 KST, clan management, Android Samsung Internet, build b46d130. Same generic code as earlier iOS KakaoTalk reports, more than 1h54 apart and on a different build. No evidence of simultaneous failure or a shared cause. No new CON-001/002/003/004 or GEN-002. No underlying exception in the report to reproduce.
