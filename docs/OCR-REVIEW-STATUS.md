@@ -1,8 +1,12 @@
 # OCR review checkpoint
 
-Updated: 2026-11-24 00:03 KST. Latest deployed scanner: 2026-11-16.1.
+Updated: 2026-11-24 00:57 KST. Latest deployed scanner: 2026-11-16.1.
 
 ## Current scan
+
+- 2026-11-24 00:57 KST: main 98ba2d1, both error tabs 1000×26. OCR A626:J1000, no new rows, next 627. Prior OCR startup failures and photo-classification cases remain open with no new evidence.
+  - Client A20:H1000, two distinct new reports (21–22), next 23. AUTH-002 at 00:23 and AUTH-003 at 00:25 KST, both resource registration on Android Samsung Internet build 98ba2d1. AUTH-003 repeats a prior code. Anonymous event IDs cannot link devices or users. No new CON-001/002/003/004 or GEN-002, and no evidence of a simultaneous connection incident. Prior CON-001 and GEN-001 remain open.
+  - Live Pages HTTP 200. Latest Code.gs unchanged since ff1afc9, Apps Script update 45171688317 confirmed successful and new persisted reports verify the live doPost intake. No reproducible application defect found from the two authentication reports. Checkpoint only.
 
 - 2026-11-24 00:03 KST: main b77a9a9, both error tabs 1000×26. OCR A620:J1000, new rows 621–626, next 627. All six OCR-01 with no recognition attempts. Compared stored JPEGs 621 (skill summon 19.1k, Lv49, 60/110) and 626 (technology potion 546). Both match their slots. Rows 622–625 share upload metadata with 621, pixels not individually compared. No decimal, compact-unit, missing-digit or wrong-slot issue evident. Initialization cause remains unresolved, as do previous open cases.
   - Client A12:H1000, new rows 13–20, next 21. Eight distinct report IDs. GEN-001 ×4: Android Samsung Internet (clan management b77a9a9 and 97af545, resource registration 97af545) and iOS KakaoTalk (clan management b77a9a9). CON-001 ×1: invite entry, Android Samsung Internet, b77a9a9. AUTH-001 ×1: clan management, Android Samsung Internet, 97af545. AUTH-003 ×2: clan management 97af545 and resource registration b77a9a9, both Android Samsung Internet. No CON-002/003/004 or GEN-002. GEN-001 spans platforms, but no matching simultaneous connection outage is established and repeated Android reports cannot be attributed to distinct devices. Keep the isolated invite connection timeout and GEN-001 open.
