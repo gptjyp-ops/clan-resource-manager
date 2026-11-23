@@ -1,8 +1,14 @@
 # OCR review checkpoint
 
-Updated: 2026-11-23 16:03 KST. Latest deployed scanner: 2026-11-16.1.
+Updated: 2026-11-23 18:04 KST. Latest deployed scanner: 2026-11-16.1.
 
 ## Current scan
+
+- 2026-11-23 18:04 KST: verified OCR tab metadata (1000 rows by 26 columns) and A552:J1000 against main 8632b86. New rows 576–602 (27 reports), last reviewed 602 / next 603. Rows 603–1000 empty. Compared stored JPEGs for representatives 576, 580, 581, 589, 593, 597, 599, 600 and 602. Remaining uploads were grouped by report metadata, without assuming identical pixels.
+  - 576–588, 590, 592 and 599–601: 18 OCR-01 initialization failures with no recorded OCR reads. Representative images are skill or pet summon screens in the matching slots. Visible compact balances include 83.3k, 44.1k, 19k and 7.27k. Existing OCR worker regressions pass. Device-side startup failure remains unresolved.
+  - 589, 591, 593–598: eight pet summon progress failures. Representative saved images show 8.53k, Lv. 24 and 11/19. OCR retains the compact amount but loses the slash in numeric attempts, and some logs read the level as 21. Latest layout finds amount, info and progress bar. Recognition cause remains open. No inferred slash, digit or level correction.
+  - 602: mount summon screen with 7.3k in the egg merge slot. The previous guard missed the centered mount header. Reproduced on the saved JPEG at the scanner overview size. Added wrong-slot detection requiring the centered mount resource and info anchors, with a merge-dialog guard. The same image now takes the OCR-06 guidance path before numeric OCR. Screen layout, diagnostics, worker initialization, type check and build passed. Frontend-only. Apps Script deployment unnecessary.
+  - Earlier unresolved rows 570/572, 575, 569 and others remain tracked. No member data, credentials, tickets or clan settings changed.
 
 - 2026-11-23 16:03 KST: verified OCR tab metadata and A552:J1000. Last reviewed 575 / next 576; rows 576–1000 were empty. Main scanner blob 00eb3913594799f8cfbbfa3cfcf4680cbcac2f90 is unchanged. Rows 570/572, 575, 569 and prior unresolved cases remain tracked. No OCR code change or deployment required.
 

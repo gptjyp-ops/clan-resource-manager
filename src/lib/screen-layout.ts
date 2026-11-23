@@ -164,7 +164,11 @@ export function isSummonPhotoInMergeSlot(p:Pixels,kind:PhotoKind):boolean{
  if(kind!=='eggMerge'&&kind!=='mountMerge')return false;
  if(findLandmarks(p,kind).selected)return false;
  const normal=findLandmarks(p,kind==='eggMerge'?'egg':'mount');
- return !!normal.amount&&!!normal.info;
+ if(normal.amount&&normal.info)return true;
+ if(kind!=='eggMerge'||mergeDialog(p))return false;
+ // A centered mount resource header and summon info also identify a wrong slot.
+ const mount=findLandmarks(p,'mount');
+ return !!mount.amount&&!!mount.info;
 }
 // Reject only positively identified foreign layouts; uncertain crops still
 // use ordinary OCR and diagnostics instead of being silently reclassified.

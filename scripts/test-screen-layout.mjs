@@ -196,6 +196,12 @@ assert.ok(locateRegions(wider,'skill').some(r=>r.field==='level'));
 assert.equal(isSummonPhotoInMergeSlot(a,'eggMerge'),true);
 assert.equal(isSummonPhotoInMergeSlot(mergeImage(0),'eggMerge'),false);
 assert.equal(isSummonPhotoInMergeSlot(a,'skill'),false);
+const mountInEggMerge=image(62,670);
+for(let y=62;y<79;y++)for(let x=30;x<94;x++)mountInEggMerge.data.set([255,255,255,255],(y*400+x)*4);
+for(let y=312;y<330;y++)for(let x=171;x<236;x++)mountInEggMerge.data.set([100,100,100,255],(y*400+x)*4);
+assert.equal(findLandmarks(mountInEggMerge,'egg').amount,undefined);
+assert.equal(isSummonPhotoInMergeSlot(mountInEggMerge,'eggMerge'),true);
+
 console.log('Rounded corners, wide-screen information anchors and wrong merge-screen detection passed.');
 
 assert.equal(isForeignPhotoInSkillSlot(a,'skill'),false);
