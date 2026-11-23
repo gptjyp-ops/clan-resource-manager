@@ -1,8 +1,10 @@
 # OCR review checkpoint
 
-Updated: 2026-11-23 08:00 KST. Latest deployed scanner: 2026-11-16.1.
+Updated: 2026-11-23 09:58 KST. Latest deployed scanner: 2026-11-16.1.
 
 ## Current scan
+
+- 2026-11-23 09:58 KST: verified ocr_errors metadata and A552:J1000. Reviewed new row 569; next 570, with rows 570–1000 empty. Original shows the pet summon screen and 59.5k in its upper-left resource bar. It was submitted to the mount summon slot and logged OCR-04 (amount). The mount amount is absent, so no numeric correction is warranted. Keep wrong-slot guidance open until the classifier can be replayed with this example. Prior open cases remain tracked. No OCR code change or deployment.
 
 - 2026-11-23 08:00 KST: verified ocr_errors metadata and A552:J1000. Last reviewed 568 / next 569. Rows 569–1000 were empty. Main scanner blob 00eb3913594799f8cfbbfa3cfcf4680cbcac2f90 is unchanged. Open cases 561–563, 552/554 and earlier remain tracked. No OCR code change or deployment required.
 
