@@ -8,6 +8,14 @@ const route=new URLSearchParams(location.hash.slice(1));
 export const activeClanId=route.get('clan')||'legacy';
 const keySlot=activeClanId==='legacy'?'clanAccessKey':'clanAccessKey:'+activeClanId;
 let accessKey=sessionStorage.getItem(keySlot)||'';
+export const potatoClanId='ea36f0150d9e407d9f4329f2';
+export const directInvite=activeClanId===potatoClanId?route.get('invite'):null;
+export async function redeemDirectInvite(code:string){
+ const reply=await rpc('list',{operation:'redeemDirectInvite',inviteCode:code});
+ if(!reply.entryAccessKey)throw Error('초대 링크로 입장하지 못했습니다.');
+ sessionStorage.setItem(keySlot,reply.entryAccessKey);
+ accessKey=reply.entryAccessKey;
+}
 export const invitedKey=route.get('code')||'';
 export let activeClanName='우리 클랜';
 export const savedAccessKey=()=>accessKey;
@@ -28,7 +36,7 @@ export let memberRemovalSupported=false;
 export let adminTicketSupported=false;
 export let entryPasswordSupported=false;
 export let serverOptions:string[]=[];
-type Reply={manualAscension?:boolean;manualMergeCounts?:boolean;manualRecords?:{nickname:string;amounts:Partial<Record<'skill'|'egg'|'eggMerge'|'mount'|'mountMerge'|'potion'|'skillLevel'|'eggLevel'|'mountLevel'|'skillWaiting'|'eggWaiting'|'mountWaiting',string>>;submittedAt:string}[];emailRecovery?:boolean;emailSent?:boolean;emailWarning?:string;adminTicket?:boolean;adminTicketLogin?:boolean;adminTicketNickname?:string;memberRemoval?:boolean;memberRecords?:{nickname:string;updated_at:string}[];ticketClanEntry?:boolean;passwordUpdated?:boolean;ticketPasswordSave?:boolean;photoRemoval?:boolean;operatorRecovery?:boolean;expiresAt?:number;entryPassword?:boolean;entryAccessKey?:string;memberSelfRecovery?:boolean;recoveryCode?:string;members?:string[];memberPasswordReset?:boolean;clan?:ClanInfo;adminToken?:string;multiClan?:boolean;diagnosticPhotos?:boolean;diagnosticReports?:boolean;preserveExisting?:boolean;details?:Inventory;serverSelection?:boolean;servers?:string[];ok:boolean;error?:string;records?:any[];photos?:Partial<Record<PhotoKind,string>>;base64?:string;type?:string};
+type Reply={inviteCode?:string;manualAscension?:boolean;manualMergeCounts?:boolean;manualRecords?:{nickname:string;amounts:Partial<Record<'skill'|'egg'|'eggMerge'|'mount'|'mountMerge'|'potion'|'skillLevel'|'eggLevel'|'mountLevel'|'skillWaiting'|'eggWaiting'|'mountWaiting',string>>;submittedAt:string}[];emailRecovery?:boolean;emailSent?:boolean;emailWarning?:string;adminTicket?:boolean;adminTicketLogin?:boolean;adminTicketNickname?:string;memberRemoval?:boolean;memberRecords?:{nickname:string;updated_at:string}[];ticketClanEntry?:boolean;passwordUpdated?:boolean;ticketPasswordSave?:boolean;photoRemoval?:boolean;operatorRecovery?:boolean;expiresAt?:number;entryPassword?:boolean;entryAccessKey?:string;memberSelfRecovery?:boolean;recoveryCode?:string;members?:string[];memberPasswordReset?:boolean;clan?:ClanInfo;adminToken?:string;multiClan?:boolean;diagnosticPhotos?:boolean;diagnosticReports?:boolean;preserveExisting?:boolean;details?:Inventory;serverSelection?:boolean;servers?:string[];ok:boolean;error?:string;records?:any[];photos?:Partial<Record<PhotoKind,string>>;base64?:string;type?:string};
 let bridgePromise:Promise<{source:Window;origin:string;channel:string}>|undefined;
 let bridgeCleanup:(()=>void)|undefined;
 const pending=new Map<string,{resolve:(r:Reply)=>void;reject:(e:Error)=>void;timer:ReturnType<typeof setTimeout>}>();

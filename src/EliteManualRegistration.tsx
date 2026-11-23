@@ -152,12 +152,15 @@ export default function EliteManualRegistration(){
      .elite-results-tools .number-field { flex: 1 1 180px; margin: 0; }
      .elite-results-tools :is(input, select, button) { min-height: 44px; border: 1px solid #95684b; border-radius: 8px; background: #fffdf8; color: #33241d; padding: 8px 12px; }
      .elite-results-tools select { width: 100%; }
-     .elite-weekly-results .elite-resource-navigation { gap: 10px; }
+     .elite-weekly-results .elite-resource-navigation, .elite-resource-page:not(.elite-resource-overview) { display: none; }
+     .elite-weekly-results .elite-resource-list { display: block; overflow: visible; }
+     .elite-resource-list .elite-resource-overview th:first-child { width: 19%; }
      .elite-resource-list .elite-resource-page tbody :is(th, td) { padding: 14px 16px; }
      .elite-resource-list .elite-resource-page td strong { font-size: 1.35rem; }
      .elite-resource-page tbody tr:hover { background: #f8dfbd; }
     }
     @media (max-width: 720px) {
+     .elite-resource-overview { display: none; }
      .elite-results-tools { display: grid; gap: 8px; margin-block: 12px; }
      .elite-results-tools :is(input, select, button) { min-height: 44px; border: 1px solid #95684b; border-radius: 8px; background: #fffdf8; color: #33241d; }
      .elite-results-tools select { width: 100%; padding-inline: 10px; }
@@ -216,8 +219,8 @@ export default function EliteManualRegistration(){
     const list=e.currentTarget;
     if(list.clientWidth)setResourcePage(Math.round(list.scrollLeft/list.clientWidth));
    }}>
-    {resourcePages.map(({label,fields:line})=>
-     <section className="elite-resource-page" key={label} aria-label={label}>
+    {[...resourcePages,{label:"전체 재화",fields}].map(({label,fields:line})=>
+     <section className={line===fields?"elite-resource-page elite-resource-overview":"elite-resource-page"} key={label} aria-label={label}>
       <table>
        <thead><tr><th>닉네임</th>{line.map(([key,name])=><th key={key} aria-sort={sortBy===key?sortDirection:undefined}>
         <button className="elite-sort-header" type="button" onClick={()=>{

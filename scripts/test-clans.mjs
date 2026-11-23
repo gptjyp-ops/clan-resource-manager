@@ -366,3 +366,22 @@ assert.equal(JSON.stringify([...sheets].map(([name,s])=>[name,s.rows])),snapshot
 assert.equal(JSON.stringify(recoveryRows).includes('new-admin-password'),false);
 assert.equal(recoveryLogs.some(s=>s.includes('new-admin-password')),false);
 console.log('One-use POTATO recovery: owner-only issue, hashed code, expiry/rotation/replay/stale-password/clan guards, session revocation and resource preservation passed.');
+
+const potatoAdmin=action('adminLogin',{clanId:recoveryId,password:'new-admin-password'});
+const potatoSession={clanId:recoveryId,adminToken:potatoAdmin.adminToken};
+const redeem=(inviteCode,clanId=recoveryId)=>action('redeemDirectInvite',{clanId,inviteCode});
+assert.equal(action('setEntryPassword',{...potatoSession,entryPassword:'test-clan-entry'}).ok,true);
+assert.equal(action('issueDirectInvite',{clanId:recoveryId}).ok,false);
+const firstInvite=action('issueDirectInvite',potatoSession).inviteCode;
+assert.match(firstInvite,/^[a-f0-9]{64}$/);
+assert.equal(props.get('POTATO_DIRECT_INVITE').includes(firstInvite),false);
+assert.equal(redeem(firstInvite).entryAccessKey,recoveryRows[1][2]);
+assert.equal(redeem(firstInvite,a.clan.id).ok,false);
+assert.equal(redeem('0'.repeat(64)).ok,false);
+const nextInvite=action('issueDirectInvite',potatoSession).inviteCode;
+assert.equal(redeem(firstInvite).ok,false);
+assert.equal(redeem(nextInvite).ok,true);
+assert.equal(action('setEntryPassword',{...potatoSession,entryPassword:'test-clan-entry-next'}).ok,true);
+assert.equal(redeem(nextInvite).ok,false);
+assert.equal(action('enterClan',{clanId:recoveryId,entryPassword:'test-clan-entry-next'}).ok,true);
+console.log('POTATO direct invite is admin-issued, clan-scoped and invalidated by reissue or password rotation.');

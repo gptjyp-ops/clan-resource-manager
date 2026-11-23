@@ -22,7 +22,7 @@ import {ScanDiagnosticsPanel} from './ScanDiagnostics';
 import {ScanFailure,newScanReport,updateScanReports,type ScanReports} from './lib/scan-diagnostics';
 import OcrCheck from './OcrCheck';
 import {ascensionStatus} from '@/lib/summon-status';
-import {getRecords,memberLogin,enterClanTicket,enterMemberTicket,issueMemberTicket,saveInventory,photoUrl,googleEnabled,unlockGoogle,unlockNamedClan,leaveClan,activeClanName,activeClanId,checkSaveConnection,savedAccessKey,invitedKey} from './lib/api';
+import {getRecords,memberLogin,enterClanTicket,enterMemberTicket,issueMemberTicket,saveInventory,photoUrl,googleEnabled,unlockGoogle,unlockNamedClan,leaveClan,activeClanName,activeClanId,checkSaveConnection,savedAccessKey,invitedKey,directInvite,redeemDirectInvite} from './lib/api';
 import {useEffect,useState,useRef} from 'react';
 import {imageFromTransfer,normalizePhoto,maximumPhotoBytes,readScreenshot} from '@/lib/photo-input';
 import {Camera,Package,ShieldCheck,RefreshCw,Upload,Check,Plus,Eye,Crown} from 'lucide-react';
@@ -180,10 +180,20 @@ function Home(){
 }
 
 export default function App(){useLanguage();useEffect(()=>{const navigate=()=>location.reload();window.addEventListener('hashchange',navigate);return()=>window.removeEventListener('hashchange',navigate);},[]);const [ready,setReady]=useState(!googleEnabled),[key,setKey]=useState(()=>invitedKey||savedAccessKey()),[checking,setChecking]=useState(false),[error,setError]=useState('');
- useEffect(()=>{if(ready||!googleEnabled||!location.hash||new URLSearchParams(location.hash.slice(1)).has('join')||activeClanId===eliteManualClanId||new URLSearchParams(location.hash.slice(1)).has('manage')||location.hash==='#clans')return;const stored=savedTicket(activeClanId);if(!stored)return;let live=true;setChecking(true);(savedAccessKey()?getRecords():enterClanTicket(stored)).then(()=>{if(live)setReady(true);}).catch(e=>{if(live)setError(e instanceof Error?e.message:t('티켓 로그인 실패'));}).finally(()=>{if(live)setChecking(false);});return()=>{live=false;};},[ready]);
+ useEffect(()=>{if(directInvite!==null||ready||!googleEnabled||!location.hash||new URLSearchParams(location.hash.slice(1)).has('join')||activeClanId===eliteManualClanId||new URLSearchParams(location.hash.slice(1)).has('manage')||location.hash==='#clans')return;const stored=savedTicket(activeClanId);if(!stored)return;let live=true;setChecking(true);(savedAccessKey()?getRecords():enterClanTicket(stored)).then(()=>{if(live)setReady(true);}).catch(e=>{if(live)setError(e instanceof Error?e.message:t('티켓 로그인 실패'));}).finally(()=>{if(live)setChecking(false);});return()=>{live=false;};},[ready]);
+ useEffect(()=>{
+  if(!googleEnabled||directInvite===null)return;
+  let live=true;
+  history.replaceState(history.state,'','#'+new URLSearchParams({clan:activeClanId}));
+  setChecking(true);
+  redeemDirectInvite(directInvite).then(()=>{if(live)setReady(true);})
+   .catch(e=>{if(live)setError(e instanceof Error?e.message:t('초대 링크로 입장하지 못했습니다.'));})
+   .finally(()=>{if(live)setChecking(false);});
+  return()=>{live=false;};
+ },[]);
  const [clanName,setClanName]=useState('');const joinSlug=new URLSearchParams(location.hash.slice(1)).get('join');const commonEntry=!location.hash||joinSlug!==null;
  useEffect(()=>{
-  if(commonEntry||ready||!new URLSearchParams(location.hash.slice(1)).has('clan')||!savedAccessKey()||savedTicket(activeClanId))return;
+  if(directInvite!==null||commonEntry||ready||!new URLSearchParams(location.hash.slice(1)).has('clan')||!savedAccessKey()||savedTicket(activeClanId))return;
   let live=true;
   getRecords().then(()=>{if(live)setReady(true);}).catch(()=>{});
   return()=>{live=false;};

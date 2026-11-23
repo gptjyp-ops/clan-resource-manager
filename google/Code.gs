@@ -279,6 +279,13 @@ function clanOperation_(p){
    });
    throw Error('클랜 이름과 입장 비밀번호를 확인해주세요.');
   }
+  if(op==='redeemDirectInvite'){
+   var id=String(p.clanId||''),code=p.inviteCode;
+   if(id!=='ea36f0150d9e407d9f4329f2'||typeof code!=='string'||!/^[a-f0-9]{64}$/.test(code))throw Error('유효한 감자 클랜 초대 링크를 확인해주세요.');
+   var invited=findClan_(id),key=String(invited.row[2]);
+   if(hash_(code,key)!==PropertiesService.getScriptProperties().getProperty('POTATO_DIRECT_INVITE'))throw Error('초대 링크가 만료되었거나 올바르지 않습니다.');
+   return {ok:true,entryAccessKey:key};
+  }
   if(op==='enterClan'){
    var id=String(p.clanId||'legacy'),entry=entrySettings_(id);
    if(!entry){authorizeClan_(p);return {ok:true,entryAccessKey:p.accessKey};}
@@ -301,6 +308,12 @@ function clanOperation_(p){
    return adminReply_(qrFound,hash_(JSON.stringify(binding),'admin-qr-binding'));
   }
   var found=clanAdmin_(p);
+  if(op==='issueDirectInvite'){
+   if(found.row[0]!=='ea36f0150d9e407d9f4329f2')throw Error('감자 클랜에서만 사용할 수 있습니다.');
+   var code=(Utilities.getUuid()+Utilities.getUuid()).replace(/-/g,'');
+   PropertiesService.getScriptProperties().setProperty('POTATO_DIRECT_INVITE',hash_(code,String(found.row[2])));
+   return {ok:true,inviteCode:code};
+  }
   if(op==='manualCancel')return manualRegistration_(op,p,String(found.row[0]));
   if(op==='adminTicketInfo'){var binding=adminQrBinding_(found.row[0]);return {ok:true,adminTicketNickname:binding&&adminQrSessionValid_(found,hash_(JSON.stringify(binding),'admin-qr-binding'))?binding.nickname:''};}
   if(op==='bindAdminTicket'){
