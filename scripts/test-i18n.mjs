@@ -14,6 +14,7 @@ const location={hash:'',search:'',origin:'https://example.test'};
 const cache=new Map();
 const api={googleEnabled:false,activeClanName:'Our test clan',invitedKey:'',savedAccessKey:()=>'',getRecords:async()=>[],photoUrl:async()=>'',leaveClan:()=>{}};
 function load(filename){filename=path.resolve(filename);if(cache.has(filename))return cache.get(filename);let source=fs.readFileSync(filename,'utf8');source=source.replaceAll('import.meta.env.BASE_URL',JSON.stringify('/clan-resource-manager/'));
+ source=source.replaceAll('import.meta.env', '({VITE_BUILD_SHA:"test-build"})');
  const output=ts.transpileModule(source,{compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.CommonJS,jsx:ts.JsxEmit.ReactJSX,esModuleInterop:true,resolveJsonModule:true}}).outputText;
  const exports={};cache.set(filename,exports);
  const localRequire=specifier=>{

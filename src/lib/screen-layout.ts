@@ -181,6 +181,11 @@ export function isForeignPhotoInSkillSlot(p:Pixels,kind:PhotoKind):boolean{
 }
 // A left-header summon resource is incompatible with the centered mount header.
 // Require positive header and information anchors; uncertain crops keep OCR.
+export function isMountPhotoInEggSlot(p:Pixels,kind:PhotoKind):boolean{
+ if(kind!=='egg'||findLandmarks(p,'egg').amount||mergeDialog(p))return false;
+ const mount=findLandmarks(p,'mount');
+ return !!mount.amount&&mount.amount.y>.2*p.height&&!!mount.info;
+}
 export function isForeignPhotoInMountSlot(p:Pixels,kind:PhotoKind):boolean{
  if(kind!=='mount')return false;
  if(findLandmarks(p,'mount').amount)return false;

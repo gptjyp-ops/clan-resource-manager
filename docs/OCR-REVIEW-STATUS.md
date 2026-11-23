@@ -1,8 +1,16 @@
 # OCR review checkpoint
 
-Updated: 2026-11-23 18:04 KST. Latest deployed scanner: 2026-11-16.1.
+Updated: 2026-11-23 21:56 KST. Latest deployed scanner: 2026-11-16.1.
 
 ## Current scan
+
+- 2026-11-23 21:56 KST: reviewed main 97af545 and both 1000×26 tabs. OCR range A598:J1000, new 603–605, next 606. Compared all three stored JPEGs.
+  - 603 egg slot: mount summon 46.4k/max. Previous layout did not reject it. The new guard detects this centered header and summon info without a left egg header and gives OCR-06. No quantity substitution.
+  - 604 mount slot: pet summon 18.4k/max. Layout also finds a spurious centered amount in the artwork. Wrong-slot guidance remains open. No inferred decimal, unit or leading-digit adjustment.
+  - 605 mount slot: pet merge, 56 selected. Latest main detects the merge dialog and OCR-06 is appropriate. Prior unresolved cases remain open.
+  - Client range A1:Z1000, first review rows 2–6, next 7. Five unique report IDs. AUTH-001 twice (Windows Edge/7bdcfea invite entry and Android Samsung Internet/97af545 clan management). AUTH-003 twice (Android Samsung Internet/97af545, clan management and resource registration), GEN-001 once (same Android/browser/build, resource registration). No CON-001 through CON-004 or GEN-002. Report IDs are event identifiers, not device IDs. No evidence establishes multiple-device simultaneous outage.
+  - Apps Script doPost commit ff1afc9 deployment 45171688317 updated the existing web app successfully; five persisted reports verify live collection. Email delivery not verified. Pages 45176693798 was successful before this review. This OCR fix is frontend-only. No member data or clan settings changed.
+
 
 - 2026-11-23 18:04 KST: verified OCR tab metadata (1000 rows by 26 columns) and A552:J1000 against main 8632b86. New rows 576–602 (27 reports), last reviewed 602 / next 603. Rows 603–1000 empty. Compared stored JPEGs for representatives 576, 580, 581, 589, 593, 597, 599, 600 and 602. Remaining uploads were grouped by report metadata, without assuming identical pixels.
   - 576–588, 590, 592 and 599–601: 18 OCR-01 initialization failures with no recorded OCR reads. Representative images are skill or pet summon screens in the matching slots. Visible compact balances include 83.3k, 44.1k, 19k and 7.27k. Existing OCR worker regressions pass. Device-side startup failure remains unresolved.
