@@ -1,8 +1,10 @@
 # OCR review checkpoint
 
-Updated: 2026-11-23 11:58 KST. Latest deployed scanner: 2026-11-16.1.
+Updated: 2026-11-23 13:57 KST. Latest deployed scanner: 2026-11-16.1.
 
 ## Current scan
+
+- 2026-11-23 13:57 KST: checked OCR tab metadata and A552:J1000. Last reviewed 575 / next 576; rows 576–1000 were empty. Main scanner blob 00eb3913594799f8cfbbfa3cfcf4680cbcac2f90 is unchanged. Rows 570/572, 575, 569 and prior unresolved cases remain tracked. No OCR code change or deployment required.
 
 - 2026-11-23 11:58 KST: verified OCR tab metadata and A552:J1000. Compared originals for new rows 570–575. Last reviewed 575 / next 576; rows 576–1000 empty. Main scanner blob 00eb3913594799f8cfbbfa3cfcf4680cbcac2f90.
   - 570 and 572: matching mount merge images show 41 selected; OCR candidates conflict (41 and 11). Latest layout finds the selected region. Recognition cause remains open.
