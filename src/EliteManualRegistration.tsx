@@ -1,9 +1,15 @@
-import {useEffect,useState,type FormEvent} from 'react';
+import {useEffect,useRef,useState,type FormEvent} from 'react';
 import {clanAction} from './lib/api';
 import {quantity} from './lib/inventory';
 
 export const eliteManualClanId='f768d7c5332948cbb1f7ec5f';
 const fields=[['skill','스킬'],['egg','알 개수'],['eggMerge','알 합성'],['mount','탈것 개수'],['mountMerge','탈것 합성수'],['potion','녹색 물약']] as const;
+const resourcePages=[
+ {label:'스킬',fields:[fields[0]]},
+ {label:'알',fields:fields.slice(1,3)},
+ {label:'탈것',fields:fields.slice(3,5)},
+ {label:'녹색 물약',fields:[fields[5]]},
+];
 const summonGroups=['skill','egg','mount'] as const;
 type SummonGroup=typeof summonGroups[number];
 type AscensionField=`${SummonGroup}${'Level'|'Waiting'}`;
@@ -28,6 +34,8 @@ function RegistrationGem({amounts}:{amounts:Registration['amounts']}){
 }
 
 export default function EliteManualRegistration(){
+ const resourceList=useRef<HTMLDivElement>(null);
+ const [resourcePage,setResourcePage]=useState(0);
  const [search,setSearch]=useState('');
  const [sortBy,setSortBy]=useState('waiting');
  const [sortDirection,setSortDirection]=useState<'ascending'|'descending'>('descending');
@@ -129,7 +137,7 @@ export default function EliteManualRegistration(){
     .elite-registration-gem summary::-webkit-details-marker { display: none; }
     .elite-registration-gem small { display: block; font-weight: normal; }
     .elite-weekly-results { padding: 16px; }
-    .elite-resource-list { display: none; }
+    .elite-resource-list, .elite-resource-navigation { display: none; }
     .elite-sort-direction { display: flex; gap: 6px; margin-block: 10px; }
     .elite-sort-direction button { min-height: 44px; }
     .elite-results-tools .elite-sort-direction button[aria-pressed="true"] { background: #54372a; color: #fff8ed; }
@@ -168,6 +176,10 @@ export default function EliteManualRegistration(){
      .elite-resource-page th[aria-sort] { background: #e9c38f; }
      .elite-resource-page td[data-sorted="true"] { background: #dfaa5e30; }
      .elite-weekly-table { display: none; }
+     .elite-resource-navigation { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 4px; }
+     .elite-resource-navigation button, .elite-resource-page th button.elite-sort-header { min-height: 44px; padding: 4px; border: 1px solid #95684b; border-radius: 6px; background: #fff8ed; color: #33241d; }
+     .elite-resource-navigation button[aria-pressed="true"] { background: #54372a; color: #fff8ed; }
+     .elite-resource-page th button.elite-sort-header { width: 100%; font: inherit; }
      .elite-resource-list { display: grid; grid-auto-flow: column; grid-auto-columns: 100%; overflow-x: auto; scroll-snap-type: x mandatory; margin: 12px 0; }
      .elite-resource-page { min-width: 0; scroll-snap-align: start; scroll-snap-stop: always; }
      .elite-resource-page h3 { margin: 0 0 8px; }
@@ -200,7 +212,7 @@ export default function EliteManualRegistration(){
    {rows.length>0&&<div className="elite-sort-direction" role="group" aria-label="정렬 방향">
     {([['descending','↓ 내림차순'],['ascending','↑ 오름차순']] as const).map(([direction,label])=>
      <button key={direction} type="button" aria-pressed={sortBy!=='waiting'&&sortDirection===direction} onClick={()=>{
-      if(sortBy==='waiting')setSortBy('skill');
+      if(sortBy==='waiting')setSortBy((resourceList.current?.clientWidth?resourcePages[resourcePage]:resourcePages[0]).fields[0][0]);
       setSortDirection(direction);
      }}>{label}</button>
     )}
@@ -208,12 +220,26 @@ export default function EliteManualRegistration(){
    <button type="button" disabled={busy} onClick={()=>void run(refresh)}>새로고침</button>
    </div>
    {rows.length===0?<p>표시할 등록 내역이 없습니다.</p>:visibleRows.length===0?<p role="status">일치하는 닉네임이 없습니다.</p>:<>
-   <div className="elite-resource-list" tabIndex={0} role="region" aria-label="재화별 현황 · 좌우로 이동">
-    {[[fields[0]],fields.slice(1,3),fields.slice(3,5),[fields[5]]].map((line,index)=>
-     <section className="elite-resource-page" key={line[0][0]} aria-label={['스킬','알','탈것','녹색 물약'][index]}>
-      <h3>{['스킬','알','탈것','녹색 물약'][index]} <small>{index+1} / 4</small></h3>
+   <div className="elite-resource-navigation" role="group" aria-label="재화 화면 선택">
+    {resourcePages.map(({label},index)=><button key={label} type="button" aria-pressed={index===resourcePage} onClick={()=>{
+     const list=resourceList.current;
+     list?.scrollTo({left:index*list.clientWidth});
+     setResourcePage(index);
+    }}>{label}</button>)}
+   </div>
+   <div ref={resourceList} className="elite-resource-list" tabIndex={0} role="region" aria-label="재화별 현황 · 좌우로 이동" onScroll={e=>{
+    const list=e.currentTarget;
+    if(list.clientWidth)setResourcePage(Math.round(list.scrollLeft/list.clientWidth));
+   }}>
+    {resourcePages.map(({label,fields:line})=>
+     <section className="elite-resource-page" key={label} aria-label={label}>
       <table>
-       <thead><tr><th>닉네임</th>{line.map(([key,label])=><th key={key} aria-sort={sortBy===key?sortDirection:undefined}>{label}</th>)}</tr></thead>
+       <thead><tr><th>닉네임</th>{line.map(([key,name])=><th key={key} aria-sort={sortBy===key?sortDirection:undefined}>
+        <button className="elite-sort-header" type="button" onClick={()=>{
+         setSortDirection(sortBy===key&&sortDirection==='descending'?'ascending':'descending');
+         setSortBy(key);
+        }}>{name} {sortBy===key?(sortDirection==='descending'?'↓':'↑'):'↕'}</button>
+       </th>)}</tr></thead>
        <tbody>{visibleRows.map(row=><tr key={row.nickname}>
         <th scope="row">{row.nickname}<RegistrationGem amounts={row.amounts}/>
          {adminToken&&<button type="button" disabled={busy} onClick={()=>setPending(row)}>등록 취소</button>}
