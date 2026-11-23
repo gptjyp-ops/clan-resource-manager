@@ -12,6 +12,7 @@ import EmailRecovery from './EmailRecovery';
 import MemberSelfRecovery, {type RecoveryReceipt} from './MemberSelfRecovery';
 import PhotoPreview from './PhotoPreview';
 import AccessCodeInput from './AccessCodeInput';
+import ConnectionHelp,{isConnectionError} from './ConnectionHelp';
 import ResourceSummary from './ResourceSummary';
 import {sortResources,nextResourceSort,sortGroups,sortLabels,type ResourceSort} from './lib/roster-sort';
 import {draftRecord,putDraft,listDrafts,removeDraft,draftId,type Draft} from './lib/drafts';
@@ -172,7 +173,7 @@ function Home(){
  {emailNotice&&<p role="status">{t(emailNotice)}</p>}
  {dashboardView==='mine'&&<ResourceCalculators key={activeClanId+':mine'} clanId={activeClanId} scope="mine" mountMerge={totalMerge(inventory.mount)} eggMerge={totalMerge(inventory.egg)} skill={quantity(inventory.skill.amount)} mount={quantity(inventory.mount.amount)}/>}
  {dashboardView==='mine'&&!showMemberLogin&&<><WarSchedule clanId={activeClanId}/>{activeClanId==='ea36f0150d9e407d9f4329f2'&&<TechTreeGuide/>}</>}
- {error&&<div className="message error" role="alert">{t(error)}</div>}{notice&&<div className="message success" role="status"><span>{t(notice)}</span><button type="button" className="notice-close" aria-label={t('안내 닫기')} onClick={()=>setNotice('')}>×</button></div>}
+ {error&&(isConnectionError(error)?<ConnectionHelp error={t(error)} busy={checkingConnection} onRetry={()=>void reconnect()}/>:<div className="message error" role="alert">{t(error)}</div>)}{notice&&<div className="message success" role="status"><span>{t(notice)}</span><button type="button" className="notice-close" aria-label={t('안내 닫기')} onClick={()=>setNotice('')}>×</button></div>}
  <ClanBot/>
  <footer>FORGE MASTER <span>{t("클랜 재화 현황 · ")}<a href={import.meta.env.BASE_URL+'#manage='+activeClanId}>{t("클랜장 관리")}</a></span></footer></div>
  <Sheet open={!!detail} onOpenChange={open=>{if(!open)setDetail(null);}}><SheetContent className="detail-sheet overflow-y-auto"><SheetHeader><SheetTitle>{detail?.nickname}{t("님의 재화")}</SheetTitle><SheetDescription>{t("개인별 최신 등록 현황")}</SheetDescription></SheetHeader>{detail&&<div className="detail-body">{groups.map(g=><section className="detail-group" key={g}><h3>{t(titles[g])}</h3><dl><div><dt>{t("보유 재화")}</dt><dd>{amountText(detail.details[g].amount)}{detail.details[g].amount&&<small>{t("원래 표시: ")}{detail.details[g].amount}</small>}</dd></div>{g!=='potion'&&<><div><dt>{t("소환 레벨")}</dt><dd>{detail.details[g].level||t("미입력")}</dd></div><div><dt>{t("승천 상태")}</dt><dd>{t(ascensionStatus(detail.details[g].level))}{detail.details[g].level==='100'&&<small>{t("승천 추천 재화량: 60k(60,000개) 이상")}</small>}</dd></div><div><dt>{t("현재 단계")}</dt><dd>{detail.details[g].level==='100'?t("최대"):detail.details[g].progress||t("미입력")}</dd></div></>}{(g==='egg'||g==='mount')&&<div><dt>{t("합성 수량")}</dt><dd>{fmt(totalMerge(detail.details[g]))}<small>{t("사진 ")}{detail.details[g].selected||t("미입력")} {t(" + 추가 ")}{detail.details[g].extra||'0'}</small></dd></div>}</dl></section>)}<div className="evidence-links">{photoKinds.filter(k=>detail.photos[k]).map(k=><Evidence key={detail.nickname+':'+k+':'+detail.photos[k]} id={detail.photos[k]!} kind={k}/>)}</div><button className="submit" disabled={busy||saving} onClick={()=>void edit(detail)}>{t("내 재화 수정하기")}</button></div>}</SheetContent></Sheet>
@@ -205,7 +206,7 @@ export default function App(){useLanguage();useEffect(()=>{const navigate=()=>lo
   <label className="field-label" htmlFor="clan-key">클랜 입장 비밀번호</label>
   <AccessCodeInput value={key} onChange={setKey} disabled={checking}/>
   <button className="submit" disabled={checking||(!joinSlug&&!clanName.trim())||!key.trim()}>{checking?'입장 확인 중…':'클랜 입장'}</button>
-  {error&&<p role="alert">{error}</p>}
+  {error&&<ConnectionHelp error={error} busy={checking} onRetry={()=>void enter()}/>}
  </form>
  <details className="ticket-import" style={{marginBlock:16}}>
   <summary>개인 QR로 로그인</summary>
@@ -216,5 +217,5 @@ export default function App(){useLanguage();useEffect(()=>{const navigate=()=>lo
  </details>
  <p><a href={import.meta.env.BASE_URL+'#clans'}>클랜장 관리</a></p>
  </section></div></main>;
- return <main><div className="workspace" style={{maxWidth:500,paddingTop:64}}><section className="panel registration"><EliteBanner compact/><div className="panel-heading"><h1>{t("클랜 재화관리")}</h1></div><p>{invitedKey?t("초대 링크의 입장 코드가 입력되었습니다. 아래 버튼을 눌러 클랜에 들어가세요."):t("클랜장이 알려준 입장 비밀번호 또는 기존 입장 코드를 입력해주세요.")}</p>{activeClanId!==eliteManualClanId&&<div style={{marginBlock:24}}><TicketImport disabled={checking} onImport={async ticket=>{setChecking(true);setError('');try{await enterClanTicket(ticket);}finally{setChecking(false);}}}/><p>{t("저장한 개인 티켓 사진으로 클랜 입장과 내 재화 로그인을 한 번에 할 수 있습니다.")}</p></div>}<form onSubmit={enter}><label className="field-label" htmlFor="clan-key">{t("입장 비밀번호 / 기존 입장 코드")}</label><AccessCodeInput value={key} onChange={setKey} disabled={checking}/><button className="submit" disabled={checking}>{checking?t("연결 확인 중…"):t("클랜 현황 열기")}</button>{error&&<p role="alert">{t(error)}</p>}</form><p><a href={import.meta.env.BASE_URL+'#clans'}>{t("새 클랜 만들기 · 클랜장 관리")}</a></p></section></div></main>;}
+ return <main><div className="workspace" style={{maxWidth:500,paddingTop:64}}><section className="panel registration"><EliteBanner compact/><div className="panel-heading"><h1>{t("클랜 재화관리")}</h1></div><p>{invitedKey?t("초대 링크의 입장 코드가 입력되었습니다. 아래 버튼을 눌러 클랜에 들어가세요."):t("클랜장이 알려준 입장 비밀번호 또는 기존 입장 코드를 입력해주세요.")}</p>{activeClanId!==eliteManualClanId&&<div style={{marginBlock:24}}><TicketImport disabled={checking} onImport={async ticket=>{setChecking(true);setError('');try{await enterClanTicket(ticket);}finally{setChecking(false);}}}/><p>{t("저장한 개인 티켓 사진으로 클랜 입장과 내 재화 로그인을 한 번에 할 수 있습니다.")}</p></div>}<form onSubmit={enter}><label className="field-label" htmlFor="clan-key">{t("입장 비밀번호 / 기존 입장 코드")}</label><AccessCodeInput value={key} onChange={setKey} disabled={checking}/><button className="submit" disabled={checking}>{checking?t("연결 확인 중…"):t("클랜 현황 열기")}</button>{error&&<ConnectionHelp error={t(error)} busy={checking} onRetry={()=>void enter()}/>}</form><p><a href={import.meta.env.BASE_URL+'#clans'}>{t("새 클랜 만들기 · 클랜장 관리")}</a></p></section></div></main>;}
 
