@@ -36,7 +36,7 @@ export default function ConnectionHelp({error,onRetry,busy=false}:{error:string;
   <details style={{marginTop:10,fontSize:13,opacity:.9}}>
    <summary style={{cursor:'pointer'}}>자세한 오류 내용 보기</summary>
    <p style={{margin:'7px 0 0'}}>{error}</p>
-   <p style={{margin:'5px 0 0'}}>오류 코드: GOOGLE-BRIDGE-TIMEOUT</p>
+   <p style={{margin:'5px 0 0'}}>오류 코드: {/열지 못|응답이 늦어지고/.test(error)?'GOOGLE-BRIDGE-TIMEOUT':'GOOGLE-CONNECTION-ERROR'}</p>
   </details>
  </section>;
 }
