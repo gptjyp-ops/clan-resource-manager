@@ -1,8 +1,12 @@
 # OCR review checkpoint
 
-Updated: 2026-11-24 05:00 KST. Latest deployed scanner: 2026-11-16.1.
+Updated: 2026-11-24 07:00 KST. Latest deployed scanner: 2026-11-16.1.
 
 ## Current scan
+
+- 2026-11-24 07:00 KST: main b46d130, both tabs 1000×26. OCR A629:J1000: no new reports, next 630. Prior 627–629 leading digit, startup and wrong-screen issues remain open.
+  - Client A24:H1000: new row 25, next 26. One CRM-GEN-001 at 06:42 KST, clan management, Android Samsung Internet, build b46d130. Same generic code as earlier iOS KakaoTalk reports, more than 1h54 apart and on a different build. No evidence of simultaneous failure or a shared cause. No new CON-001/002/003/004 or GEN-002. No underlying exception in the report to reproduce.
+  - Live Pages HTTP 200. Code.gs remains ff1afc9, Apps Script production deployment 45171688317. The new persisted client report confirms ongoing doPost intake. Checkpoint only. No member data or settings changed.
 
 - 2026-11-24 05:00 KST: main 297af1d, both error tabs 1000×26. OCR A626:J1000, new rows 627–629, next 630. Three byte-identical stored JPEGs show real mount summon 11.7k/maximum, correctly submitted to mount. All three OCR-04 logs read 1.7k. The decimal point and k unit are visible, with a leading 1 omitted in the logged read. Latest layout locates the amount area on the stored JPEG. A standalone Tesseract thresholded crop returned no usable value, so the reported recognition failure mechanism was not reproduced. Keep unresolved and never insert a digit by assumption.
   - Client A22:H1000, new rows 23–24, next 25. Two GEN-001 reports, iOS KakaoTalk build 297af1d, clan management and resource registration within 39 seconds. No new CON-001/002/003/004 or GEN-002. Anonymous events cannot establish whether multiple devices were affected. Proximity to the OCR report does not establish a shared cause. Previous unresolved cases remain open.
