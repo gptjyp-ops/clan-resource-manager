@@ -44,3 +44,20 @@ const message={type:'clan-request',channel:'test-channel',id:'1',method:'list',p
 listeners.message({origin:'https://evil.example',source:top,data:message});listeners.message({origin:'https://gptjyp-ops.github.io',source:{},data:message});assert.equal(calls.length,0);
 listeners.message({origin:'https://gptjyp-ops.github.io',source:top,data:message});assert.equal(calls.length,1);assert.equal(sent[1].m.type,'clan-response');
 console.log('Google backend and bridge checks passed. Live Google deployment still requires account authorization.');
+
+const reportRows=[['received_at','occurred_at','error_code','screen','os','browser','version','report_id']];
+const reportSheet={
+ getLastRow:()=>reportRows.length,
+ getRange:(row,col,count,width)=>({getValues:()=>reportRows.slice(row-1,row-1+count).map(r=>r.slice(col-1,col-1+width))}),
+ appendRow:row=>reportRows.push(row),
+};
+const reportCache=new Map();
+context.CacheService={getScriptCache:()=>({get:key=>reportCache.get(key),put:(key,value)=>reportCache.set(key,value)})};
+context.SpreadsheetApp.openById=()=>({getSheetByName:()=>reportSheet});
+const report={id:crypto.randomUUID(),code:'CRM-GEN-001',occurredAt:new Date().toISOString()};
+assert.equal(context.receiveClientError_(report),'saved');
+reportCache.clear();
+assert.equal(context.receiveClientError_(report),'duplicate');
+assert.equal(reportRows.length,2);
+assert.equal(JSON.parse(properties.get('CRM_CLIENT_DAILY')).count,1);
+assert.equal(context.receiveClientError_({...report,id:crypto.randomUUID()}),'saved');

@@ -1,8 +1,12 @@
 # OCR review checkpoint
 
-Updated: 2026-11-24 08:04 KST. Latest deployed scanner: 2026-11-16.1.
+Updated: 2026-11-24 10:00 KST. Latest deployed scanner: 2026-11-16.1.
 
 ## Current scan
+
+- 2026-11-24 10:00 KST: main 9bc43bd, both tabs 1000×26. OCR A629:J1000: no new reports; next 630. Prior 627–629 and other unresolved OCR cases remain open.
+  - Client A1:H1000: rows 27–41 repeated prior report IDs from rows 3–10 and 16–22. Received around 09:13 KST but preserve earlier occurrence times. All Android Samsung Internet, builds 97af545/b77a9a9/98ba2d1, clan management, invite entry or resource registration. Duplicate counts: AUTH-001 ×3, AUTH-002 ×2, AUTH-003 ×5, GEN-001 ×5. Rows 42–43 are two new AUTH-003 events, Android Samsung Internet build 98ba2d1 at 09:15 and 09:18 KST, registration and clan management. Next row 44. No priority connection/crash codes or evidence of simultaneous multi-device failure. Prior CON-001 and GEN-001 remain open.
+  - Reproduced duplicate intake after a cache miss. The backend now checks the persisted report ID column under the existing lock before appending. Regression covers an evicted cache and confirms retries neither append nor consume daily quota. Existing duplicate rows preserved. Google backend, clan, email recovery and deployment tests passed locally. No member data or settings changed.
 
 - 2026-11-24 08:04 KST: main 78cfd47, both tabs 1000×26. OCR A629:J1000: no new reports, next 630. Prior OCR cases remain open.
   - Client A25:H1000: new row 26, next 27. One recurring CRM-AUTH-001 code at 07:09 KST, invite/legacy code entry, Android KakaoTalk, build b46d130. No new CRM-CON-001/002/003/004 or CRM-GEN-002. One anonymous event does not establish a shared device or simultaneous outage. Earlier CON-001 and GEN-001 remain open.

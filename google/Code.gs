@@ -49,10 +49,15 @@ function receiveClientError_(entry){
   var props=PropertiesService.getScriptProperties(),now=Date.now(),day=new Date(now).toISOString().slice(0,10);
   var daily=JSON.parse(props.getProperty('CRM_CLIENT_DAILY')||'{}');
   if(daily.day!==day)daily={day:day,count:0,mailCount:0};
-  if(daily.count>=300)throw Error('limit_reached');
   var spreadsheetId=props.getProperty('SHEET_ID');
   if(!spreadsheetId)throw Error('sheet_missing');
   var book=SpreadsheetApp.openById(spreadsheetId),sheet=book.getSheetByName('client_errors');
+  var lastRow=sheet?sheet.getLastRow():0;
+  if(lastRow>1&&sheet.getRange(2,8,lastRow-1,1).getValues().some(function(row){return row[0]===id;})){
+   cache.put(cacheId,'1',21600);
+   return 'duplicate';
+  }
+  if(daily.count>=300)throw Error('limit_reached');
   if(!sheet){
    sheet=book.insertSheet('client_errors');
    sheet.appendRow(['received_at','occurred_at','error_code','screen','os','browser','version','report_id']);
