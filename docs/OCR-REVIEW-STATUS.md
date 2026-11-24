@@ -1,8 +1,12 @@
 # OCR review checkpoint
 
-Updated: 2026-11-24 11:00 KST. Latest deployed scanner: 2026-11-16.1.
+Updated: 2026-11-24 13:00 KST. Latest deployed scanner: 2026-11-16.1.
 
 ## Current scan
+
+- 2026-11-24 13:00 KST: main a25faf9, both tabs 1000×26. OCR A629:J1000: no new reports, next 630. Previous unresolved OCR issues remain open.
+  - Client A1:H1000: reviewed rows 45–51, seven unique report IDs, next 52. CON-004 ×2 at 12:41–12:42 KST, iOS KakaoTalk/cbb951f, invite and registration screens. Same browser/OS/build, no independent device evidence. No CON-001/002/003 or GEN-002. GEN-001 ×2 at 12:12–12:14, Android KakaoTalk/5c4dff8, clan management. INV-001 ×2 at 12:44–12:45, iOS KakaoTalk and Chrome (OS Other), a25faf9, invite screen. Two client environments, but the anonymized reports cannot verify distinct devices or a shared backend outage. AUTH-001 ×1 at 12:58, Windows Chrome/a25faf9, invite screen. Previous CON-001 and GEN-001 remain open.
+  - The source changes since the previous checkpoint were theme styles and presentation only. The records lack the underlying connection exception and invite details, so the cause could not be reproduced. Live site HTTP 200. Pages run 45321000577 and Apps Script run 45301934103 succeeded. Latest Code.gs remains 879ab3c and new persisted records confirm doPost intake. Checkpoint only, no application or member data changes.
 
 - 2026-11-24 11:00 KST: main 879ab3c, both tabs 1000×26. OCR A629:J1000: no new reports, next 630. Existing unresolved cases remain open.
   - Client A1:H1000: row 44 is a new report ID, CRM-AUTH-001 at 10:32 KST on Android KakaoTalk, invite/legacy code entry, build 879ab3c. This repeats the earlier error code in the same browser family but is a distinct event. No new CON-001/002/003/004 or GEN-002. Anonymous records do not establish a shared device or simultaneous outage. Next row 45.
