@@ -3,9 +3,14 @@ Total output lines: 615
 
 # OCR review checkpoint
 
-Updated: 2026-11-24 19:00 KST. Latest deployed scanner: 2026-11-16.1.
+Updated: 2026-11-24 20:00 KST. Latest deployed scanner: 2026-11-16.1.
 
 ## Current scan
+
+- 2026-11-24 20:00 KST: main 0706be6. Both error tabs 1000×26. OCR A635:J1000 empty; next 635. Earlier unresolved cases remain open.
+  - Client A59:H1000, rows 59–60, next 61. Prior report ID match rows (0 means no match): 0, 0. AUTH-002 in resource registration and AUTH-003 in clan management, both Android Samsung Internet build 98ba2d1 at 19:26 KST. No CON-001/002/003/004 or GEN-002. Device count and root cause remain unresolved.
+  - Live Pages HTTP 200. Pages 45321000577 and Apps Script 45301934103 succeeded. Latest Code.gs remains 879ab3c and persisted reports verify production doPost intake. Checkpoint only.
+
 
 - 2026-11-24 19:00 KST: main c37c9ce, both tabs 1000×26. OCR A635:J1000 empty; next 635. Previous unresolved issues remain open.
   - Client A55:H1000: four unique events (rows 55–58; next 59), compared with A1:H54. All Android Samsung Internet, build 98ba2d1, 18:05–18:06 KST. AUTH-001 and GEN-001 in clan management; AUTH-003 twice across clan management and registration. No CON-001/002/003/004 or GEN-002. Device count and underlying cause remain unresolved.
