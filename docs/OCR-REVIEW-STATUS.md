@@ -3,9 +3,14 @@ Total output lines: 615
 
 # OCR review checkpoint
 
-Updated: 2026-11-25 02:00 KST. Latest deployed scanner: 2026-11-16.1.
+Updated: 2026-11-25 08:00 KST. Latest deployed scanner: 2026-11-16.1.
 
 ## Current scan
+
+- 2026-11-25 08:00 KST. Main 93da898. Both error tabs 1000×26. OCR A638:J1000 empty. Next OCR row 638; prior initialization and recognition cases remain open.
+  - Client A64:H1000: row 64, next 65. Unique report ID compared with H1:H63. CRM-INV-001 at 07:53 KST on the invite/legacy entry screen, Android Samsung Internet build b46d130. The code covers several invite-entry failures; the underlying rejection and device count cannot be established. No CON-001/002/003/004 or GEN-002 and no evidence of a simultaneous outage. Keep this report open.
+  - Live Pages HTTP 200. Pages 45321000577 and Apps Script 45301934103 succeeded. Latest Code.gs remains 879ab3c; persisted report verifies production doPost intake. Checkpoint only.
+
 
 - 2026-11-25 02:00 KST. main 2691832; both error tabs 1000×26. OCR A635:J1000, rows 635–637, next 638. All OCR-01 with zero recognition attempts. Stored JPEGs 635–636 are byte-identical skill summon screenshots (19.1k, Lv. 49, 60/110). Row 637 shows pet summon (18.4k, max). The screenshots match their slots. No OCR output to compare for a decimal, k suffix or leading-digit discrepancy. Worker initialization tests passed on main. The reported device-side initialization failure was not reproduced; this and prior unresolved cases remain open.
   - Client A63:H1000, row 63, next 64. Unique report ID compared with H1:H62. GEN-001 at 01:47 KST in resource registration, Android Samsung Internet build 0706be6. Report was near the OCR-01 events; available reports do not establish a common cause, user, or simultaneous multi-device outage. No CON-001/002/003/004 or GEN-002.
