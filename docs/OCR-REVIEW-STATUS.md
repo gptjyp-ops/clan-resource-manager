@@ -3,9 +3,14 @@ Total output lines: 615
 
 # OCR review checkpoint
 
-Updated: 2026-11-24 22:00 KST. Latest deployed scanner: 2026-11-16.1.
+Updated: 2026-11-25 02:00 KST. Latest deployed scanner: 2026-11-16.1.
 
 ## Current scan
+
+- 2026-11-25 02:00 KST. main 2691832; both error tabs 1000×26. OCR A635:J1000, rows 635–637, next 638. All OCR-01 with zero recognition attempts. Stored JPEGs 635–636 are byte-identical skill summon screenshots (19.1k, Lv. 49, 60/110). Row 637 shows pet summon (18.4k, max). The screenshots match their slots. No OCR output to compare for a decimal, k suffix or leading-digit discrepancy. Worker initialization tests passed on main. The reported device-side initialization failure was not reproduced; this and prior unresolved cases remain open.
+  - Client A63:H1000, row 63, next 64. Unique report ID compared with H1:H62. GEN-001 at 01:47 KST in resource registration, Android Samsung Internet build 0706be6. Report was near the OCR-01 events; available reports do not establish a common cause, user, or simultaneous multi-device outage. No CON-001/002/003/004 or GEN-002.
+  - Live Pages HTTP 200. Pages 45321000577 and Apps Script 45301934103 succeeded. Code.gs remains 879ab3c; new persisted client report verifies live doPost intake. Checkpoint only.
+
 
 - 2026-11-24 22:00 KST. main 8971cc3, both error tabs 1000×26. OCR A635:J1000 empty. Next OCR row 635, earlier unresolved cases still open.
   - Client A61:H1000, two distinct report IDs in rows 61–62, checked against H1:H60. Next row 63. AUTH-001 at 21:27 KST in clan management and AUTH-003 at 21:35 in resource registration. Both Android Samsung Internet build 0706be6. Current source maps the codes to admission information mismatch and temporary authentication throttling. No evidence links the reports to a single user or establishes simultaneous failure across devices. No CON-001/002/003/004 or GEN-002. Actual triggers remain unresolved.
