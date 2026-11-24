@@ -304,3 +304,96 @@ html[lang="en"] .panel-heading{flex-wrap:wrap;gap:8px}
 }
 
 .save-complete{display:flex;align-items:center;gap:16px;padding:24px;margin:20px 0;border:2px solid #48b49e;border-radius:16px;background:#e5faf3;color:#103b33;scroll-margin-top:24px}.save-complete h2{margin:0 0 8px;font-size:22px}.save-complete p{margin:0}.save-complete button{margin-left:auto}@media(max-width:600px){.save-complete{flex-wrap:wrap;padding:18px}.save-complete button{width:100%;margin:0}}
+
+/* The in-game rarity colors guide the default inventory dashboard. */
+main:has(.dashboard-tabs) {
+  --forge-ink: #111623;
+  --forge-outline: #0a0d15;
+  --forge-gold: #ffcd52;
+  --forge-cyan: #64d9f4;
+  --forge-violet: #c5abff;
+  --forge-green: #76eda4;
+}
+
+body:not([data-clan-theme], [data-community-theme]) main:has(.dashboard-tabs) {
+  background: radial-gradient(ellipse at 50% 0, #263653 0, #101724 65%);
+}
+
+body:not([data-clan-theme], [data-community-theme]) main:has(.dashboard-tabs) .topbar {
+  background: #171f30;
+  border-bottom: 2px solid #3f4b65;
+}
+
+body:not([data-clan-theme], [data-community-theme]) main:has(.dashboard-tabs) .brand-icon {
+  background: var(--forge-gold);
+  color: var(--forge-ink);
+  border: 2px solid var(--forge-outline);
+  box-shadow: 0 3px 0 var(--forge-outline);
+}
+
+body:not([data-clan-theme], [data-community-theme]) .dashboard-tabs {
+  background: #171f30;
+  border: 1px solid #465372;
+  padding: 5px;
+}
+
+body:not([data-clan-theme], [data-community-theme]) .dashboard-tabs button.active {
+  background: var(--forge-cyan);
+  border: 2px solid var(--forge-outline);
+  color: var(--forge-ink);
+  box-shadow: 0 2px 0 var(--forge-outline);
+}
+
+main:has(.dashboard-tabs) .resource-overview .summary article {
+  --resource-color: var(--forge-gold);
+}
+
+body:is([data-clan-theme], [data-community-theme]) .resource-overview .summary article {
+  border-top: 3px solid var(--resource-color);
+}
+
+body:not([data-clan-theme], [data-community-theme]) .resource-overview .summary article {
+  background: linear-gradient(145deg, color-mix(in srgb, var(--resource-color) 12%, #1c2537), #182131 75%);
+  border: 1px solid #45506b;
+  border-top: 3px solid var(--resource-color);
+  box-shadow: 0 4px 0 var(--forge-outline);
+}
+
+main:has(.dashboard-tabs) .resource-overview article:nth-child(2),
+main:has(.dashboard-tabs) .resource-overview article:nth-child(5) {
+  --resource-color: var(--forge-violet);
+}
+
+main:has(.dashboard-tabs) .resource-overview article:nth-child(3),
+main:has(.dashboard-tabs) .resource-overview article:nth-child(6) {
+  --resource-color: var(--forge-cyan);
+}
+
+main:has(.dashboard-tabs) .resource-overview article:nth-child(4) {
+  --resource-color: var(--forge-green);
+}
+
+body:not([data-clan-theme], [data-community-theme]) .resource-overview .resource-marker {
+  background: color-mix(in srgb, var(--resource-color) 20%, #172032);
+  border: 1px solid color-mix(in srgb, var(--resource-color) 70%, #172032);
+}
+
+body:not([data-clan-theme], [data-community-theme]) .resource-overview .summary-number {
+  color: var(--resource-color);
+}
+
+body:not([data-clan-theme], [data-community-theme]) main:has(.dashboard-tabs)
+  .single-view > .panel > .panel-heading {
+  background: linear-gradient(100deg, #283954, #1c2639);
+  border-bottom-color: #45506b;
+}
+
+body:not([data-clan-theme], [data-community-theme]) main:has(.dashboard-tabs) .submit {
+  background: var(--forge-gold);
+  border: 2px solid var(--forge-outline);
+  box-shadow: 0 3px 0 var(--forge-outline);
+}
+
+body:not([data-clan-theme], [data-community-theme]) main:has(.dashboard-tabs) .submit:hover:not(:disabled) {
+  background: #ffdc7e;
+}
