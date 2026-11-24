@@ -3,9 +3,13 @@ Total output lines: 615
 
 # OCR review checkpoint
 
-Updated: 2026-11-24 18:00 KST. Latest deployed scanner: 2026-11-16.1.
+Updated: 2026-11-24 19:00 KST. Latest deployed scanner: 2026-11-16.1.
 
 ## Current scan
+
+- 2026-11-24 19:00 KST: main c37c9ce, both tabs 1000×26. OCR A635:J1000 empty; next 635. Previous unresolved issues remain open.
+  - Client A55:H1000: four unique events (rows 55–58; next 59), compared with A1:H54. All Android Samsung Internet, build 98ba2d1, 18:05–18:06 KST. AUTH-001 and GEN-001 in clan management; AUTH-003 twice across clan management and registration. No CON-001/002/003/004 or GEN-002. Device count and underlying cause remain unresolved.
+  - Live Pages HTTP 200, Pages 45321000577 and Apps Script 45301934103 successful. Latest Code.gs remains 879ab3c and persisted events verify doPost intake. Checkpoint only.
 
 - 2026-11-24 18:00 KST: main eccd55d, both tabs 1000×26. OCR A630:J1000, five new OCR-06 reports in rows 630–634, next 635. Compared all stored images. Rows 630–632 and 634 are byte-identical mount summon screens (6.3k balance) in the mount merge slot. Row 633 shows a mount upgrade screen in the potion slot. The rejection is appropriate in all five cases. No decimal, unit or leading-digit correction applies. Earlier unresolved OCR cases remain open.
   - Client rows 52–54, next 55. CON-001 once at 17:04 KST (invite), GEN-001 twice at 17:15–17:16 (clan management and registration). All Android Samsung Internet, build eccd55d. No CON-002/003/004 or GEN-002. Metadata does not establish multiple devices or a shared simultaneous outage. The connection and general errors remain open without the underlying exceptions.
