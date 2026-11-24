@@ -1,8 +1,12 @@
 # OCR review checkpoint
 
-Updated: 2026-11-24 10:00 KST. Latest deployed scanner: 2026-11-16.1.
+Updated: 2026-11-24 11:00 KST. Latest deployed scanner: 2026-11-16.1.
 
 ## Current scan
+
+- 2026-11-24 11:00 KST: main 879ab3c, both tabs 1000×26. OCR A629:J1000: no new reports, next 630. Existing unresolved cases remain open.
+  - Client A1:H1000: row 44 is a new report ID, CRM-AUTH-001 at 10:32 KST on Android KakaoTalk, invite/legacy code entry, build 879ab3c. This repeats the earlier error code in the same browser family but is a distinct event. No new CON-001/002/003/004 or GEN-002. Anonymous records do not establish a shared device or simultaneous outage. Next row 45.
+  - Pages 45301934160 and Google Apps Script 45301934103 both completed their deploy steps for 879ab3c. Live Pages HTTP 200; row 44 confirms post-deployment client intake. No duplicate report ID after that deployment in this scan. No reproducible code defect confirmed from row 44. Checkpoint only.
 
 - 2026-11-24 10:00 KST: main 9bc43bd, both tabs 1000×26. OCR A629:J1000: no new reports; next 630. Prior 627–629 and other unresolved OCR cases remain open.
   - Client A1:H1000: rows 27–41 repeated prior report IDs from rows 3–10 and 16–22. Received around 09:13 KST but preserve earlier occurrence times. All Android Samsung Internet, builds 97af545/b77a9a9/98ba2d1, clan management, invite entry or resource registration. Duplicate counts: AUTH-001 ×3, AUTH-002 ×2, AUTH-003 ×5, GEN-001 ×5. Rows 42–43 are two new AUTH-003 events, Android Samsung Internet build 98ba2d1 at 09:15 and 09:18 KST, registration and clan management. Next row 44. No priority connection/crash codes or evidence of simultaneous multi-device failure. Prior CON-001 and GEN-001 remain open.
