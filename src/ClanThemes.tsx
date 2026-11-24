@@ -1,6 +1,67 @@
-import nukaCap from '../public/images/potato-nuka-cap.png';
-import vaultBoy from '../public/images/potato-vault-boy.png';
+import ResourceIcon from './ResourceIcon';
+import {groups} from './lib/inventory';
 import {useEffect,useState,type CSSProperties} from 'react';
 import './clan-themes.css';
-const themes:Record<string,'fallout'|'joker'>={ea36f0150d9e407d9f4329f2:'fallout','765aa91c6f9f47d4a1211462':'fallout',f636de4784dc40eabe6af6af:'fallout','5151bc1d842247c3a0e8418a':'joker','40bbda0b48e6412a843c9046':'joker',be8591c5ca3949a1b8289cc9:'joker','8ed832fd882742fbae675672':'joker','02df2b6670884e209ab6bc4d':'joker'};
-export default function ClanThemes(){const read=()=>themes[new URLSearchParams(location.hash.slice(1)).get('clan')||''];const [theme,setTheme]=useState(read);useEffect(()=>{const update=()=>setTheme(read());window.addEventListener('hashchange',update);return()=>window.removeEventListener('hashchange',update);},[]);useEffect(()=>{if(!theme)return;document.body.dataset.communityTheme=theme;const title=document.title;document.title=theme==='fallout'?'POTATO · 재화 보관소':'시펄 · 재화 보관소';return()=>{delete document.body.dataset.communityTheme;document.title=title;};},[theme]);if(!theme)return null;return <><div className={"community-atmosphere "+theme} aria-hidden="true">{Array.from({length:36},(_,i)=><span key={i} className="community-floater" style={{'--left':`${(i*37+5)%100}%`,'--size':`${32+i%4*12}px`,'--duration':`${24+i%9*3}s`,'--delay':`${-i*3.7}s`,'--spin':`${i%2?1:-1}`,'--drift':`${(i%2?1:-1)*(25+i%5*16)}px`} as CSSProperties}>{theme==='fallout'?<span className="nuka-cap"><img src={nukaCap} alt=""/></span>:<span className={"floating-card "+(i%4===1||i%4===2?'red':'')}><b>{['A','K','Q','J'][i%4]}</b><em>{['♠','♥','♦','♣'][i%4]}</em><small>{['♠','♥','♦','♣'][i%4]}</small></span>}</span>)}</div><section className="community-banner" aria-label="클랜 테마"><div className="community-emblem" aria-hidden="true">{theme==='fallout'?<img src={vaultBoy} alt=""/>:'♠'}</div><div><span className="community-eyebrow">{theme==='fallout'?'POTATO / VAULT OPERATIONS':'SEA PEARL / WILD CARD'}</span><h2>{theme==='fallout'?'WELCOME TO VAULT POTATO':'판을 뒤집을 준비.'}</h2><p>{theme==='fallout'?'감자 클랜 · 생존자를 위한 재화 보관소':'시펄 클랜 · 다음 승부를 위한 재화 보관소'}</p><span className="community-stamp">{theme==='fallout'?'● TERMINAL ONLINE':'◆ YOUR NEXT MOVE'}</span></div><span className="community-decoration" aria-hidden="true">{theme==='fallout'?'76':'HA'}</span></section></>;}
+const themes:Record<string,'forge'|'joker'>={ea36f0150d9e407d9f4329f2:'forge','765aa91c6f9f47d4a1211462':'forge',f636de4784dc40eabe6af6af:'forge','5151bc1d842247c3a0e8418a':'joker','40bbda0b48e6412a843c9046':'joker',be8591c5ca3949a1b8289cc9:'joker','8ed832fd882742fbae675672':'joker','02df2b6670884e209ab6bc4d':'joker'};
+
+export default function ClanThemes() {
+ const readTheme = () => themes[new URLSearchParams(location.hash.slice(1)).get('clan') || ''];
+ const [theme, setTheme] = useState(readTheme);
+
+ useEffect(() => {
+  const update = () => setTheme(readTheme());
+  window.addEventListener('hashchange', update);
+  return () => window.removeEventListener('hashchange', update);
+ }, []);
+
+ useEffect(() => {
+  if (!theme) return;
+  document.body.dataset.communityTheme = theme;
+  const title = document.title;
+  document.title = theme === 'forge' ? '감자 클랜 · 재화관리' : '시펄 · 재화 보관소';
+  return () => {
+   delete document.body.dataset.communityTheme;
+   document.title = title;
+  };
+ }, [theme]);
+
+ if (!theme) return null;
+
+ if (theme === 'forge') {
+  return <section className="community-banner potato-forge-banner" aria-label="감자 클랜">
+   <div className="potato-forge-title"><span>포지마스터</span><h2>감자 클랜 재화관리</h2></div>
+   <div className="potato-forge-items" aria-hidden="true">
+    {groups.map(group => <div className={`potato-forge-item potato-forge-${group}`} key={group}>
+     <ResourceIcon group={group}/>
+     <span className="potato-forge-star">★</span>
+    </div>)}
+   </div>
+  </section>;
+ }
+
+ return <>
+  <div className="community-atmosphere joker" aria-hidden="true">
+   {Array.from({length:36}, (_, i) => {
+    const suit = ['♠','♥','♦','♣'][i % 4];
+    return <span key={i} className="community-floater" style={{
+     '--left': `${(i * 37 + 5) % 100}%`,
+     '--size': `${32 + i % 4 * 12}px`,
+     '--duration': `${24 + i % 9 * 3}s`,
+     '--delay': `${-i * 3.7}s`,
+     '--spin': `${i % 2 ? 1 : -1}`,
+     '--drift': `${(i % 2 ? 1 : -1) * (25 + i % 5 * 16)}px`,
+    } as CSSProperties}><span className={`floating-card ${i % 4 === 1 || i % 4 === 2 ? 'red' : ''}`}>
+     <b>{['A','K','Q','J'][i % 4]}</b><em>{suit}</em><small>{suit}</small>
+    </span></span>;
+   })}
+  </div>
+  <section className="community-banner" aria-label="클랜 테마">
+   <div className="community-emblem" aria-hidden="true">♠</div>
+   <div><span className="community-eyebrow">SEA PEARL / WILD CARD</span>
+    <h2>판을 뒤집을 준비.</h2><p>시펄 클랜 · 다음 승부를 위한 재화 보관소</p>
+    <span className="community-stamp">◆ YOUR NEXT MOVE</span>
+   </div>
+   <span className="community-decoration" aria-hidden="true">HA</span>
+  </section>
+ </>;
+}

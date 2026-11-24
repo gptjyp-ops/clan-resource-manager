@@ -23,48 +23,129 @@ body[data-community-theme] #root{isolation:isolate}
 @keyframes community-fall{from{transform:translate3d(0,-100px,0) rotate(0deg)}to{transform:translate3d(var(--drift),calc(100vh + 240px),0) rotate(calc(var(--spin)*360deg))}}
 @media(max-width:700px){.community-floater:nth-child(n+19){display:none}.community-floater{opacity:.22}}
 @media(prefers-reduced-motion:reduce){.community-floater{animation:none;top:calc(var(--left)*.85);transform:rotate(-18deg);will-change:auto}}
-/* POTATO: retro-futuristic vault, steel walls and bottle-cap currency. */
-body[data-community-theme="fallout"]{--background:#101e21;--foreground:#d9f4bd;--card:#142421;--card-foreground:#d9f4bd;--primary:#f2cd64;--primary-foreground:#142a35;--border:#71866a;--theme-highlight:#f2cd64;--theme-panel:#142421;--theme-ink:#d9f4bd;--theme-muted:#b6caa1;background:#12252f url('./../public/images/potato-vault.svg') center/cover fixed}
-body[data-community-theme="fallout"] .community-atmosphere{background:linear-gradient(90deg,#08131c18,#08131c66 35%,#08131c66 65%,#08131c18)}
-body[data-community-theme="fallout"] .community-banner{background:linear-gradient(105deg,#173e60,#245675 65%,#17384f);border:3px solid #e3bd55;border-radius:12px;box-shadow:0 6px 0 #091722,0 15px 45px #0008;max-width:1120px;color:#ffeb9f}
-body[data-community-theme="fallout"] .community-banner h2{color:#ffe695;text-shadow:2px 3px #102b3c}body[data-community-theme="fallout"] .community-banner p{color:#e3d7a8}body[data-community-theme="fallout"] .community-emblem{background:#e7c45d;color:#173e60;border:5px double #14364f;box-shadow:0 0 0 3px #e7c45d}
-body[data-community-theme="fallout"] .community-decoration{opacity:.2;color:#f8d977}
-body[data-community-theme="fallout"] .community-floater{opacity:.72;width:calc(var(--size)*1.4)}
-body[data-community-theme="fallout"] :is(.panel,.summary article,.mount-merge-calculator){background:linear-gradient(120deg,#172b22f7,#0d1e19fc);border:1px solid #7b9564;border-radius:7px;box-shadow:inset 0 0 35px #7aaf4c0a,0 8px 24px #0006}
-body[data-community-theme="fallout"] .panel-heading{background:#1e3942;border-bottom:2px solid #d9b653;color:#f4d77b}
-body[data-community-theme="fallout"] :is(h1,h2,h3,.nickname,.resource-amount){color:#c3f5a0}body[data-community-theme="fallout"] .submit{background:#e9c359;color:#173447;box-shadow:0 4px 0 #8a6c28;border-radius:5px;text-transform:uppercase}
-body[data-community-theme="fallout"] :is(.upload,.ticket-import-button){background:#132f27;border:2px dashed #9ac976;color:#dcf0bf}body[data-community-theme="fallout"] .upload strong{color:#c4f798}
-@media(max-width:700px){body[data-community-theme="fallout"]{background-position:38% center}body[data-community-theme="fallout"] .community-floater{opacity:.5;width:var(--size)}}
 
-/* Artwork supplied by the clan owner; scoped to POTATO only. */
-body[data-community-theme="fallout"]{background-color:#101917;background-image:linear-gradient(90deg,#07131318,#071313bb 32%,#071313bb 68%,#07131318),url('../public/images/potato-wasteland.webp'),url('../public/images/potato-vault-boy.png');background-position:center,left center,right center;background-size:cover,auto 100vh,auto 90vh;background-repeat:no-repeat;background-attachment:fixed}
-body[data-community-theme="fallout"] .community-atmosphere{background:repeating-linear-gradient(0deg,#0000 0 3px,#0002 3px 4px);box-shadow:inset 0 0 140px #0008}
-body[data-community-theme="fallout"] .community-banner{min-height:220px;background:linear-gradient(90deg,#183c49f5,#17372bdc),url('../public/images/potato-pip-boy.png') right center/cover;border:3px solid #bba353;box-shadow:inset 0 0 0 5px #182b29,0 12px 45px #0009}
-body[data-community-theme="fallout"] .community-emblem{width:140px;height:170px;background:none;border:0;border-radius:0;box-shadow:none;overflow:hidden}
-body[data-community-theme="fallout"] .community-emblem img{width:100%;height:100%;object-fit:cover;object-position:center 40%;border-radius:8px}
-body[data-community-theme="fallout"] .community-banner h2{font-family:Impact,'Arial Narrow',sans-serif;font-style:italic;font-size:clamp(27px,4vw,46px);letter-spacing:.015em;color:#e5c862}
-body[data-community-theme="fallout"] :is(.panel,.summary article,.mount-merge-calculator){background:repeating-linear-gradient(0deg,#102019f5 0 3px,#13251bf5 3px 4px);border:3px solid #6c7050;box-shadow:inset 0 0 0 3px #263626,inset 0 0 40px #0009,0 8px 24px #0008}
-body[data-community-theme="fallout"] :is(.resource-amount,.panel-heading){color:#78fa91;text-shadow:0 0 8px #76ff7740}
-@media(max-width:700px){body[data-community-theme="fallout"]{background-image:linear-gradient(#0c1919a0,#0c1919dc),url('../public/images/potato-wasteland.webp');background-size:cover,cover;background-position:center;background-attachment:scroll}body[data-community-theme="fallout"] .community-banner{min-height:170px;gap:12px}body[data-community-theme="fallout"] .community-emblem{width:74px;height:120px}body[data-community-theme="fallout"] .community-banner h2{font-size:26px}}
+body[data-community-theme="forge"] {
+  --background: #111a2b;
+  --foreground: #f2f5fc;
+  --card: #1e2b42;
+  --card-foreground: #f2f5fc;
+  --popover: #1e2b42;
+  --popover-foreground: #f2f5fc;
+  --primary: #ffcf55;
+  --primary-foreground: #151a28;
+  --secondary: #273956;
+  --secondary-foreground: #f2f5fc;
+  --muted: #273956;
+  --muted-foreground: #b9c9e1;
+  --accent: #344b70;
+  --accent-foreground: #f2f5fc;
+  --border: #536788;
+  --input: #536788;
+  --ring: #63d8f0;
+  --theme-ink: var(--foreground);
+  --theme-muted: var(--muted-foreground);
+  --theme-panel: var(--card);
+  --theme-highlight: var(--primary);
+  background: radial-gradient(ellipse at 50% 0, #354e76, #111a2b 55%);
+}
 
-body[data-community-theme="fallout"] .community-floater{width:calc(var(--size)*.52);opacity:.8}
-.nuka-cap{display:block;position:relative;aspect-ratio:1;overflow:hidden;clip-path:circle(48% at 50% 50%);filter:drop-shadow(1px 3px 2px #0008)}
-.nuka-cap img{position:absolute;width:138%;max-width:none;height:auto;left:-13%;top:-3%;pointer-events:none}
-@media(max-width:700px){body[data-community-theme="fallout"] .community-floater{width:calc(var(--size)*.45);opacity:.65}}
-/* Pip-Boy phosphor: readable green controls and numbers on a dark CRT surface. */
-body[data-community-theme="fallout"]{--primary:#6dff83;--primary-foreground:#082013;--theme-highlight:#6dff83;--ring:#6dff83;--border:#497d48;--input:#497d48;--theme-ink:#c1f8bb;--theme-muted:#9dba96;--secondary:#183823;--secondary-foreground:#c1f8bb;--accent:#224b2d;--accent-foreground:#c1f8bb}
-body[data-community-theme="fallout"] .community-banner{background:linear-gradient(95deg,#102b1bf5,#07190edf),url('../public/images/potato-pip-boy.png') right center/cover;border-color:#5c9e52;box-shadow:inset 0 0 0 4px #28382a,inset 0 0 45px #51ff6b0d,0 12px 45px #0009}
-body[data-community-theme="fallout"] .community-banner h2{color:#7cff8a;text-shadow:0 0 12px #60ff733b}
-body[data-community-theme="fallout"] .community-banner p{color:#b1d5a6}
-body[data-community-theme="fallout"] :is(.community-eyebrow,.community-stamp,.community-decoration){color:#79ff8b}
-body[data-community-theme="fallout"] :is(.panel,.summary article,.mount-merge-calculator){border-color:#527948;box-shadow:inset 0 0 0 3px #263a25,inset 0 0 40px #0008,0 8px 24px #0008}
-body[data-community-theme="fallout"] :is(.panel-heading,.merge-calculator-heading){background:#102a19;border-bottom:1px solid #63ab55;color:#81ff8e}
-body[data-community-theme="fallout"] :is(.summary-number,.resource-amount,.merge-calculator-result strong){color:#7dff8b;font-variant-numeric:tabular-nums;text-shadow:0 0 9px #63ff7a42}
-body[data-community-theme="fallout"] :is(.summary-content strong,.calculator-result-label,.calculator-step-number){color:#7dff8b}
-body[data-community-theme="fallout"] .submit{background:#78f88a;color:#082313;border:1px solid #a4ffae;box-shadow:0 3px 0 #275d30,0 0 14px #68ff7924}
-body[data-community-theme="fallout"] :is(.quiet,.capture-paste,.save-mode button,.resource-sort button){background:#122c1b;color:#bdfbc2;border-color:#51794b}
-body[data-community-theme="fallout"] :is(.save-mode button.active,.resource-sort button.active,button[aria-pressed="true"]){background:#285d32;color:#bfffc7;border-color:#7aff8c;box-shadow:inset 0 -2px #7aff8c}
-body[data-community-theme="fallout"] :is(.upload,.ticket-import-button){background:#102b1b;border-color:#75ea7f;color:#c0f8bf}
-body[data-community-theme="fallout"] :is(.upload strong,input,select,textarea){color:#b7ffc0!important}
-body[data-community-theme="fallout"] :is(button,a){transition:background-color .15s,border-color .15s}
-body[data-community-theme="fallout"] button:not(:disabled):hover{border-color:#a0ffac}
+body[data-community-theme="forge"] .potato-forge-banner {
+  justify-content: space-between;
+  gap: 24px;
+  max-width: 1224px;
+  margin: 12px auto 0;
+  padding: 26px 34px 30px;
+  width: calc(100% - 48px);
+  color: #141c30;
+  background: linear-gradient(130deg, #fff 45%, #e6efff);
+  border: 3px solid #0a1121;
+  border-radius: 20px;
+  box-shadow: 0 6px 0 #0a1121;
+}
+
+.potato-forge-title > span {
+  color: #465b80;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.potato-forge-banner h2 {
+  margin: 4px 0 0;
+  font-weight: 900;
+  line-height: 1.25;
+  word-break: keep-all;
+}
+
+.potato-forge-items {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  width: min(100%, 320px);
+}
+
+.potato-forge-item {
+  display: grid;
+  place-items: center;
+  position: relative;
+  aspect-ratio: 1;
+  border: 3px solid #131929;
+  border-radius: 15px;
+  box-shadow: 0 3px 0 #131929;
+  background: #ffcd52;
+}
+
+.potato-forge-egg { background: #c5abff; }
+.potato-forge-mount { background: #64d9f4; }
+.potato-forge-potion { background: #76eda4; }
+
+.potato-forge-item .resource-art { width: 78%; height: 78%; }
+
+.potato-forge-star {
+  position: absolute;
+  bottom: -15px;
+  color: #ffcd52;
+  font-size: 22px;
+  line-height: 1;
+  -webkit-text-stroke: 1px #131929;
+  paint-order: stroke fill;
+}
+
+body[data-community-theme="forge"] :is(.brand-icon, .submit, .dashboard-tabs button.active) {
+  color: #151a28;
+  background: var(--primary);
+  border: 2px solid #0a1121;
+  box-shadow: 0 3px 0 #0a1121;
+}
+
+body[data-community-theme="forge"] .dashboard-tabs button.active { background: #64d9f4; }
+body[data-community-theme="forge"] .submit:hover:not(:disabled) { background: #ffe08b; }
+
+body[data-community-theme="forge"] :is(.panel-heading, .merge-calculator-heading) {
+  background: #293e5d;
+  border-bottom-color: var(--border);
+}
+
+body[data-community-theme="forge"] .resource-overview .summary article {
+  background: linear-gradient(140deg, #263956, #1b2940 72%);
+  box-shadow: 0 4px 0 #0a1121;
+}
+
+body[data-community-theme="forge"] .resource-overview .resource-marker {
+  background: color-mix(in srgb, var(--resource-color) 80%, white);
+  border: 2px solid #0a1121;
+  box-shadow: 0 2px 0 #0a1121;
+  border-radius: 12px;
+}
+
+@media (max-width: 600px) {
+  body[data-community-theme="forge"] .potato-forge-banner {
+    flex-direction: column;
+    align-items: flex-start;
+    width: calc(100% - 32px);
+    gap: 14px;
+    padding: 15px 18px 23px;
+  }
+  .potato-forge-items { width: min(100%, 232px); gap: 8px; }
+  .potato-forge-item { border-radius: 11px; }
+  .potato-forge-star { bottom: -12px; font-size: 18px; }
+}
