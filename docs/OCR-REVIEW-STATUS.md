@@ -3,9 +3,14 @@ Total output lines: 615
 
 # OCR review checkpoint
 
-Updated: 2026-11-25 17:03 KST. Latest deployed scanner: 2026-11-16.1.
+Updated: 2026-11-25 18:04 KST. Latest deployed scanner: 2026-11-16.1.
 
 ## Current scan
+
+- 2026-11-25 18:04 KST. Main c104e1c. Both error tabs 1000×26. OCR A638:J1000 empty, next 638. Prior unresolved cases remain open.
+  - Client A67:H1000: rows 67–68, next 69. Two distinct report IDs absent from H1:H66. CRM-AUTH-001 on the invite/legacy entry screen at 17:12 KST (Android Chrome, e8b4e7d) and 17:14 KST (Android Samsung Internet, c104e1c). The two source commits differ only in the review document. Reports show two browser environments in under two minutes, but cannot distinguish one user switching browsers from separate devices or establish an outage. No CON-001/002/003/004 or GEN-002. Actual authentication trigger remains unresolved.
+  - Live Pages HTTP 200. Pages 45321000577 and Apps Script 45301934103 succeeded. Latest Code.gs remains 879ab3c and persisted reports confirm live doPost intake. Checkpoint only.
+
 
 - 2026-11-25 17:03 KST. Main cea2daf. Both error tabs 1000×26. OCR A638:J1000 empty, next 638. Earlier unresolved cases remain open.
   - Client A66:H1000: row 66, next 67. Unique report ID compared with H1:H65. CRM-GEN-001 at 16:55 KST in clan resource management, Android KakaoTalk build cea2daf. The same fallback code appeared at 15:28 on Samsung Internet build e8b4e7d, over an hour earlier. Different browser environments do not establish distinct devices or a simultaneous outage. The original exception remains unknown. No CON-001/002/003/004 or GEN-002.
