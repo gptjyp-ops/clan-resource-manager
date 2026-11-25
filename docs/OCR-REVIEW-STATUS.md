@@ -3,9 +3,14 @@ Total output lines: 615
 
 # OCR review checkpoint
 
-Updated: 2026-11-25 08:00 KST. Latest deployed scanner: 2026-11-16.1.
+Updated: 2026-11-25 15:57 KST. Latest deployed scanner: 2026-11-16.1.
 
 ## Current scan
+
+- 2026-11-25 15:57 KST. Main e8b4e7d. Both error tabs 1000×26. OCR A638:J1000 empty, next 638. Earlier unresolved cases remain open.
+  - Client A65:H1000: row 65, next 66. Unique report ID compared with H1:H64. CRM-GEN-001 at 15:28 KST on the clan resource management screen, Android Samsung Internet build e8b4e7d. This is the fallback diagnosis. The originating exception and device count are unknown. No CON-001/002/003/004 or GEN-002. Keep open.
+  - Live Pages HTTP 200. Pages 45321000577 and Apps Script 45301934103 succeeded. Latest Code.gs remains 879ab3c and the persisted report verifies production doPost intake. Checkpoint only.
+
 
 - 2026-11-25 08:00 KST. Main 93da898. Both error tabs 1000×26. OCR A638:J1000 empty. Next OCR row 638; prior initialization and recognition cases remain open.
   - Client A64:H1000: row 64, next 65. Unique report ID compared with H1:H63. CRM-INV-001 at 07:53 KST on the invite/legacy entry screen, Android Samsung Internet build b46d130. The code covers several invite-entry failures; the underlying rejection and device count cannot be established. No CON-001/002/003/004 or GEN-002 and no evidence of a simultaneous outage. Keep this report open.
