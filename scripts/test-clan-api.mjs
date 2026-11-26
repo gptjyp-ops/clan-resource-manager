@@ -3,11 +3,11 @@ import vm from 'node:vm';
 import crypto from 'node:crypto';
 import {build} from 'esbuild';
 const code=(await build({entryPoints:['src/lib/api.ts'],bundle:true,write:false,format:'iife',globalName:'ClanAPI',define:{'import.meta.env.BASE_URL':'"/clan-resource-manager/"','import.meta.env.VITE_GOOGLE_SCRIPT_URL':'"https://script.google.com/macros/s/test/exec"','import.meta.env.VITE_API_BASE_URL':'""'}})).outputFiles[0].text;
-function setup(hash,stored,serverSelection=true,preserveExisting=true,entryPassword=false,adminTicket=false){const storage=new Map(Object.entries(stored)),handlers={},sent=[];let frame,source;
+function setup(hash,stored,serverSelection=true,preserveExisting=true,entryPassword=false,adminTicket=false,delayReady=false){const storage=new Map(Object.entries(stored)),handlers={},sent=[];let frame,source,ready;
  const location={hash,origin:'https://gptjyp-ops.github.io',href:''};
  source={postMessage(message,origin){sent.push(message);const payload=message.payload;const result=payload.operation==='capabilities'?{ok:true,multiClan:true,preserveExisting,serverSelection,entryPassword,ticketClanEntry:true,servers:serverSelection?['12','99','not-a-server']:[]}:payload.operation==='ticketClanEnter'?{ok:true,entryAccessKey:'ticket-entry-token',adminTicket,clan:{id:payload.clanId}}:payload.operation==='enterClan'?{ok:true,entryAccessKey:'server-entry-token'}:{ok:true,records:[],clan:{id:payload.clanId,name:'Test',server:'12'},photos:{}};handlers.message({origin,source,data:{type:'clan-response',channel:message.channel,id:message.id,result}});}};
- const context={console,URLSearchParams,crypto:{randomUUID:()=>crypto.randomUUID()},location,sessionStorage:{getItem:k=>storage.get(k)||null,setItem:(k,v)=>storage.set(k,v),removeItem:k=>storage.delete(k)},setTimeout,clearTimeout,window:{addEventListener:(k,f)=>handlers[k]=f,removeEventListener:k=>delete handlers[k]},document:{createElement:()=>frame={remove(){}},body:{appendChild(){const channel=new URL(frame.src).searchParams.get('channel');handlers.message({origin:'https://script.googleusercontent.com',source,data:{type:'clan-ready',channel}});}}}};
- vm.createContext(context);vm.runInContext(code,context);return {api:context.ClanAPI,storage,sent,location};}
+ const context={console,URLSearchParams,crypto:{randomUUID:()=>crypto.randomUUID()},location,sessionStorage:{getItem:k=>storage.get(k)||null,setItem:(k,v)=>storage.set(k,v),removeItem:k=>storage.delete(k)},setTimeout,clearTimeout,window:{addEventListener:(k,f)=>handlers[k]=f,removeEventListener:k=>delete handlers[k]},document:{createElement:()=>frame={remove(){}},body:{appendChild(){const channel=new URL(frame.src).searchParams.get('channel');ready=()=>handlers.message({origin:'https://script.googleusercontent.com',source,data:{type:'clan-ready',channel}});if(!delayReady)ready();}}}};
+ vm.createContext(context);vm.runInContext(code,context);return {api:context.ClanAPI,storage,sent,location,ready:()=>ready()};}
 const a=setup('#clan=aaaaaaaaaaaaaaaaaaaaaaaa&code=invite-a',{clanAccessKey:'legacy-secret','clanAccessKey:bbbbbbbbbbbbbbbbbbbbbbbb':'b-secret'});
 assert.equal(a.api.savedAccessKey(),'');assert.equal(a.api.invitedKey,'invite-a');
 await a.api.unlockGoogle('invite-a');await a.api.saveInventory('member','password',{},{},{potion:['amount']});assert.deepEqual(JSON.parse(JSON.stringify(a.sent.find(m=>m.method==='save').payload.changedFields)),{potion:['amount']});await a.api.getRecords();
@@ -47,3 +47,13 @@ await ownerGate.api.enterClanTicket(personal);
 assert.equal(ownerGate.location.hash,'#clan='+personal.clanId);
 assert.equal(ownerGate.location.hash.includes(personal.token),false);
 console.log('Administrator-bound QRs enter member resources; management remains an explicit choice and tokens stay out of URLs.');
+
+const connecting=setup('',{},true,true,false,false,true);
+const loading=connecting.api.getRecords();
+const checking=connecting.api.checkSaveConnection();
+connecting.ready();
+await Promise.race([
+ Promise.all([loading,checking]),
+ new Promise((_,reject)=>{setTimeout(()=>reject(Error('Concurrent check left the original connection unresolved')),100);}),
+]);
+assert.equal(connecting.sent.length,3);

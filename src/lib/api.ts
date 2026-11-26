@@ -38,6 +38,7 @@ export let entryPasswordSupported=false;
 export let serverOptions:string[]=[];
 type Reply={inviteCode?:string;manualAscension?:boolean;manualMergeCounts?:boolean;manualRecords?:{nickname:string;amounts:Partial<Record<'skill'|'egg'|'eggMerge'|'mount'|'mountMerge'|'potion'|'skillLevel'|'eggLevel'|'mountLevel'|'skillWaiting'|'eggWaiting'|'mountWaiting',string>>;submittedAt:string}[];emailRecovery?:boolean;emailSent?:boolean;emailWarning?:string;adminTicket?:boolean;adminTicketLogin?:boolean;adminTicketNickname?:string;memberRemoval?:boolean;memberRecords?:{nickname:string;updated_at:string}[];ticketClanEntry?:boolean;passwordUpdated?:boolean;ticketPasswordSave?:boolean;photoRemoval?:boolean;operatorRecovery?:boolean;expiresAt?:number;entryPassword?:boolean;entryAccessKey?:string;memberSelfRecovery?:boolean;recoveryCode?:string;members?:string[];memberPasswordReset?:boolean;clan?:ClanInfo;adminToken?:string;multiClan?:boolean;diagnosticPhotos?:boolean;diagnosticReports?:boolean;preserveExisting?:boolean;details?:Inventory;serverSelection?:boolean;servers?:string[];ok:boolean;error?:string;records?:any[];photos?:Partial<Record<PhotoKind,string>>;base64?:string;type?:string};
 let bridgePromise:Promise<{source:Window;origin:string;channel:string}>|undefined;
+let bridgeReady=false;
 let bridgeCleanup:(()=>void)|undefined;
 const pending=new Map<string,{resolve:(r:Reply)=>void;reject:(e:Error)=>void;timer:ReturnType<typeof setTimeout>}>();
 function bridge(){
@@ -49,7 +50,7 @@ function bridge(){
   const timer=setTimeout(()=>{window.removeEventListener('message',listen);frame.remove();bridgePromise=undefined;reject(Error('구글 저장 연결을 열지 못했습니다. 웹 앱 배포 권한과 주소를 확인해주세요.'));},30000);
   function listen(event:MessageEvent){
    const m=event.data;if(!m||m.channel!==channel||!/^https:\/\/(?:[a-z0-9-]+\.)*googleusercontent\.com$/.test(event.origin))return;
-   if(!source&&m.type==='clan-ready'&&event.source){source=event.source as Window;origin=event.origin;clearTimeout(timer);resolve({source,origin,channel});return;}
+   if(!source&&m.type==='clan-ready'&&event.source){source=event.source as Window;origin=event.origin;clearTimeout(timer);bridgeReady=true;resolve({source,origin,channel});return;}
    if(event.source!==source||event.origin!==origin||m.type!=='clan-response')return;
    const request=pending.get(m.id);if(!request)return;clearTimeout(request.timer);pending.delete(m.id);if(!m.result?.ok)request.reject(Error(m.result?.error||'저장 요청 실패'));else request.resolve(m.result);
   }
@@ -61,7 +62,9 @@ async function rpc(method:string,payload:Record<string,unknown>={}):Promise<Repl
 export async function checkSaveConnection(){
  if(!googleEnabled){const response=await fetch(apiUrl('/api/records'),{cache:'no-store'});if(!response.ok)throw Error('저장 연결을 확인하지 못했습니다. 잠시 후 다시 시도해주세요.');return;}
  if(pending.size)throw Error('다른 연결 요청이 진행 중입니다. 잠시 후 다시 확인해주세요.');
- bridgeCleanup?.();bridgePromise=undefined;
+ if(bridgeReady){
+  bridgeCleanup?.();bridgePromise=undefined;bridgeReady=false;
+ }
  const capability=await rpc('list',{operation:'capabilities'});if(!capability.preserveExisting)throw Error('기존 재화 보호를 위해 저장을 중단했습니다. 운영자가 구글 스크립트를 업데이트해야 합니다.');
  await rpc('list');
 }
