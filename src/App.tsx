@@ -208,6 +208,11 @@ export default function App(){useLanguage();useEffect(()=>{const navigate=()=>lo
   <button className="submit" disabled={checking||(!joinSlug&&!clanName.trim())||!key.trim()}>{checking?'입장 확인 중…':'클랜 입장'}</button>
   {error&&<ConnectionHelp error={error} screen="클랜 이름으로 입장" busy={checking} onRetry={()=>void enter()}/>}
  </form>
+ {!joinSlug&&<section aria-label={t("신규 클랜 등록")} style={{margin:24,padding:16,border:'1px solid currentColor',borderRadius:12}}>
+  <h2 style={{margin:0,fontSize:'1.05rem'}}>{t("처음 이용하는 클랜인가요?")}</h2>
+  <p style={{margin:'4px 0 12px'}}>{t("클랜장이 먼저 등록한 뒤 초대 링크를 클랜원에게 공유하세요.")}</p>
+  <a className="submit" style={{display:'flex',alignItems:'center',justifyContent:'center',borderRadius:8,textDecoration:'none',minHeight:44}} href={import.meta.env.BASE_URL+'#clans'}>{t("신규 클랜 등록")}</a>
+ </section>}
  <details className="ticket-import" style={{marginBlock:16}}>
   <summary>개인 QR로 로그인</summary>
   <TicketImport disabled={checking} onImport={async ticket=>{
