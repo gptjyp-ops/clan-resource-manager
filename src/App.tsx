@@ -160,7 +160,7 @@ function Home(){
  {busy&&<div className="scan-status" role="status"><span>{t("사진에서 숫자를 읽고 있습니다… ")}{progress}%</span><Progress value={progress}/><button type="button" className="capture-paste" onClick={cancelScan}>{t("인식 취소 · 다른 사진 선택")}</button></div>}
  {saveMode==='all'&&<button type="button" className="next-resource" disabled={busy||saving} onClick={()=>{const next=groups[groups.indexOf(tab)+1];if(next)selectResource(next);else document.getElementById('save-review')?.scrollIntoView({behavior:'smooth',block:'center'});}}>{groups[groups.indexOf(tab)+1]?tr`다음: ${t(titles[groups[groups.indexOf(tab)+1]])} 사진 올리기`:t("전체 내역 확인하기")}</button>}
  <section className="save-review" id="save-review" aria-label={t("전체 저장 내역")}><h3>{t("한 번에 저장할 내역 ")}<small>{4-missing.length}{t("/4 항목 완료")}</small></h3>{groups.map(g=><button key={g} type="button" disabled={busy||saving} className={missing.includes(g)?'incomplete':''} onClick={()=>selectResource(g)}><span><strong>{t(titles[g])}</strong><small>{g==='potion'?t("수량만 저장"):tr`${inventory[g].level||t("미입력")}레벨 · ${inventory[g].level==='100'?t("최대"):(inventory[g].progress||t("미입력"))+' '+t("단계")}`}{(g==='egg'||g==='mount')&&tr` · 합성 ${fmt(totalMerge(inventory[g]))}`}</small></span><span>{inventory[g].amount||t("미입력")}<small>{missing.includes(g)?t("확인 필요"):t("입력 완료")}</small></span></button>)}</section>
- {ticket?<><p className="helper" role="status">{t('QR 로그인 중 · 비밀번호 없이 저장할 수 있습니다.')}</p><details><summary>{t('비밀번호 방식으로 전환 (선택)')}</summary><label className="field-label" htmlFor="password">{t('새 수정 비밀번호')}</label><input id="password" disabled={busy||saving} type="password" minLength={6} maxLength={100} autoComplete="new-password" value={password} onChange={e=>setPassword(e.target.value)}/><p className="helper">{t('비워두면 QR 로그인을 유지합니다. 비밀번호를 입력하고 저장하면 비밀번호 방식으로 전환되며 기존 QR은 무효화됩니다.')}</p></details></>:<><label className="field-label" htmlFor="password">{t("본인 수정 비밀번호")}</label><input id="password" disabled={busy||saving} type="password" minLength={6} maxLength={100} required autoComplete="off" placeholder={t("6자 이상 · 다음 수정 때도 사용")} value={password} onChange={e=>setPassword(e.target.value)}/><p className="helper">{t("신규 회원은 비밀번호를 정하고, 기존 회원은 등록한 비밀번호를 입력해주세요.")}</p></>}
+ {ticket?<><p className="helper" role="status">{t('QR 로그인 중 · 비밀번호 없이 저장할 수 있습니다.')}</p><details><summary>{t('비밀번호 방식으로 전환 (선택)')}</summary><label className="field-label" htmlFor="password">{t('새 수정 비밀번호')}</label><input id="password" disabled={busy||saving} type="password" minLength={6} maxLength={100} autoComplete="new-password" value={password} onChange={e=>setPassword(e.target.value)}/><p className="helper">{t('비워두면 QR 로그인을 유지합니다. 비밀번호를 입력하고 저장하면 비밀번호 방식으로 전환되며 기존 QR은 무효화됩니다.')}</p></details></>:<><label className="field-label" htmlFor="password">{t("본인 수정 비밀번호")}</label><input id="password" disabled={busy||saving} type="password" minLength={6} maxLength={100} required autoComplete="off" placeholder={t("6자 이상 · 다음 수정 때도 사용")} value={password} onChange={e=>setPassword(e.target.value)}/><p className="helper">{t("신규 회원은 최초 저장에 사용할 비밀번호를 정해주세요. 저장 후 ‘기존 회원 로그인 · QR 티켓 발급’에서 개인 QR을 발급받으세요. 기존 회원은 등록한 비밀번호를 입력해주세요.")}</p></>}
  
  {googleEnabled&&<label className="field-label">{t('복구 이메일')}<input type="email" autoComplete="email" maxLength={254} required={!records.some(r=>r.nickname===nickname.trim().normalize('NFKC'))} disabled={busy||saving} value={recoveryEmail} onChange={e=>setRecoveryEmail(e.target.value)}/><span className="helper">{t('신규 회원은 복구 이메일을 입력해주세요. 기존 회원은 비워두면 유지됩니다. 메일 인증 후 사용할 수 있습니다.')}</span></label>}
  <button className="submit" type="submit" disabled={busy||saving}>{saving?t("저장 중…"):<><Check size={18}/>{saveMode==='all'?t("4종 재화 한 번에 저장"):t("입력한 재화 저장")}</>}</button><p className="helper center">{saveMode==='all'?t("네 종류의 재화와 올린 사진·합성 수량을 한 번에 저장합니다."):t("빈칸은 삭제하지 않습니다. 0을 입력하면 해당 수량만 0으로 수정됩니다.")}</p></form></section>}
@@ -201,6 +201,16 @@ export default function App(){useLanguage();useEffect(()=>{const navigate=()=>lo
  },[commonEntry,ready]);
  async function enter(e?:React.FormEvent){e?.preventDefault();setChecking(true);setError('');try{if(commonEntry){await unlockNamedClan(clanName,key,joinSlug??undefined);return;}await unlockGoogle(key);setReady(true);}catch(e){setError(e instanceof Error?e.message:t("연결 실패"));}finally{setChecking(false);}}if(location.hash==='#operator-recovery')return <OperatorRecovery/>;if(location.hash==='#ocr-check')return <OcrCheck/>;if(location.hash==='#clans'||new URLSearchParams(location.hash.slice(1)).has('manage'))return <ClanPortal/>;if(ready)return activeClanId===eliteManualClanId?<EliteManualRegistration/>:<Home/>;if(commonEntry)return <main><div className="workspace" style={{maxWidth:500,paddingTop:48}}><section className="panel registration">
  <h1>클랜 재화관리</h1>
+ <section aria-label={t("개인 QR로 로그인")} style={{margin:24}}>
+  <p className="helper">{t("저장한 개인 QR 티켓 이미지를 선택해 로그인하세요.")}</p>
+  <TicketImport disabled={checking} onImport={async ticket=>{
+   setChecking(true);setError('');
+   try{await enterClanTicket(ticket);}finally{setChecking(false);}
+  }}/>
+ </section>
+ <details style={{margin:24}} open={joinSlug!==null?true:undefined}>
+  <summary>{t("처음 등록하거나 클랜 비밀번호로 입장하기")}</summary>
+  <p className="helper">{t("신규 회원은 클랜장에게 받은 초대 링크로 입장하세요. 재화를 처음 저장한 뒤 개인 QR 티켓을 발급받아 저장하고, 다음부터는 QR로 로그인하세요.")}</p>
  <form onSubmit={enter}>
   {joinSlug?<p>클랜 입장 링크 · {joinSlug}</p>:<label className="number-field"><span>클랜 이름</span><input value={clanName} onChange={e=>setClanName(e.target.value)} required maxLength={100} autoComplete="off" disabled={checking}/></label>}
   <label className="field-label" htmlFor="clan-key">클랜 입장 비밀번호</label>
@@ -208,18 +218,12 @@ export default function App(){useLanguage();useEffect(()=>{const navigate=()=>lo
   <button className="submit" disabled={checking||(!joinSlug&&!clanName.trim())||!key.trim()}>{checking?'입장 확인 중…':'클랜 입장'}</button>
   {error&&<ConnectionHelp error={error} screen="클랜 이름으로 입장" busy={checking} onRetry={()=>void enter()}/>}
  </form>
+ </details>
  {!joinSlug&&<section aria-label={t("신규 클랜 등록")} style={{margin:24,padding:16,border:'1px solid currentColor',borderRadius:12}}>
   <h2 style={{margin:0,fontSize:'1.05rem'}}>{t("처음 이용하는 클랜인가요?")}</h2>
-  <p style={{margin:'4px 0 12px'}}>{t("클랜장이 먼저 등록한 뒤 초대 링크를 클랜원에게 공유하세요.")}</p>
+  <p style={{margin:'4px 0 12px'}}>{t("클랜장이 먼저 클랜을 등록하고 초대 링크와 개인 QR 발급 방법을 클랜원에게 안내하세요.")}</p>
   <a className="submit" style={{display:'flex',alignItems:'center',justifyContent:'center',borderRadius:8,textDecoration:'none',minHeight:44}} href={import.meta.env.BASE_URL+'#clans'}>{t("신규 클랜 등록")}</a>
  </section>}
- <details className="ticket-import" style={{marginBlock:16}}>
-  <summary>개인 QR로 로그인</summary>
-  <TicketImport disabled={checking} onImport={async ticket=>{
-   setChecking(true);setError('');
-   try{await enterClanTicket(ticket);}finally{setChecking(false);}
-  }}/>
- </details>
  <p><a href={import.meta.env.BASE_URL+'#clans'}>클랜장 관리</a></p>
  </section></div></main>;
  return <main><div className="workspace" style={{maxWidth:500,paddingTop:64}}><section className="panel registration"><EliteBanner compact/><div className="panel-heading"><h1>{t("클랜 재화관리")}</h1></div><p>{invitedKey?t("초대 링크의 입장 코드가 입력되었습니다. 아래 버튼을 눌러 클랜에 들어가세요."):t("클랜장이 알려준 입장 비밀번호 또는 기존 입장 코드를 입력해주세요.")}</p>{activeClanId!==eliteManualClanId&&<div style={{marginBlock:24}}><TicketImport disabled={checking} onImport={async ticket=>{setChecking(true);setError('');try{await enterClanTicket(ticket);}finally{setChecking(false);}}}/><p>{t("저장한 개인 티켓 사진으로 클랜 입장과 내 재화 로그인을 한 번에 할 수 있습니다.")}</p></div>}<form onSubmit={enter}><label className="field-label" htmlFor="clan-key">{t("입장 비밀번호 / 기존 입장 코드")}</label><AccessCodeInput value={key} onChange={setKey} disabled={checking}/><button className="submit" disabled={checking}>{checking?t("연결 확인 중…"):t("클랜 현황 열기")}</button>{error&&<ConnectionHelp error={error} screen="초대 링크 및 기존 코드 입장" busy={checking} onRetry={()=>void enter()}/>}</form><p><a href={import.meta.env.BASE_URL+'#clans'}>{t("새 클랜 만들기 · 클랜장 관리")}</a></p></section></div></main>;}

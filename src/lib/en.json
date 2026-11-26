@@ -1,4 +1,10 @@
 {
+  "개인 QR로 로그인": "Sign in with a personal QR ticket",
+  "저장한 개인 QR 티켓 이미지를 선택해 로그인하세요.": "Select your saved personal QR ticket image to sign in.",
+  "처음 등록하거나 클랜 비밀번호로 입장하기": "First-time registration or clan password entry",
+  "신규 회원은 클랜장에게 받은 초대 링크로 입장하세요. 재화를 처음 저장한 뒤 개인 QR 티켓을 발급받아 저장하고, 다음부터는 QR로 로그인하세요.": "New members, enter using the invitation from your clan leader. After saving your resources for the first time, get and save your personal QR ticket and use it to sign in next time.",
+  "클랜장이 먼저 클랜을 등록하고 초대 링크와 개인 QR 발급 방법을 클랜원에게 안내하세요.": "Clan leaders, register your clan and share the invitation and personal QR ticket instructions with members.",
+  "신규 회원은 최초 저장에 사용할 비밀번호를 정해주세요. 저장 후 ‘기존 회원 로그인 · QR 티켓 발급’에서 개인 QR을 발급받으세요. 기존 회원은 등록한 비밀번호를 입력해주세요.": "New members, set a password for your first save, then use the existing-member sign-in and QR ticket option to get your personal QR. Existing members, enter your registered password.",
   "클랜장 QR 로그인 실패": "Clan leader QR sign-in failed.",
   "초대 링크로 입장하지 못했습니다.": "Could not enter the clan using this invitation link.",
   "알 칸에 탈것 소환 사진이 감지되었습니다. 화면 왼쪽 위에 알 재화가 보이는 펫 소환 사진을 올려주세요.": "A mount summon screenshot was detected in the egg slot. Upload the pet summon screen showing the egg balance at the top left.",
