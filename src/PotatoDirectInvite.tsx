@@ -2,15 +2,16 @@ import {useState} from 'react';
 import {clanAction} from './lib/api';
 
 export function ClanDirectInvite({clanId,adminToken,disabled}:{clanId:string;adminToken:string;disabled:boolean}){
- const [link,setLink]=useState(''),[busy,setBusy]=useState(false),[message,setMessage]=useState('');
+ const [link,setLink]=useState(''),[busy,setBusy]=useState(false),[message,setMessage]=useState(''),[failed,setFailed]=useState(false);
  async function create(){
   setBusy(true);
   setMessage('');
+  setFailed(false);
   try{
    const reply=await clanAction('issueDirectInvite',{clanId,adminToken});
    if(!reply.inviteCode)throw Error('초대 코드를 발급하지 못했습니다.');
    setLink(location.origin+import.meta.env.BASE_URL+'#'+new URLSearchParams({clan:clanId,invite:reply.inviteCode}));
-  }catch(e){setMessage(e instanceof Error?e.message:'초대 링크 발급 실패');}
+  }catch(e){setFailed(true);setMessage(e instanceof Error?e.message:'초대 링크 발급 실패');}
   finally{setBusy(false);}
  }
  return <section className="member-password-reset" aria-labelledby="clan-direct-invite-title">
@@ -20,9 +21,9 @@ export function ClanDirectInvite({clanId,adminToken,disabled}:{clanId:string;adm
   <button type="button" className="capture-paste" disabled={disabled||busy} onClick={()=>void create()}>새 초대 링크 발급</button>
   {link&&<label className="field-label">클랜 초대 링크<input readOnly value={link} onFocus={e=>e.currentTarget.select()}/></label>}
   {link&&<button type="button" className="capture-paste" onClick={async()=>{
-   try{await navigator.clipboard.writeText(link);setMessage('초대 링크를 복사했습니다.');}
-   catch{setMessage('위 입력칸의 링크를 선택해 복사해주세요.');}
+   try{await navigator.clipboard.writeText(link);setFailed(false);setMessage('초대 링크를 복사했습니다.');}
+   catch{setFailed(false);setMessage('위 입력칸의 링크를 선택해 복사해주세요.');}
   }}>비밀번호 없는 초대 링크 복사</button>}
-  {message&&<p role="alert">{message}</p>}
+  {message&&<p key={failed?'error':'status'} role={failed?'alert':'status'}>{message}</p>}
  </section>;
 }
