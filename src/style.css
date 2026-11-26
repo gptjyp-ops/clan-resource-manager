@@ -525,3 +525,19 @@ body:is([data-clan-theme], [data-community-theme]) .pastel-settings {
   accent-color: var(--ring);
   margin-bottom: 12px;
 }
+
+body:not([data-clan-theme], [data-community-theme]) .registration .panel-heading {
+  background: var(--secondary);
+  color: var(--foreground);
+  border-bottom-color: var(--border);
+}
+
+body:not([data-clan-theme], [data-community-theme]) .registration .panel-heading h1 {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+body:not([data-clan-theme], [data-community-theme]) .registration input::placeholder {
+  color: var(--muted-foreground);
+  opacity: 1;
+}

@@ -1,3 +1,4 @@
+import {EliteTechGuide} from './TechTreeGuide';
 import {useEffect,useRef,useState,type FormEvent} from 'react';
 import {clanAction} from './lib/api';
 import {quantity} from './lib/inventory';
@@ -168,6 +169,11 @@ export default function EliteManualRegistration(){
      .elite-sort-direction { margin: 0; }
      .elite-sort-direction button { flex: 1; }
     }
+     .elite-tech-guide { margin: 14px 0; }
+     .elite-tech-guide h3 { font-size: 1rem; font-weight: 800; margin: 0 0 8px; }
+     .elite-tech-guide ul { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr)); gap: 8px; margin: 0; padding: 0; list-style: none; }
+     .elite-tech-guide li { display: flex; align-items: center; gap: 8px; padding: 8px; border: 1px solid #aac6df; border-radius: 8px; background: #edf6ff; color: #203b55; font-weight: 700; }
+     .elite-tech-guide img { flex: none; object-fit: contain; background: #d9e8f4; border-radius: 5px; }
      .elite-resource-day { display: block; margin-bottom: 2px; color: #69452f; font-size: .8rem; font-weight: 700; }
      .elite-resource-page th[aria-sort] { background: #e9c38f; }
      .elite-resource-page td[data-sorted="true"] { background: #dfaa5e30; }
@@ -191,6 +197,7 @@ export default function EliteManualRegistration(){
      .elite-resource-page .elite-waiting { width: fit-content; padding: 1px 4px; border-radius: 4px; background: #ffe4a1; color: #5b3700; font-weight: 800; }
    `}</style>
    <h2>이번 주 등록 현황</h2>
+   <EliteTechGuide/>
    <div className="elite-results-tools">
    {rows.length>0&&<label className="number-field"><span>닉네임 검색</span><input type="search" value={search} onChange={e=>setSearch(e.target.value)} placeholder="닉네임 일부 입력"/></label>}
    {rows.length>0&&<label className="number-field"><span>등록 재화 정렬</span>
