@@ -3,9 +3,11 @@ Total output lines: 615
 
 # OCR review checkpoint
 
-Updated: 2026-11-25 18:04 KST. Latest deployed scanner: 2026-11-16.1.
+Updated: 2026-11-26 15:01 KST. Latest deployed scanner: 2026-11-16.1.
 
 ## Current scan
+
+- 2026-11-26 15:01 KST. Main 035899a. Read both 1000×26 tabs to their grid ends. OCR last row 637, next 638, no new reports. Earlier unresolved cases remain open. Client last row 69, next 70. Row 69 is unique by report ID: CRM-AUTH-001 at 14:37 KST, Windows Chrome, invite/legacy entry, build 8bfd6cb. The code appeared 16 times historically. This event is over a day after the preceding reports, so neither a simultaneous outage nor distinct device identity is established. No new CON-001/002/003/004 or GEN-002. Exact credential mismatch remains unresolved. Live Pages HTTP 200. Code.gs and Bridge.html remain at 879ab3c, previously verified Apps Script run 45301934103. Persisted row confirms live doPost intake. Checkpoint only.
 
 - 2026-11-25 18:04 KST. Main c104e1c. Both error tabs 1000×26. OCR A638:J1000 empty, next 638. Prior unresolved cases remain open.
   - Client A67:H1000: rows 67–68, next 69. Two distinct report IDs absent from H1:H66. CRM-AUTH-001 on the invite/legacy entry screen at 17:12 KST (Android Chrome, e8b4e7d) and 17:14 KST (Android Samsung Internet, c104e1c). The two source commits differ only in the review document. Reports show two browser environments in under two minutes, but cannot distinguish one user switching browsers from separate devices or establish an outage. No CON-001/002/003/004 or GEN-002. Actual authentication trigger remains unresolved.
