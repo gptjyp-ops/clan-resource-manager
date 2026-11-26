@@ -188,7 +188,6 @@ export default function App(){useLanguage();useEffect(()=>{const navigate=()=>lo
   setChecking(true);
   redeemDirectInvite(directInvite).then(()=>{
    if(!live)return;
-   history.replaceState(history.state,'','#'+new URLSearchParams({clan:activeClanId}));
    setReady(true);
   })
    .catch(e=>{if(live)setError(e instanceof Error?e.message:t('초대 링크로 입장하지 못했습니다.'));})
