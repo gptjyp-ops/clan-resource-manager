@@ -212,6 +212,9 @@ function authorizeClan_(p){
  var clan=resolveClan_(p);
  if(!clan.key||typeof p.accessKey!=='string'||hash_(p.accessKey,'clan-access')!==hash_(clan.key,'clan-access'))throw Error('클랜 입장 코드가 맞지 않습니다.');return clan;
 }
+function directInviteProperty_(clanId){
+ return clanId==='ea36f0150d9e407d9f4329f2'?'POTATO_DIRECT_INVITE':'CLAN_DIRECT_INVITE_'+clanId;
+}
 function clanAdmin_(p){
  var found=findClan_(String(p.clanId||'')),session=PropertiesService.getScriptProperties().getProperty('ADMIN_SESSION_'+found.row[0]);
  if(!session||typeof p.adminToken!=='string')throw Error('클랜장 로그인이 필요합니다.');var data=JSON.parse(session);
@@ -350,9 +353,9 @@ function clanOperation_(p){
   }
   if(op==='redeemDirectInvite'){
    var id=String(p.clanId||''),code=p.inviteCode;
-   if(id!=='ea36f0150d9e407d9f4329f2'||typeof code!=='string'||!/^[a-f0-9]{64}$/.test(code))throw Error('유효한 감자 클랜 초대 링크를 확인해주세요.');
+   if(!id||typeof code!=='string'||!/^[a-f0-9]{64}$/.test(code))throw Error('유효한 클랜 초대 링크를 확인해주세요.');
    var invited=findClan_(id),key=String(invited.row[2]);
-   if(hash_(code,key)!==PropertiesService.getScriptProperties().getProperty('POTATO_DIRECT_INVITE'))throw Error('초대 링크가 만료되었거나 올바르지 않습니다.');
+   if(hash_(code,key)!==PropertiesService.getScriptProperties().getProperty(directInviteProperty_(id)))throw Error('초대 링크가 만료되었거나 올바르지 않습니다.');
    return {ok:true,entryAccessKey:key};
   }
   if(op==='enterClan'){
@@ -378,9 +381,8 @@ function clanOperation_(p){
   }
   var found=clanAdmin_(p);
   if(op==='issueDirectInvite'){
-   if(found.row[0]!=='ea36f0150d9e407d9f4329f2')throw Error('감자 클랜에서만 사용할 수 있습니다.');
    var code=(Utilities.getUuid()+Utilities.getUuid()).replace(/-/g,'');
-   PropertiesService.getScriptProperties().setProperty('POTATO_DIRECT_INVITE',hash_(code,String(found.row[2])));
+   PropertiesService.getScriptProperties().setProperty(directInviteProperty_(found.row[0]),hash_(code,String(found.row[2])));
    return {ok:true,inviteCode:code};
   }
   if(op==='manualCancel')return manualRegistration_(op,p,String(found.row[0]));

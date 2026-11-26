@@ -339,7 +339,8 @@ console.log('Only explicitly bound owner QR tickets grant admin access; ordinary
 // remains owner-only; the browser form accepts a short-lived one-use code.
 const recoveryId='ea36f0150d9e407d9f4329f2',recoveryRows=[['id'],[recoveryId,JSON.stringify('POTATO'),'invite','old-hash','old-salt','members','photos','created',3,999,'27']];
 const recoverySheet={getRange(row,col,count,width){return {setValues(values){values.forEach((r,i)=>r.forEach((v,j)=>recoveryRows[row-1+i][col-1+j]=v));}};}};
-context.findClan_=id=>{assert.equal(id,recoveryId);return {index:0,row:[...recoveryRows[1]],sheet:recoverySheet};};
+const findRegisteredClan=context.findClan_;
+context.findClan_=id=>{if(id!==recoveryId)return findRegisteredClan(id);return {index:0,row:[...recoveryRows[1]],sheet:recoverySheet};};
 context.ScriptApp={getService:()=>({getUrl:()=> 'https://script.google.com/macros/s/test/exec'})};
 const recoveryLogs=[];context.console={log:text=>recoveryLogs.push(text)};
 const mint=()=>{context.preparePotatoAdminRecovery();return recoveryLogs.at(-1).match(/[a-f0-9]{64}$/)[0];};
@@ -385,3 +386,17 @@ assert.equal(action('setEntryPassword',{...potatoSession,entryPassword:'test-cla
 assert.equal(redeem(nextInvite).ok,false);
 assert.equal(action('enterClan',{clanId:recoveryId,entryPassword:'test-clan-entry-next'}).ok,true);
 console.log('POTATO direct invite is admin-issued, clan-scoped and invalidated by reissue or password rotation.');
+
+const otherAdmin=action('adminLogin',{clanId:directClan.clan.id,password:'direct-admin-password'});
+assert.equal(otherAdmin.ok,true);
+const otherSession={clanId:directClan.clan.id,adminToken:otherAdmin.adminToken};
+assert.equal(action('issueDirectInvite',{clanId:directClan.clan.id,adminToken:potatoSession.adminToken}).ok,false);
+const otherInvite=action('issueDirectInvite',otherSession).inviteCode;
+assert.match(otherInvite,/^[a-f0-9]{64}$/);
+assert.equal(redeem(otherInvite,directClan.clan.id).entryAccessKey,otherAdmin.clan.inviteKey);
+assert.equal(redeem(otherInvite).ok,false);
+const potatoInvite=action('issueDirectInvite',potatoSession).inviteCode;
+const otherReplacement=action('issueDirectInvite',otherSession).inviteCode;
+assert.equal(redeem(otherInvite,directClan.clan.id).ok,false);
+assert.equal(redeem(otherReplacement,directClan.clan.id).ok,true);
+assert.equal(redeem(potatoInvite).ok,true);

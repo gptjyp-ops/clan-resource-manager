@@ -9,7 +9,7 @@ export const activeClanId=route.get('clan')||'legacy';
 const keySlot=activeClanId==='legacy'?'clanAccessKey':'clanAccessKey:'+activeClanId;
 let accessKey=sessionStorage.getItem(keySlot)||'';
 export const potatoClanId='ea36f0150d9e407d9f4329f2';
-export const directInvite=activeClanId===potatoClanId?route.get('invite'):null;
+export const directInvite=route.has('clan')?route.get('invite'):null;
 export async function redeemDirectInvite(code:string){
  const reply=await rpc('list',{operation:'redeemDirectInvite',inviteCode:code});
  if(!reply.entryAccessKey)throw Error('초대 링크로 입장하지 못했습니다.');
