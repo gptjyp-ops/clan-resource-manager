@@ -406,9 +406,9 @@ body:not([data-clan-theme], [data-community-theme]) {
   --card-foreground: var(--foreground);
   --popover: var(--card);
   --popover-foreground: var(--foreground);
-  --primary: #e3d6fa;
+  --primary: hsl(var(--pastel-hue, 265) 70% 91%);
   --primary-foreground: #30234f;
-  --secondary: #f0eafb;
+  --secondary: hsl(var(--pastel-hue, 265) 60% 95%);
   --secondary-foreground: var(--foreground);
   --muted: #f0edf7;
   --muted-foreground: #5e5571;
@@ -416,8 +416,8 @@ body:not([data-clan-theme], [data-community-theme]) {
   --accent-foreground: #23483e;
   --border: #d7cee5;
   --input: #a99abf;
-  --ring: #6942a2;
-  background: linear-gradient(150deg, #f5effc, #fff4ee 55%, #ebf7f3);
+  --ring: hsl(var(--pastel-hue, 265) 45% 39%);
+  background: linear-gradient(150deg, hsl(var(--pastel-hue, 265) 65% 96%), #fff4ee 55%, #ebf7f3);
   min-height: 100vh;
 }
 
@@ -480,4 +480,48 @@ body:not([data-clan-theme], [data-community-theme]) .roster .resource-roster-tab
 
 body:not([data-clan-theme], [data-community-theme]) .registration-legend span {
   color: var(--foreground) !important;
+}
+
+.pastel-settings {
+  width: min(420px, calc(100% - 32px));
+  margin: 20px auto;
+  padding: 12px 16px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: var(--foreground);
+}
+
+body:is([data-clan-theme], [data-community-theme]) .pastel-settings {
+  display: none;
+}
+
+.pastel-settings summary {
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.pastel-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.pastel-settings button {
+  padding: 7px 12px;
+  border: 1px solid var(--input);
+  border-radius: 8px;
+}
+
+.pastel-settings button[aria-pressed="true"] {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  font-weight: 700;
+}
+
+.pastel-settings input[type="range"] {
+  display: block;
+  accent-color: var(--ring);
+  margin-bottom: 12px;
 }

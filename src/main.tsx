@@ -7,8 +7,9 @@ import {GlobalErrorMonitor,AppErrorBoundary} from './GlobalErrorMonitor';
 import './error-monitor.css';
 import React from 'react';import {createRoot} from 'react-dom/client';import App from './App';import './style.css';
 import HelpSupport from './HelpSupport';
+import PastelSettings from './PastelSettings';
 import LanguageSwitch from './LanguageSwitch';
-createRoot(document.getElementById('root')!).render(<React.StrictMode><AppErrorBoundary><GlobalErrorMonitor/><EliteTheme/><ClanThemes/><MatrixBackground/><LanguageSwitch/><App/><HelpSupport/></AppErrorBoundary></React.StrictMode>);
+createRoot(document.getElementById('root')!).render(<React.StrictMode><AppErrorBoundary><GlobalErrorMonitor/><EliteTheme/><ClanThemes/><MatrixBackground/><LanguageSwitch/><App/><PastelSettings/><HelpSupport/></AppErrorBoundary></React.StrictMode>);
 
 
 import './clan-bot.css';

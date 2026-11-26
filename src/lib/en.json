@@ -1,4 +1,11 @@
 {
+  "기본 테마 색상": "Default theme colors",
+  "라벤더": "Lavender",
+  "복숭아": "Peach",
+  "민트": "Mint",
+  "하늘": "Sky Blue",
+  "색상 직접 조절": "Adjust hue",
+  "기본 색상으로": "Reset color",
   "개인 QR로 로그인": "Sign in with a personal QR ticket",
   "저장한 개인 QR 티켓 이미지를 선택해 로그인하세요.": "Select your saved personal QR ticket image to sign in.",
   "처음 등록하거나 클랜 비밀번호로 입장하기": "First-time registration or clan password entry",
