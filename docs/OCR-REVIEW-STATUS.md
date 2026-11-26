@@ -3,9 +3,13 @@ Total output lines: 615
 
 # OCR review checkpoint
 
-Updated: 2026-11-26 15:01 KST. Latest deployed scanner: 2026-11-16.1.
+Updated: 2026-11-26 16:02 KST. Latest deployed scanner: 2026-11-16.1.
 
 ## Current scan
+
+- 2026-11-26 16:02 KST. Main 8d48783. Both tabs 1000×26. OCR A637:J1000 last populated 637, next 638, no new reports or photos. Earlier unresolved cases remain open.
+  - Client A69:H1000 last populated 70, next 71. Row 70 is unique by report ID against rows 2–69: CRM-CON-004 at 15:58 KST, Android Samsung Internet, clan leader management, build 4600c15. Prior occurrences were November 24 on iOS KakaoTalk, not simultaneous with this report. Other priority codes have no new entries. No evidence identifies the failed request or establishes a multi-device outage. Keep open.
+  - Apps Script run 45772179610 deployed the existing web app successfully, with the doPost collector unchanged. Row 70 verifies production intake before that rollout. Pages run 45772179573 succeeded for the invite update. No app changes for this report.
 
 - 2026-11-26 15:01 KST. Main 035899a. Read both 1000×26 tabs to their grid ends. OCR last row 637, next 638, no new reports. Earlier unresolved cases remain open. Client last row 69, next 70. Row 69 is unique by report ID: CRM-AUTH-001 at 14:37 KST, Windows Chrome, invite/legacy entry, build 8bfd6cb. The code appeared 16 times historically. This event is over a day after the preceding reports, so neither a simultaneous outage nor distinct device identity is established. No new CON-001/002/003/004 or GEN-002. Exact credential mismatch remains unresolved. Live Pages HTTP 200. Code.gs and Bridge.html remain at 879ab3c, previously verified Apps Script run 45301934103. Persisted row confirms live doPost intake. Checkpoint only.
 
