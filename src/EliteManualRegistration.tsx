@@ -9,7 +9,7 @@ const resourcePages=[
  {label:'스킬',days:'1·3일차',fields:[fields[0]]},
  {label:'알',days:'3·5일차',fields:fields.slice(1,3)},
  {label:'탈것',days:'2·4일차',fields:fields.slice(3,5)},
- {label:'녹색 물약',days:'녹물전쟁시에만 오더에 따라 투자',fields:[fields[5]]},
+ {label:'녹색 물약',days:'오더에 따라',fields:[fields[5]]},
 ];
 const resourceDays=new Map(resourcePages.flatMap(({days,fields})=>fields.map(([key])=>[key,days] as const)));
 const summonGroups=['skill','egg','mount'] as const;
