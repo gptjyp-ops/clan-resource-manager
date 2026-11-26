@@ -169,12 +169,6 @@ export default function EliteManualRegistration(){
      .elite-sort-direction { margin: 0; }
      .elite-sort-direction button { flex: 1; }
     }
-     .elite-tech-guide { margin: 14px 0; }
-     .elite-tech-guide h3 { font-size: 1rem; font-weight: 800; margin: 0 0 8px; }
-     .elite-tech-guide ul { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr)); gap: 8px; margin: 0; padding: 0; list-style: none; }
-     .elite-tech-guide li { display: flex; align-items: center; gap: 8px; padding: 8px; border: 1px solid #aac6df; border-radius: 8px; background: #edf6ff; color: #203b55; font-weight: 700; }
-     .elite-tech-target { display: block; font-size: .8rem; color: #35536f; }
-     .elite-tech-guide img { flex: none; object-fit: contain; background: #d9e8f4; border-radius: 5px; }
      .elite-resource-day { display: block; margin-bottom: 2px; color: #69452f; font-size: .8rem; font-weight: 700; }
      .elite-resource-page th[aria-sort] { background: #e9c38f; }
      .elite-resource-page td[data-sorted="true"] { background: #dfaa5e30; }
