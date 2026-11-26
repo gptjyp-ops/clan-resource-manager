@@ -21,7 +21,7 @@ export function directInviteLink(clanId:string,code:string){
   const binary=hex.replace(/../g,pair=>String.fromCharCode(parseInt(pair,16)));
   return base+'#'+btoa(binary).replace(/=+$/,'').replace(/\+/g,'-').replace(/\//g,'_');
  }
- return base+'#'+new URLSearchParams({clan:clanId,invite:code});
+ throw Error('90자 초대 링크를 발급하지 못했습니다. 관리 페이지를 새로 열고 다시 시도해주세요.');
 }
 export const activeClanId=route.get('clan')||'legacy';
 const keySlot=activeClanId==='legacy'?'clanAccessKey':'clanAccessKey:'+activeClanId;

@@ -41,7 +41,7 @@ export function ClanDirectInvite({clanId,adminToken,disabled}:{clanId:string;adm
   <p className="helper">클랜장 비밀번호로 로그인한 뒤 바로 발급할 수 있습니다. 개인 QR 연결은 선택입니다.</p>
   <p>링크를 가진 사람은 클랜 입장 비밀번호 없이 들어올 수 있습니다. 새 링크를 발급하면 이전 초대 링크는 만료됩니다.</p>
   <button type="button" className="capture-paste" disabled={disabled||busy} onClick={()=>void create()}>새 초대 링크 발급</button>
-  {link&&<label className="field-label">클랜 초대 링크<textarea ref={linkField} readOnly rows={3} style={{width:'100%',overflowWrap:'anywhere'}} value={link} onFocus={e=>e.currentTarget.select()}/></label>}
+  {link&&<label className="field-label">클랜 초대 링크 ({link.length}자)<textarea ref={linkField} readOnly rows={3} style={{width:'100%',overflowWrap:'anywhere'}} value={link} onFocus={e=>e.currentTarget.select()}/></label>}
   {link&&<button type="button" className="capture-paste" disabled={busy||disabled} onClick={()=>void copyInvite()}>비밀번호 없는 초대 링크 복사</button>}
   {message&&<p key={failed?'error':'status'} role={failed?'alert':'status'}>{message}</p>}
  </section>;

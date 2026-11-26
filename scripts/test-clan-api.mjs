@@ -66,3 +66,5 @@ for(const clan of ['a'.repeat(24),'legacy']){
  assert.equal(receiver.api.activeClanId,clan);
  assert.equal(receiver.api.directInvite,code);
 }
+
+assert.throws(()=>legacy.api.directInviteLink('a'.repeat(24),'b'.repeat(64)),/90자/);
