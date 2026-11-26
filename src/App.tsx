@@ -185,9 +185,12 @@ export default function App(){useLanguage();useEffect(()=>{const navigate=()=>lo
  useEffect(()=>{
   if(!googleEnabled||directInvite===null)return;
   let live=true;
-  history.replaceState(history.state,'','#'+new URLSearchParams({clan:activeClanId}));
   setChecking(true);
-  redeemDirectInvite(directInvite).then(()=>{if(live)setReady(true);})
+  redeemDirectInvite(directInvite).then(()=>{
+   if(!live)return;
+   history.replaceState(history.state,'','#'+new URLSearchParams({clan:activeClanId}));
+   setReady(true);
+  })
    .catch(e=>{if(live)setError(e instanceof Error?e.message:t('초대 링크로 입장하지 못했습니다.'));})
    .finally(()=>{if(live)setChecking(false);});
   return()=>{live=false;};
@@ -199,7 +202,10 @@ export default function App(){useLanguage();useEffect(()=>{const navigate=()=>lo
   getRecords().then(()=>{if(live)setReady(true);}).catch(()=>{});
   return()=>{live=false;};
  },[commonEntry,ready]);
- async function enter(e?:React.FormEvent){e?.preventDefault();setChecking(true);setError('');try{if(commonEntry){await unlockNamedClan(clanName,key,joinSlug??undefined);return;}await unlockGoogle(key);setReady(true);}catch(e){setError(e instanceof Error?e.message:t("연결 실패"));}finally{setChecking(false);}}if(location.hash==='#operator-recovery')return <OperatorRecovery/>;if(location.hash==='#ocr-check')return <OcrCheck/>;if(location.hash==='#clans'||new URLSearchParams(location.hash.slice(1)).has('manage'))return <ClanPortal/>;if(ready)return activeClanId===eliteManualClanId?<EliteManualRegistration/>:<Home/>;if(commonEntry)return <main><div className="workspace" style={{maxWidth:500,paddingTop:48}}><section className="panel registration">
+ async function enter(e?:React.FormEvent){e?.preventDefault();setChecking(true);setError('');try{if(commonEntry){await unlockNamedClan(clanName,key,joinSlug??undefined);return;}await unlockGoogle(key);setReady(true);}catch(e){setError(e instanceof Error?e.message:t("연결 실패"));}finally{setChecking(false);}}if(location.hash==='#operator-recovery')return <OperatorRecovery/>;if(location.hash==='#ocr-check')return <OcrCheck/>;if(location.hash==='#clans'||new URLSearchParams(location.hash.slice(1)).has('manage'))return <ClanPortal/>;if(ready)return activeClanId===eliteManualClanId?<EliteManualRegistration/>:<Home/>;if(googleEnabled&&directInvite!==null)return <main><div className="workspace" style={{maxWidth:500,paddingTop:64}}><section className="panel registration">
+ <h1>{t("클랜 재화관리")}</h1>
+ {error?<><ConnectionHelp error={error} screen="초대 링크 및 기존 코드 입장" busy={checking}/><button type="button" className="submit" disabled={checking} onClick={()=>location.reload()}>{t("다시 시도")}</button></>:<p role="status">{t("연결 확인 중…")}</p>}
+ </section></div></main>;if(commonEntry)return <main><div className="workspace" style={{maxWidth:500,paddingTop:48}}><section className="panel registration">
  <h1>클랜 재화관리</h1>
  <section aria-label={t("개인 QR로 로그인")} style={{margin:24}}>
   <p className="helper">{t("저장한 개인 QR 티켓 이미지를 선택해 로그인하세요.")}</p>

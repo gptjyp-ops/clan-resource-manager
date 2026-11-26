@@ -7,6 +7,11 @@ Updated: 2026-11-26 16:02 KST. Latest deployed scanner: 2026-11-16.1.
 
 ## Current scan
 
+- 2026-11-26 17:03 KST. Main b3d293c. Both grids 1000×26. OCR A637:J1000 ends at 637 (next 638); no new reports or original images. Earlier unresolved OCR cases retained.
+  - Client A70:H1000 ends at 85 (next 86). New rows 71–85: five CON-004 on Android KakaoTalk in clan resources, one CON-001 on Windows Chrome on invite entry, nine GEN-001 across invite entry and clan management. Builds 1fa5b1f and b3d293c. Invite-entry reports clustered across Android, iOS and Windows. Logs establish multiple environments, not the number of users or a common infrastructure outage. No new CON-002/003 or GEN-002. Exact initiating failures remain open.
+  - Direct invitation entry previously removed the token before success, so a failed request could not be retried by reloading. Retain the invitation until successful redemption and show a dedicated retry action. This fixes recovery; the reported Elite link was not tested with its private token.
+  - Prior Pages and checks for b3d293c succeeded. Apps Script doPost remains on the backend deployed by run 45772179610; client rows on later builds verify live intake. No backend change.
+
 - 2026-11-26 16:02 KST. Main 8d48783. Both tabs 1000×26. OCR A637:J1000 last populated 637, next 638, no new reports or photos. Earlier unresolved cases remain open.
   - Client A69:H1000 last populated 70, next 71. Row 70 is unique by report ID against rows 2–69: CRM-CON-004 at 15:58 KST, Android Samsung Internet, clan leader management, build 4600c15. Prior occurrences were November 24 on iOS KakaoTalk, not simultaneous with this report. Other priority codes have no new entries. No evidence identifies the failed request or establishes a multi-device outage. Keep open.
   - Apps Script run 45772179610 deployed the existing web app successfully, with the doPost collector unchanged. Row 70 verifies production intake before that rollout. Pages run 45772179573 succeeded for the invite update. No app changes for this report.
