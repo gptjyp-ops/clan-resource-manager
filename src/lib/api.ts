@@ -4,7 +4,25 @@ import type {Inventory,PhotoKind,ChangedFields} from './inventory';
 import {googleScriptUrl} from './google-config';
 export const apiUrl=(path:string)=>(import.meta.env.VITE_API_BASE_URL||'').replace(/\/$/,'')+path;
 export const googleEnabled=!!googleScriptUrl;
-const route=new URLSearchParams(location.hash.slice(1));
+const fragment=location.hash.slice(1);
+const route=new URLSearchParams(fragment);
+// Compact links carry the clan ID and invite code in the fragment.
+const compactInvite=route.get('i')||fragment;
+if(compactInvite&&/^(?:[A-Za-z0-9_-]{22}|[A-Za-z0-9_-]{38})$/.test(compactInvite)){
+ const binary=atob(compactInvite.replace(/-/g,'+').replace(/_/g,'/'));
+ const hex=Array.from(binary,byte=>byte.charCodeAt(0).toString(16).padStart(2,'0')).join('');
+ route.set('clan',hex.length===32?'legacy':hex.slice(0,24));
+ route.set('invite',hex.slice(-32));
+}
+export function directInviteLink(clanId:string,code:string){
+ const base=location.origin+import.meta.env.BASE_URL;
+ if(/^(?:legacy|[a-f0-9]{24})$/.test(clanId)&&/^[a-f0-9]{32}$/.test(code)){
+  const hex=(clanId==='legacy'?'':clanId)+code;
+  const binary=hex.replace(/../g,pair=>String.fromCharCode(parseInt(pair,16)));
+  return base+'#'+btoa(binary).replace(/=+$/,'').replace(/\+/g,'-').replace(/\//g,'_');
+ }
+ return base+'#'+new URLSearchParams({clan:clanId,invite:code});
+}
 export const activeClanId=route.get('clan')||'legacy';
 const keySlot=activeClanId==='legacy'?'clanAccessKey':'clanAccessKey:'+activeClanId;
 let accessKey=sessionStorage.getItem(keySlot)||'';

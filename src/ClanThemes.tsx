@@ -1,3 +1,4 @@
+import {activeClanId,directInvite} from './lib/api';
 import ResourceIcon from './ResourceIcon';
 import {groups} from './lib/inventory';
 import {useEffect,useState,type CSSProperties} from 'react';
@@ -5,7 +6,10 @@ import './clan-themes.css';
 const themes:Record<string,'forge'|'joker'>={ea36f0150d9e407d9f4329f2:'forge','765aa91c6f9f47d4a1211462':'forge',f636de4784dc40eabe6af6af:'forge','5151bc1d842247c3a0e8418a':'joker','40bbda0b48e6412a843c9046':'joker',be8591c5ca3949a1b8289cc9:'joker','8ed832fd882742fbae675672':'joker','02df2b6670884e209ab6bc4d':'joker'};
 
 export default function ClanThemes() {
- const readTheme = () => themes[new URLSearchParams(location.hash.slice(1)).get('clan') || ''];
+ const readTheme = () => {
+  const route = new URLSearchParams(location.hash.slice(1));
+  return themes[route.get('clan') || (directInvite !== null ? activeClanId : '')];
+ };
  const [theme, setTheme] = useState(readTheme);
 
  useEffect(() => {

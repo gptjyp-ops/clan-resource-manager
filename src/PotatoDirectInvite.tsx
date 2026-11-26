@@ -1,5 +1,5 @@
 import {useRef,useState} from 'react';
-import {clanAction} from './lib/api';
+import {clanAction,directInviteLink} from './lib/api';
 
 export function ClanDirectInvite({clanId,adminToken,disabled}:{clanId:string;adminToken:string;disabled:boolean}){
  const [link,setLink]=useState(''),[busy,setBusy]=useState(false),[message,setMessage]=useState(''),[failed,setFailed]=useState(false);
@@ -9,9 +9,9 @@ export function ClanDirectInvite({clanId,adminToken,disabled}:{clanId:string;adm
   setMessage('');
   setFailed(false);
   try{
-   const reply=await clanAction('issueDirectInvite',{clanId,adminToken});
+   const reply=await clanAction('issueDirectInvite',{clanId,adminToken,compactInvite:true});
    if(!reply.inviteCode)throw Error('초대 코드를 발급하지 못했습니다.');
-   setLink(location.origin+import.meta.env.BASE_URL+'#'+new URLSearchParams({clan:clanId,invite:reply.inviteCode}));
+   setLink(directInviteLink(clanId,reply.inviteCode));
   }catch(e){setFailed(true);setMessage(e instanceof Error?e.message:'초대 링크 발급 실패');}
   finally{setBusy(false);}
  }

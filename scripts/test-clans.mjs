@@ -400,3 +400,8 @@ const otherReplacement=action('issueDirectInvite',otherSession).inviteCode;
 assert.equal(redeem(otherInvite,directClan.clan.id).ok,false);
 assert.equal(redeem(otherReplacement,directClan.clan.id).ok,true);
 assert.equal(redeem(potatoInvite).ok,true);
+
+const shortInvite=action('issueDirectInvite',{...otherSession,compactInvite:true}).inviteCode;
+assert.match(shortInvite,/^[a-f0-9]{32}$/);
+assert.equal(redeem(shortInvite,directClan.clan.id).ok,true);
+assert.equal(redeem(shortInvite).ok,false);

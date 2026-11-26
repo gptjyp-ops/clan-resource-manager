@@ -353,7 +353,7 @@ function clanOperation_(p){
   }
   if(op==='redeemDirectInvite'){
    var id=String(p.clanId||''),code=p.inviteCode;
-   if(!id||typeof code!=='string'||!/^[a-f0-9]{64}$/.test(code))throw Error('유효한 클랜 초대 링크를 확인해주세요.');
+   if(!id||typeof code!=='string'||!/^(?:[a-f0-9]{32}|[a-f0-9]{64})$/.test(code))throw Error('유효한 클랜 초대 링크를 확인해주세요.');
    var invited=findClan_(id),key=String(invited.row[2]);
    if(hash_(code,key)!==PropertiesService.getScriptProperties().getProperty(directInviteProperty_(id)))throw Error('초대 링크가 만료되었거나 올바르지 않습니다.');
    return {ok:true,entryAccessKey:key};
@@ -381,7 +381,7 @@ function clanOperation_(p){
   }
   var found=clanAdmin_(p);
   if(op==='issueDirectInvite'){
-   var code=(Utilities.getUuid()+Utilities.getUuid()).replace(/-/g,'');
+   var code=(Utilities.getUuid()+(p.compactInvite===true?'':Utilities.getUuid())).replace(/-/g,'');
    PropertiesService.getScriptProperties().setProperty(directInviteProperty_(found.row[0]),hash_(code,String(found.row[2])));
    return {ok:true,inviteCode:code};
   }
