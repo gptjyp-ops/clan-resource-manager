@@ -6,8 +6,8 @@ export const apiUrl=(path:string)=>(import.meta.env.VITE_API_BASE_URL||'').repla
 export const googleEnabled=!!googleScriptUrl;
 const fragment=location.hash.slice(1);
 const route=new URLSearchParams(fragment);
-// Compact links carry the clan ID and invite code in the fragment.
-const compactInvite=route.get('i')||fragment;
+// Keep new invites in the query so sharing apps can omit the fragment.
+const compactInvite=route.get('i')||fragment||location.search.slice(1);
 if(compactInvite&&/^(?:[A-Za-z0-9_-]{22}|[A-Za-z0-9_-]{38})$/.test(compactInvite)){
  const binary=atob(compactInvite.replace(/-/g,'+').replace(/_/g,'/'));
  const hex=Array.from(binary,byte=>byte.charCodeAt(0).toString(16).padStart(2,'0')).join('');
@@ -19,7 +19,7 @@ export function directInviteLink(clanId:string,code:string){
  if(/^(?:legacy|[a-f0-9]{24})$/.test(clanId)&&/^[a-f0-9]{32}$/.test(code)){
   const hex=(clanId==='legacy'?'':clanId)+code;
   const binary=hex.replace(/../g,pair=>String.fromCharCode(parseInt(pair,16)));
-  return base+'#'+btoa(binary).replace(/=+$/,'').replace(/\+/g,'-').replace(/\//g,'_');
+  return base+'?'+btoa(binary).replace(/=+$/,'').replace(/\+/g,'-').replace(/\//g,'_');
  }
  throw Error('90자 초대 링크를 발급하지 못했습니다. 관리 페이지를 새로 열고 다시 시도해주세요.');
 }

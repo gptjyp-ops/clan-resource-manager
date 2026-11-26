@@ -3,8 +3,8 @@ import vm from 'node:vm';
 import crypto from 'node:crypto';
 import {build} from 'esbuild';
 const code=(await build({entryPoints:['src/lib/api.ts'],bundle:true,write:false,format:'iife',globalName:'ClanAPI',define:{'import.meta.env.BASE_URL':'"/clan-resource-manager/"','import.meta.env.VITE_GOOGLE_SCRIPT_URL':'"https://script.google.com/macros/s/test/exec"','import.meta.env.VITE_API_BASE_URL':'""'}})).outputFiles[0].text;
-function setup(hash,stored,serverSelection=true,preserveExisting=true,entryPassword=false,adminTicket=false,delayReady=false){const storage=new Map(Object.entries(stored)),handlers={},sent=[];let frame,source,ready;
- const location={hash,origin:'https://gptjyp-ops.github.io',href:''};
+function setup(hash,stored,serverSelection=true,preserveExisting=true,entryPassword=false,adminTicket=false,delayReady=false,search=''){const storage=new Map(Object.entries(stored)),handlers={},sent=[];let frame,source,ready;
+ const location={hash,search,origin:'https://gptjyp-ops.github.io',href:''};
  source={postMessage(message,origin){sent.push(message);const payload=message.payload;const result=payload.operation==='capabilities'?{ok:true,multiClan:true,preserveExisting,serverSelection,entryPassword,ticketClanEntry:true,servers:serverSelection?['12','99','not-a-server']:[]}:payload.operation==='ticketClanEnter'?{ok:true,entryAccessKey:'ticket-entry-token',adminTicket,clan:{id:payload.clanId}}:payload.operation==='enterClan'?{ok:true,entryAccessKey:'server-entry-token'}:{ok:true,records:[],clan:{id:payload.clanId,name:'Test',server:'12'},photos:{}};handlers.message({origin,source,data:{type:'clan-response',channel:message.channel,id:message.id,result}});}};
  const context={console,URLSearchParams,atob,btoa,crypto:{randomUUID:()=>crypto.randomUUID()},location,sessionStorage:{getItem:k=>storage.get(k)||null,setItem:(k,v)=>storage.set(k,v),removeItem:k=>storage.delete(k)},setTimeout,clearTimeout,window:{addEventListener:(k,f)=>handlers[k]=f,removeEventListener:k=>delete handlers[k]},document:{createElement:()=>frame={remove(){}},body:{appendChild(){const channel=new URL(frame.src).searchParams.get('channel');ready=()=>handlers.message({origin:'https://script.googleusercontent.com',source,data:{type:'clan-ready',channel}});if(!delayReady)ready();}}}};
  vm.createContext(context);vm.runInContext(code,context);return {api:context.ClanAPI,storage,sent,location,ready:()=>ready()};}
@@ -62,9 +62,15 @@ for(const clan of ['a'.repeat(24),'legacy']){
  const code='b'.repeat(32);
  const url=legacy.api.directInviteLink(clan,code);
  assert.equal(url.length,clan==='legacy'?74:90);
- const receiver=setup(new URL(url).hash,{});
- assert.equal(receiver.api.activeClanId,clan);
- assert.equal(receiver.api.directInvite,code);
+ const shared=new URL(url);
+ assert.equal(shared.hash,'');
+ assert.ok(shared.search);
+ const token=shared.search.slice(1);
+ for(const [hash,search] of [['',shared.search],['#'+token,''],['#i='+token,''],['#clan='+clan+'&invite='+code,'']]){
+  const receiver=setup(hash,{},true,true,false,false,false,search);
+  assert.equal(receiver.api.activeClanId,clan);
+  assert.equal(receiver.api.directInvite,code);
+ }
 }
 
 assert.throws(()=>legacy.api.directInviteLink('a'.repeat(24),'b'.repeat(64)),/90자/);
