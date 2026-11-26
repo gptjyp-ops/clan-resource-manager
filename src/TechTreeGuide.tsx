@@ -9,7 +9,7 @@ export function EliteTechGuide() {
   <h3 id="elite-tech-title">클랜 기술</h3>
   <ul>{eliteTechnologies.map(name => <li key={name}>
    <img src={techIcons.get(name)} alt="" width={34} height={34} />
-   <span>{name}</span>
+   <span>{name}<small className="elite-tech-target">목표 6티어</small></span>
   </li>)}</ul>
  </section>;
 }

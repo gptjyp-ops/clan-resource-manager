@@ -9,7 +9,7 @@ const resourcePages=[
  {label:'스킬',days:'1·3일차',fields:[fields[0]]},
  {label:'알',days:'3·5일차',fields:fields.slice(1,3)},
  {label:'탈것',days:'2·4일차',fields:fields.slice(3,5)},
- {label:'녹색 물약',days:'2·5일차',fields:[fields[5]]},
+ {label:'녹색 물약',days:'녹물전쟁시에만 오더에 따라 투자',fields:[fields[5]]},
 ];
 const resourceDays=new Map(resourcePages.flatMap(({days,fields})=>fields.map(([key])=>[key,days] as const)));
 const summonGroups=['skill','egg','mount'] as const;
@@ -173,6 +173,7 @@ export default function EliteManualRegistration(){
      .elite-tech-guide h3 { font-size: 1rem; font-weight: 800; margin: 0 0 8px; }
      .elite-tech-guide ul { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr)); gap: 8px; margin: 0; padding: 0; list-style: none; }
      .elite-tech-guide li { display: flex; align-items: center; gap: 8px; padding: 8px; border: 1px solid #aac6df; border-radius: 8px; background: #edf6ff; color: #203b55; font-weight: 700; }
+     .elite-tech-target { display: block; font-size: .8rem; color: #35536f; }
      .elite-tech-guide img { flex: none; object-fit: contain; background: #d9e8f4; border-radius: 5px; }
      .elite-resource-day { display: block; margin-bottom: 2px; color: #69452f; font-size: .8rem; font-weight: 700; }
      .elite-resource-page th[aria-sort] { background: #e9c38f; }
