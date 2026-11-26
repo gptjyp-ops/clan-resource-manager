@@ -397,3 +397,87 @@ body:not([data-clan-theme], [data-community-theme]) main:has(.dashboard-tabs) .s
 body:not([data-clan-theme], [data-community-theme]) main:has(.dashboard-tabs) .submit:hover:not(:disabled) {
   background: #ffdc7e;
 }
+
+/* Shared pastel appearance. Custom clan themes have their own palettes. */
+body:not([data-clan-theme], [data-community-theme]) {
+  --background: #f6f3fc;
+  --foreground: #28233e;
+  --card: #fffdfd;
+  --card-foreground: var(--foreground);
+  --popover: var(--card);
+  --popover-foreground: var(--foreground);
+  --primary: #e3d6fa;
+  --primary-foreground: #30234f;
+  --secondary: #f0eafb;
+  --secondary-foreground: var(--foreground);
+  --muted: #f0edf7;
+  --muted-foreground: #5e5571;
+  --accent: #e1f4ef;
+  --accent-foreground: #23483e;
+  --border: #d7cee5;
+  --input: #a99abf;
+  --ring: #6942a2;
+  background: linear-gradient(150deg, #f5effc, #fff4ee 55%, #ebf7f3);
+  min-height: 100vh;
+}
+
+body:not([data-clan-theme], [data-community-theme]) [data-clan-ambient] {
+  display: none;
+}
+
+body:not([data-clan-theme], [data-community-theme]) main:has(.dashboard-tabs) {
+  background: transparent;
+}
+
+body:not([data-clan-theme], [data-community-theme]) :is(.panel, .topbar, .dashboard-tabs, .resource-overview .summary article),
+body:not([data-clan-theme], [data-community-theme]) main:has(.dashboard-tabs) :is(.topbar, .single-view > .panel > .panel-heading) {
+  background: var(--card);
+  color: var(--foreground);
+  border-color: var(--border);
+  box-shadow: none;
+}
+
+body:not([data-clan-theme], [data-community-theme]) :is(.helper, .eyebrow, .meta, .date, .summary p, .sort-help, .quantity-fields label, .page-heading p:not(.eyebrow), .brand small, .clan-badge, .empty, .empty h3, .nickname, .roster th, .roster-note, .quiet, .count, .number-field > span, .upload span:not(.replace), .upload small) {
+  color: var(--muted-foreground);
+}
+
+body:not([data-clan-theme], [data-community-theme]) :is(.roster th, .roster-note, .upload, .ticket-import-button) {
+  background: var(--secondary);
+  color: var(--foreground);
+  border-color: var(--border);
+}
+
+body:not([data-clan-theme], [data-community-theme]) :is(.registration input:not([type=file]), .registration select, .registration textarea) {
+  background: var(--card);
+  color: var(--foreground);
+  border-color: var(--input);
+}
+
+body:not([data-clan-theme], [data-community-theme]) :is(.registration input::placeholder, .resource-overview .summary-number) {
+  color: var(--foreground);
+}
+
+body:not([data-clan-theme], [data-community-theme]) :is(.submit, .submit:hover:not(:disabled)),
+body:not([data-clan-theme], [data-community-theme]) main:has(.dashboard-tabs) :is(.submit, .submit:hover:not(:disabled), .brand-icon, .dashboard-tabs button.active) {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  border-color: var(--input);
+  box-shadow: none;
+}
+
+body:not([data-clan-theme], [data-community-theme]) :focus-visible {
+  outline-color: var(--ring);
+}
+
+body:not([data-clan-theme], [data-community-theme]) .registration > h1 {
+  padding: 24px 24px 0;
+}
+
+body:not([data-clan-theme], [data-community-theme]) .roster .resource-roster-table :is(th, td):first-child {
+  background: var(--secondary);
+  box-shadow: 2px 0 0 var(--border);
+}
+
+body:not([data-clan-theme], [data-community-theme]) .registration-legend span {
+  color: var(--foreground) !important;
+}
