@@ -5,11 +5,12 @@ import {quantity} from './lib/inventory';
 export const eliteManualClanId='f768d7c5332948cbb1f7ec5f';
 const fields=[['skill','스킬'],['egg','알 개수'],['eggMerge','알 합성'],['mount','탈것 개수'],['mountMerge','탈것 합성수'],['potion','녹색 물약']] as const;
 const resourcePages=[
- {label:'스킬',fields:[fields[0]]},
- {label:'알',fields:fields.slice(1,3)},
- {label:'탈것',fields:fields.slice(3,5)},
- {label:'녹색 물약',fields:[fields[5]]},
+ {label:'스킬',days:'1·3일차',fields:[fields[0]]},
+ {label:'알',days:'3·5일차',fields:fields.slice(1,3)},
+ {label:'탈것',days:'2·4일차',fields:fields.slice(3,5)},
+ {label:'녹색 물약',days:'2·5일차',fields:[fields[5]]},
 ];
+const resourceDays=new Map(resourcePages.flatMap(({days,fields})=>fields.map(([key])=>[key,days] as const)));
 const summonGroups=['skill','egg','mount'] as const;
 type SummonGroup=typeof summonGroups[number];
 type AscensionField=`${SummonGroup}${'Level'|'Waiting'}`;
@@ -167,6 +168,7 @@ export default function EliteManualRegistration(){
      .elite-sort-direction { margin: 0; }
      .elite-sort-direction button { flex: 1; }
     }
+     .elite-resource-day { display: block; margin-bottom: 2px; color: #69452f; font-size: .8rem; font-weight: 700; }
      .elite-resource-page th[aria-sort] { background: #e9c38f; }
      .elite-resource-page td[data-sorted="true"] { background: #dfaa5e30; }
      .elite-resource-navigation { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 4px; }
@@ -226,7 +228,7 @@ export default function EliteManualRegistration(){
         <button className="elite-sort-header" type="button" onClick={()=>{
          setSortDirection(sortBy===key&&sortDirection==='descending'?'ascending':'descending');
          setSortBy(key);
-        }}>{name} {sortBy===key?(sortDirection==='descending'?'↓':'↑'):'↕'}</button>
+        }}><span className="elite-resource-day">{resourceDays.get(key)}</span>{name} {sortBy===key?(sortDirection==='descending'?'↓':'↑'):'↕'}</button>
        </th>)}</tr></thead>
        <tbody>{visibleRows.map(row=><tr key={row.nickname}>
         <th scope="row">{row.nickname}<RegistrationGem amounts={row.amounts}/>
